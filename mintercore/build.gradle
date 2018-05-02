@@ -1,0 +1,105 @@
+apply plugin: 'com.android.library'
+
+group = 'network.minter.android'
+version = '1.0.0'
+
+android {
+    compileSdkVersion minterMaxSdk
+
+    defaultConfig {
+        minSdkVersion minterMinSdk
+        targetSdkVersion minterMaxSdk
+        versionCode 1
+        versionName version
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++14"
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/spring.tooling'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+    sourceSets {
+        main {
+            jni.srcDirs 'src/main/cpp/secp256k1/src/java'
+            jniLibs.srcDirs 'libs'
+        }
+
+        test {
+            jni.srcDirs 'src/main/cpp/secp256k1/src/java'
+            jniLibs.srcDirs 'libs'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/secp256k1/CMakeLists.txt'
+        }
+    }
+
+}
+
+ext {
+    scastleVersion = '1.58.0.0'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // google
+    implementation "com.android.support:appcompat-v7:${minterLibSupport}"
+
+    // network
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    // ethereum
+    api project(':ethereuman')
+
+    //for SHA3 @TODO remove
+    implementation "com.madgag.spongycastle:core:${scastleVersion}"
+    implementation "com.madgag.spongycastle:prov:${scastleVersion}"
+
+    // stuff
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+}
