@@ -51,7 +51,6 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
             throw new IllegalStateException(String.format("File %s is not readable", file.getAbsoluteFile()));
         }
 
-
         byte[] data = new byte[(int) file.length()];
         DataInputStream is = new DataInputStream(new FileInputStream(file));
         is.readFully(data);
@@ -82,12 +81,16 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         return res;
     }
 
+    public PublicKey getPublicKey() {
+        return getPublicKey(false);
+    }
+
     /**
      * Extract public key from private
      *
      * @return Public Key data
      */
-    public PublicKey getPublicKey() {
+    public PublicKey getPublicKey(boolean compressed) {
         if (!isValid()) {
             throw new IllegalStateException("Can't get public key, private key already disposed");
         }
@@ -95,7 +98,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         long ctx = NativeSecp256k1.contextCreate();
         PublicKey out;
         try {
-            out = new PublicKey(NativeSecp256k1.computePubkey(ctx, getData(), false));
+            out = new PublicKey(NativeSecp256k1.computePubkey(ctx, getData(), compressed));
         } finally {
             NativeSecp256k1.contextCleanup(ctx);
         }
@@ -125,6 +128,6 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
 
     @Override
     public boolean isDestroyed() {
-        return false;
+        return !isValid();
     }
 }

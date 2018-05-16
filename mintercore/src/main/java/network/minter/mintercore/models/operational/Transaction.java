@@ -21,7 +21,7 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class Transaction<OperationData extends Operation> {
-    public final static Long VALUE_MUL = 100000000L;
+    public final static Long VALUE_MUL = 100_000_000L;
     private BigInteger mNonce;
     private BigInteger mGasPrice = new BigInteger("1000000000", 10);
     private OperationType mType = OperationType.SendCoin;
@@ -64,13 +64,13 @@ public class Transaction<OperationData extends Operation> {
         return transaction;
     }
 
-    public static SendTx.Builder newSendTransaction(BigInteger nonce, BigInteger gasPrice) {
-        Transaction<SendTx> tx = new Builder<SendTx>(nonce)
+    public static TxSendCoin.Builder newSendTransaction(BigInteger nonce, BigInteger gasPrice) {
+        Transaction<TxSendCoin> tx = new Builder<TxSendCoin>(nonce)
                 .setGasPrice(gasPrice)
                 .setType(OperationType.SendCoin)
                 .build();
 
-        return new SendTx().new Builder(tx);
+        return new TxSendCoin().new Builder(tx);
     }
 
     public BigInteger getNonce() {

@@ -119,7 +119,7 @@ public class NetworkException extends RuntimeException {
                     mUserMessage = "Authorization error";
                     break;
                 default:
-                    mUserMessage = "Unknown error. Please, try again later";
+                    mUserMessage = "DecodeError error. Please, try again later";
             }
 
             mExceptionMessage = another.getMessage();
@@ -130,7 +130,7 @@ public class NetworkException extends RuntimeException {
             mExceptionMessage = another.getMessage();
         } else {
             mStatusCode = Code.Unknown;
-            mUserMessage = "Unknown network error. Please, try again later";
+            mUserMessage = "DecodeError network error. Please, try again later";
             mExceptionMessage = another.getMessage();
         }
     }

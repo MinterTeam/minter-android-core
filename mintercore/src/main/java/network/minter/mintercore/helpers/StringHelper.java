@@ -9,6 +9,9 @@ import network.minter.mintercore.MinterApi;
  */
 public class StringHelper {
 
+    // 20 byte address with or without prefix
+    public static final String HEX_ADDRESS_PATTERN = "^((0|M|m)x)?([a-fA-F0-9]{40})$";
+    public static final String HEX_NUM_PATTERN = "^(0x)?([a-fA-F0-9]{2,})$";
     private final static char[] hexArray = "0123456789ABCDEF".toLowerCase().toCharArray();
 
     public static String strlpad(int size, String input) {
@@ -88,11 +91,18 @@ public class StringHelper {
     }
 
     public static String bytesToString(byte[] data) {
-        final char[] coinChars = new char[data.length];
-        for (int i = 0; i < data.length; i++) {
-            coinChars[i] = (char) data[i];
+        return bytesToString(data, data.length);
+    }
+
+    public static String bytesToString(byte[] data, int readLength) {
+        if(data.length < readLength) {
+            throw new ArrayIndexOutOfBoundsException("Read length less than array size: "+String.valueOf(readLength)+" of " + String.valueOf(data.length));
+        }
+        final char[] out = new char[readLength];
+        for (int i = 0; i < readLength; i++) {
+            out[i] = (char) data[i];
         }
 
-        return new String(coinChars);
+        return new String(out);
     }
 }

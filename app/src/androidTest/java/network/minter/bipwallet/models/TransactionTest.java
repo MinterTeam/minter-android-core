@@ -11,7 +11,7 @@ import network.minter.mintercore.MinterApi;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.mintercore.models.operational.OperationType;
-import network.minter.mintercore.models.operational.SendTx;
+import network.minter.mintercore.models.operational.TxSendCoin;
 import network.minter.mintercore.models.operational.Transaction;
 import network.minter.mintercore.models.operational.TransactionSign;
 
@@ -35,20 +35,18 @@ public class TransactionTest {
                 "418e4be028dcaed85aa58b643979f644f806a42bb6d1912848720788a53bb8a4");
         final MinterAddress address = new MinterAddress("Mxc3a55cdb5bcb97fd5657794247de4ed5e4a49f0d");
 
-        Transaction<SendTx> tx = Transaction
+        Transaction<TxSendCoin> tx = Transaction
                 .newSendTransaction(new BigInteger("11"), new BigInteger("1"))
                 .setCoin("MNT")
                 .setTo(address)
                 .setValue(1)
                 .build();
 
-
         TransactionSign sign = tx.sign(privateKey);
         assertNotNull(sign);
         assertEquals(validSign.length(), sign.getTxSign().length());
         assertEquals(validSign, sign.getTxSign());
     }
-
 
     @Test
     public void testDecodeSendTransaction() {
@@ -62,7 +60,7 @@ public class TransactionTest {
         BigInteger value = new BigInteger("1").multiply(new BigInteger(Transaction.VALUE_MUL.toString()));
         String coin = MinterApi.DEFAULT_COIN;
 
-        Transaction<SendTx> tx = Transaction.fromEncoded(encodedTransaction, SendTx.class);
+        Transaction<TxSendCoin> tx = Transaction.fromEncoded(encodedTransaction, TxSendCoin.class);
 
         assertNotNull(tx);
         assertEquals(nonce, tx.getNonce());
@@ -70,7 +68,7 @@ public class TransactionTest {
         assertEquals(type, tx.getType());
 
         assertNotNull(tx.getData());
-        assertTrue(tx.getData() instanceof SendTx);
+        assertTrue(tx.getData() instanceof TxSendCoin);
         assertEquals(valueHuman, tx.getData().getValue());
         assertEquals(value, tx.getData().getValueBigInteger());
         assertEquals(coin, tx.getData().getCoin());

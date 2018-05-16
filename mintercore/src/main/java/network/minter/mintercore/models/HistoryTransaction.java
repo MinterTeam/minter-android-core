@@ -1,5 +1,12 @@
 package network.minter.mintercore.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.mintercore.models.operational.Operation;
 import network.minter.mintercore.models.operational.OperationType;
 
 /**
@@ -8,12 +15,31 @@ import network.minter.mintercore.models.operational.OperationType;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class HistoryTransaction {
-    public String hash;
+    public BytesData hash;
+    public int height;
+    public int index;
     public OperationType type;
-    public String from;
-    public String to;
-    public String coinSymbol;
-    public float value;
+    public MinterAddress from;
+    public BigInteger nonce;
+    public BigInteger gasPrice;
+    @SerializedName("tx_result")
+    public TxResult txResult;
+    public Object data;
+    public String payload; //@TODO what is it?
 
+    public <T extends Operation> T getData() {
+        return (T) data;
+    }
 
+    public static class TxResult {
+        public BigInteger gasWanted;
+        public BigInteger gasUsed;
+        public List<Tag> tags;
+        public Object fee; //@TODO
+    }
+
+    public static class Tag {
+        public String key;
+        public String value;
+    }
 }

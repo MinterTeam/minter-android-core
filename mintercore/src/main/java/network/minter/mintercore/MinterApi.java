@@ -4,10 +4,17 @@ import com.google.gson.GsonBuilder;
 
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import java.math.BigInteger;
 import java.security.Security;
 
 import network.minter.mintercore.api.ApiService;
+import network.minter.mintercore.api.converters.BigIntegerDeserializer;
+import network.minter.mintercore.api.converters.BytesDataDeserializer;
+import network.minter.mintercore.api.converters.MinterAddressDeserializer;
+import network.minter.mintercore.bip39.NativeBip39;
+import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.crypto.NativeSecp256k1;
+import network.minter.mintercore.models.BytesData;
 import network.minter.mintercore.repo.AccountRepository;
 import network.minter.mintercore.repo.CoinRepository;
 import network.minter.mintercore.repo.TransactionRepository;
@@ -30,7 +37,7 @@ public class MinterApi {
     private TransactionRepository mTransactionRepository;
 
     private MinterApi() {
-        mApiService = new ApiService.Builder(BASE_URL, new GsonBuilder());
+        mApiService = new ApiService.Builder(BASE_URL, getGsonBuilder());
         mApiService.addHeader("Content-Type", "application/json");
         mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid");
         mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
@@ -45,6 +52,7 @@ public class MinterApi {
         INSTANCE.mApiService.setDebug(true);
 
         NativeSecp256k1.init();
+        NativeBip39.init();
 
         if (!NativeSecp256k1.isEnabled()) {
             throw new RuntimeException("Unable to load secp256k1 library");
@@ -65,6 +73,15 @@ public class MinterApi {
 
             INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
         }
+    }
+
+    public GsonBuilder getGsonBuilder() {
+        GsonBuilder out = new GsonBuilder();
+        out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
+        out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
+        out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
+
+        return out;
     }
 
     public static MinterApi getInstance() {

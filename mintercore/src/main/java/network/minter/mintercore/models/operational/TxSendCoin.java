@@ -16,12 +16,12 @@ import network.minter.mintercore.helpers.StringHelper;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public final class SendTx extends Operation {
+public final class TxSendCoin extends Operation {
     String coin = MinterApi.DEFAULT_COIN;
-    byte[] to;
+    MinterAddress to;
     BigInteger value;
 
-    SendTx() {
+    TxSendCoin() {
     }
 
     public long getValue() {
@@ -47,7 +47,7 @@ public final class SendTx extends Operation {
     @NonNull
     @Override
     protected byte[] encodeRLP() {
-        byte[] to = this.to;
+        byte[] to = this.to.getData();
         to = BytesHelper.lpad(20, to);
 
         return RLP.encode(new Object[]{coin, to, value});
@@ -59,35 +59,33 @@ public final class SendTx extends Operation {
         final Object[] decoded = (Object[]) rlp.getDecoded();
 
         coin = StringHelper.bytesToString(fromRawRlp(0, decoded));
-        to = fromRawRlp(1, decoded);
+        to = new MinterAddress(fromRawRlp(1, decoded));
         value = new BigInteger(fromRawRlp(2, decoded));
     }
 
     @Override
     protected <T extends Operation, B extends Operation.Builder<T>> B getBuilder(
             Transaction<? extends Operation> rawTx) {
-        return (B) new Builder((Transaction<SendTx>) rawTx);
+        return (B) new Builder((Transaction<TxSendCoin>) rawTx);
     }
 
-    public final class Builder extends Operation.Builder<SendTx> {
-        Builder(Transaction<SendTx> op) {
+    public final class Builder extends Operation.Builder<TxSendCoin> {
+        Builder(Transaction<TxSendCoin> op) {
             super(op);
         }
 
         public Builder setCoin(final String coin) {
-            SendTx.this.coin = StringHelper.strrpad(10, coin);
+            TxSendCoin.this.coin = StringHelper.strrpad(10, coin);
             return this;
         }
 
         public Builder setTo(MinterAddress publicKey) {
-            return setTo(publicKey.toString());
+            to = publicKey;
+            return this;
         }
 
         public Builder setTo(String address) {
-            final String rawHex = address.replace("Mx", "").replace("0x", "");
-            to = StringHelper.hexStringToBytes(rawHex);
-
-            return this;
+            return setTo(new MinterAddress(address));
         }
 
         public Builder setValue(long value) {
@@ -102,13 +100,13 @@ public final class SendTx extends Operation {
             return setValue(new BigInteger(String.valueOf((long) (value * Transaction.VALUE_MUL))));
         }
 
-        public Transaction<SendTx> build() {
-            getTx().setData(SendTx.this);
+        public Transaction<TxSendCoin> build() {
+            getTx().setData(TxSendCoin.this);
             return getTx();
         }
 
         private Builder setValue(BigInteger value) {
-            SendTx.this.value = value.multiply(new BigInteger(Transaction.VALUE_MUL.toString(), 10));
+            TxSendCoin.this.value = value.multiply(new BigInteger(Transaction.VALUE_MUL.toString(), 10));
             return this;
         }
 

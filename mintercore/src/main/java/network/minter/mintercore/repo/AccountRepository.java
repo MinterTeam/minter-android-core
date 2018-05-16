@@ -38,11 +38,6 @@ public class AccountRepository extends DataRepository<AccountEndpoint> {
         super(apiBuilder);
     }
 
-    public Call<DataResult<Balance>> getBalance(@NonNull MinterAddress key, String coin) {
-        checkNotNull(key, "Public key required!");
-        return getBalance(key.toString(), coin);
-    }
-
     public Call<DataResult<Balance>> getBalance(@NonNull MinterAddress key) {
         checkNotNull(key, "Public key required!");
         return getBalance(key.toString());
@@ -55,31 +50,7 @@ public class AccountRepository extends DataRepository<AccountEndpoint> {
      * @return
      */
     public Call<DataResult<Balance>> getBalance(@NonNull String address) {
-        return getService().getBalance(
-                Collections.singletonMap("address", checkNotNull(address, "Address required!"))
-        );
-    }
-
-    /**
-     * Returns balance result data for specified address and coin
-     *
-     * @param address
-     * @param coin
-     * @return Prepared request with balance result
-     * @see Balance
-     */
-    public Call<DataResult<Balance>> getBalance(@NonNull String address, @Nullable String coin) {
-        if (coin == null || coin.isEmpty()) {
-            return getBalance(address);
-        }
-
-        checkArgument(coin.length() <= 10, "Coin can contains maximum 10 characters");
-
-        return getService().getBalance(
-                asMap(
-                        "address", checkNotNull(address, "Address required!"),
-                        "coin", coin
-                ));
+        return getService().getBalance(checkNotNull(address, "Address required!"));
     }
 
     public Call<DataResult<Long>> getTransactionCount(@NonNull MinterAddress key) {
@@ -94,7 +65,7 @@ public class AccountRepository extends DataRepository<AccountEndpoint> {
      * @return Prepared request with transaction count result
      */
     public Call<DataResult<Long>> getTransactionCount(@NonNull String address) {
-        return getService().getTransactionCount(asMap("address", checkNotNull(address, "Address required!")));
+        return getService().getTransactionCount(checkNotNull(address, "Address required!"));
     }
 
     /**

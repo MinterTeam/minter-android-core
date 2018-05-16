@@ -14,6 +14,7 @@ import network.minter.mintercore.models.DataResult;
 import retrofit2.Response;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -26,25 +27,26 @@ public class AccountTest extends BaseApiTest {
 
     @Test
     public void testGetBalance() throws IOException {
-        MinterAddress pk = new MinterAddress("Mxa257e2ec0def0d3a23f0a7e5d61a254c96a1ce4e");
+        MinterAddress pk = new MinterAddress("Mx2d483a56027638ec9b5d69568c82aaf6af891456");
 
         Response<DataResult<Balance>> result = MinterApi.getInstance()
                 .account()
-                .getBalance(pk, MinterApi.DEFAULT_COIN)
+                .getBalance(pk)
                 .execute();
 
         assertNotNull(result);
-        assertNotNull(result.body());
+        String err = result.isSuccessful() ? null : result.errorBody().string();
+        assertNotNull(err, result.body());
         final DataResult<Balance> data = result.body();
         assertEquals(toJson(data), DataResult.ResultCode.Success, data.code);
         assertNotNull(data.result);
-        assertEquals(data.result.coins.size(), 1); // cause we were set exact coin name
+        assertTrue(data.result.coins.size() >= 1); // cause we were set exact coin name
         assertEquals(toJson(data.result), MinterApi.DEFAULT_COIN, data.result.get(MinterApi.DEFAULT_COIN).coin);
     }
 
 
     public void testGetTransactionsCount() throws IOException {
-        MinterAddress pk = new MinterAddress("Mxa257e2ec0def0d3a23f0a7e5d61a254c96a1ce4e");
+        MinterAddress pk = new MinterAddress("Mx2d483a56027638ec9b5d69568c82aaf6af891456");
 
         Response<DataResult<Long>> result = MinterApi.getInstance()
                 .account()

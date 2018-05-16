@@ -7,8 +7,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import network.minter.mintercore.MinterApi;
+import network.minter.mintercore.bip39.HDKey;
+import network.minter.mintercore.bip39.MnemonicResult;
+import network.minter.mintercore.bip39.NativeBip39;
+import network.minter.mintercore.bip39.NativeHDKeyEncoder;
+import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.mintercore.crypto.PublicKey;
+import network.minter.mintercore.helpers.StringHelper;
+import timber.log.Timber;
+
+import static junit.framework.Assert.assertEquals;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,68 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void sign(View v) {
         MinterApi.initialize(true);
-
-        final PublicKey publicKey = new PublicKey(ADDR_MY);
-        final PrivateKey privateKey = new PrivateKey(PRIV_MY);
-        final PublicKey extracted = privateKey.getPublicKey();
-
-/*
-        RawTransaction<SendTx> tx = RawTransaction
-                .newSendTransaction(new BigInteger("1"), new BigInteger("1"))
-                .setCoin("MNT")
-                .setTo("Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99")
-                .setValue(1)
-                .build();
-
-
-        // Send transaction
-        MinterApi.getInstance().account()
-                .sendTransaction(tx.sign(new PrivateKey(PRIV_MY)))
-                .enqueue(new Callback<TransactionSendResult>() {
-                    @Override
-                    public void onResponse(@NonNull Call<TransactionSendResult> call, @NonNull Response<TransactionSendResult> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<TransactionSendResult> call, Throwable t) {
-
-                    }
-                });
-*/
-
-
-//        RawTransaction<Object> t = new RawTransaction<>(new BigInteger("11"));
-//        t.setGasPrice(new BigInteger("1"));
-//        t.setType(new BigInteger("1"));
-//        SendTx tx = new SendTx();
-//        tx.setCoin("MNT");
-//        tx.setTo("Mxc3a55cdb5bcb97fd5657794247de4ed5e4a49f0d");
-//        tx.setValue(1);
-//        t.setData(tx);
-//
-//        final String txSign = t.sign(PRIV);
-//
-//        StringBuilder statusText = new StringBuilder();
-//
-//        if (txSign == null) {
-//            status.setText(String.format("Invalid signature:\nNULL\n\nMust be:\n%s", VALID_SIGN));
-//            return;
-//        }
-//
-//        if (!txSign.equals(VALID_SIGN)) {
-//            statusText.append(String.format("Invalid signature:\n%s\n\nMust be:\n%s", txSign, VALID_SIGN));
-//        } else {
-//            statusText.append(String.format("TX valid:\n %s\n\nMust be:\n%s", txSign, VALID_SIGN));
-//        }
-//
-//
-//        statusText.append("\n\n");
-//        statusText.append(String.format("Singed size: %d", txSign.replace("Mx", "").length()));
-//        statusText.append('\n');
-//        statusText.append(String.format("Valid size:  %d", VALID_SIGN.replace("Mx", "").length()));
-//
-//        status.setText(statusText.toString());
 
 
     }

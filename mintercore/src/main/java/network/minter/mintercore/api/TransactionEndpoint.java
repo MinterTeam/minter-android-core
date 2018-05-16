@@ -7,7 +7,9 @@ import network.minter.mintercore.models.DataResult;
 import network.minter.mintercore.models.HistoryTransaction;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * MinterCore. 2018
@@ -16,9 +18,9 @@ import retrofit2.http.POST;
  */
 public interface TransactionEndpoint {
 
-    @POST("/api/getTransactions")
-    Call<DataResult<List<HistoryTransaction>>> getTransactionsFrom(@Body Map<String, String> data);
+    @GET("/api/transactions")
+    Call<DataResult<List<HistoryTransaction>>> getTransactions(@Query("query") String urlEncodedQuery);
 
-    @POST("/api/getTransactions")
-    Call<DataResult<List<HistoryTransaction>>> getTransactionsTo(@Body Map<String, String> data);
+//    @GET("/api/getTransactions")
+//    Call<DataResult<List<HistoryTransaction>>> getTransactionsTo(@Body Map<String, String> data);
 }

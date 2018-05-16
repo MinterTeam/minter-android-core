@@ -15,24 +15,19 @@ public class DataResult<Result> {
     public String message;
 
     public enum ResultCode {
-        @SerializedName("0")
-        Success(0),
-        @SerializedName("1")
-        Unknown(1),
-        @SerializedName("200")
-        CoinNotFound(200),
-        @SerializedName("300")
-        InsufficientFundsForTransaction(300),
-        @SerializedName("400")
-        NonceTooLow(400),
-        @SerializedName("401")
-        NonceToHigh(401),
-        @SerializedName("500")
-        IncorrectSignature(500),
-        @SerializedName("600")
-        IncorrectTransactionData(600),
-        @SerializedName("900")
-        UnknownError(900);
+        Unknown(-1),
+        @SerializedName("0") Success(0),
+        @SerializedName("1") DecodeError(1),
+        @SerializedName("2") InsufficientFunds(2),
+        @SerializedName("3") UnknownTransactionType(3),
+        @SerializedName("4") WrongNonce(4),
+        @SerializedName("5") CoinNotExists(5),
+        @SerializedName("6") CoinAlreadyExists(6),
+        @SerializedName("7") WrongCrr(7),
+        @SerializedName("8") CrossConvert(8),
+        @SerializedName("9") CandidateExists(9),
+        @SerializedName("10") WrongCommission(10),
+        @SerializedName("11") CandidateNotFound(11);
 
         int resVal;
 

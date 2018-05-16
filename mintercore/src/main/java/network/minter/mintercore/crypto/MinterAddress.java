@@ -53,4 +53,8 @@ public class MinterAddress extends PublicKey {
     public String toString() {
         return toHexString(MinterApi.MINTER_PREFIX, false);
     }
+
+    public boolean equals(String other) {
+        return other.equals(toString());
+    }
 }

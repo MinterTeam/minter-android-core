@@ -28,9 +28,7 @@ public class CoinRepository extends DataRepository<CoinEndpoint> {
      * @return Full coin info
      */
     public Call<DataResult<Coin>> getCoinInfo(@NonNull String symbol) {
-        return getService().getCoinInformation(
-                asMap("symbol", checkNotNull(symbol, "Symbol required"))
-        );
+        return getService().getCoinInformation(checkNotNull(symbol, "Symbol required"));
     }
 
     /**
@@ -46,8 +44,8 @@ public class CoinRepository extends DataRepository<CoinEndpoint> {
         }
 
         return getService().estimateCoinExchangeReturn(asMap(
-                "from", checkNotNull(fromCoin, "Source coin required"),
-                "to", checkNotNull(toCoin, "Target coin required"),
+                "from_coin", checkNotNull(fromCoin, "Source coin required"),
+                "to_coin", checkNotNull(toCoin, "Target coin required"),
                 "amount", String.valueOf(amount)
         ));
     }

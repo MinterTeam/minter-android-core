@@ -2,16 +2,27 @@ package network.minter.mintercore.repo;
 
 import android.support.annotation.NonNull;
 
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import network.minter.mintercore.MinterApi;
 import network.minter.mintercore.api.ApiService;
 import network.minter.mintercore.api.TransactionEndpoint;
+import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.models.DataResult;
 import network.minter.mintercore.models.HistoryTransaction;
+import network.minter.mintercore.models.operational.TxSendCoin;
 import retrofit2.Call;
 
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
-import static network.minter.mintercore.internal.helpers.CollectionsHelper.asMap;
 
 /**
  * MinterCore. 2018
@@ -24,32 +35,97 @@ public class TransactionRepository extends DataRepository<TransactionEndpoint> {
     }
 
     /**
-     * Get outgoing transactions by address
+     * Get transactions by query
      *
-     * @param fromAddress
+     * @param query
      * @return
+     * @see TQuery
      */
-    public Call<DataResult<List<HistoryTransaction>>> getTransactionsFrom(@NonNull String fromAddress) {
-        return getService().getTransactionsFrom(asMap(
-                "tx.from", checkNotNull(fromAddress, "Address required")
-        ));
+    public Call<DataResult<List<HistoryTransaction>>> getTransactions(@NonNull TQuery query) {
+        return getService().getTransactions(checkNotNull(query, "Query required").build());
     }
 
-    /**
-     * Get incoming transactions by address
-     *
-     * @param toAddress
-     * @return
-     */
-    public Call<DataResult<List<HistoryTransaction>>> getTransactionsTo(@NonNull String toAddress) {
-        return getService().getTransactionsFrom(asMap(
-                "tx.to", checkNotNull(toAddress, "Address required")
-        ));
+    @Override
+    protected void configureService(ApiService.Builder apiBuilder) {
+        super.configureService(apiBuilder);
+        apiBuilder.registerTypeAdapter(HistoryTransaction.class, new HistoryTransactionDeserializer());
     }
 
     @NonNull
     @Override
     protected Class<TransactionEndpoint> getServiceClass() {
         return TransactionEndpoint.class;
+    }
+
+    public static final class HistoryTransactionDeserializer implements JsonDeserializer<HistoryTransaction> {
+
+        @Override
+        public HistoryTransaction deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            if (json.isJsonNull() || !json.isJsonObject()) {
+                return null;
+            }
+
+            final Gson gson = MinterApi.getInstance().getGsonBuilder().create();
+
+            HistoryTransaction out = gson.fromJson(json, HistoryTransaction.class);
+            switch (out.type) {
+                case SendCoin:
+                    out.data = gson.fromJson(json.getAsJsonObject().get("data").getAsJsonObject(), TxSendCoin.class);
+                    break;
+
+                default:
+                    out.data = null;
+            }
+
+            return out;
+        }
+    }
+
+    public static class TQuery {
+        private Map<String, String> mData = new HashMap<>();
+
+        public TQuery setFrom(MinterAddress from) {
+            return setFrom(from.toString());
+        }
+
+        public TQuery setTo(MinterAddress to) {
+            return setTo(to.toString());
+        }
+
+        public TQuery setTo(String to) {
+            mData.put("tx.to", normalizeAddress(to));
+            return this;
+        }
+
+        public TQuery setFrom(String from) {
+            mData.put("tx.from", normalizeAddress(from));
+            return this;
+        }
+
+        public String build() {
+            StringBuilder out = new StringBuilder();
+
+            int i = 0;
+            for (Map.Entry<String, String> v : mData.entrySet()) {
+                out.append(v.getKey()).append("=").append("'").append(v.getValue()).append("'");
+                if (i + 1 < mData.size()) {
+                    out.append('&');
+                }
+            }
+
+            return out.toString();
+        }
+
+        private String normalizeAddress(String in) {
+            final String prefix = in.substring(0, 2);
+            if (prefix.equals("Mx") || prefix.equals("mx") || prefix.equals("0x")) {
+                return in.substring(2);
+            }
+
+            return in;
+        }
+
+
     }
 }

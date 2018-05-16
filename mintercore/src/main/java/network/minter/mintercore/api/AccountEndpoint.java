@@ -7,7 +7,9 @@ import network.minter.mintercore.models.DataResult;
 import network.minter.mintercore.models.TransactionSendResult;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * MinterCore. 2018
@@ -16,11 +18,11 @@ import retrofit2.http.POST;
  */
 public interface AccountEndpoint {
 
-    @POST("/api/getBalance")
-    Call<DataResult<Balance>> getBalance(@Body Map<String, String> data);
+    @GET("/api/balance/{address}")
+    Call<DataResult<Balance>> getBalance(@Query("address") String address);
 
-    @POST("/api/getTransactionCount")
-    Call<DataResult<Long>> getTransactionCount(@Body Map<String, String> data);
+    @GET("/api/transactionCount/{address}")
+    Call<DataResult<Long>> getTransactionCount(@Query("address") String address);
 
     @POST("/api/sendTransaction")
     Call<TransactionSendResult> sendTransaction(@Body Map<String, String> data);

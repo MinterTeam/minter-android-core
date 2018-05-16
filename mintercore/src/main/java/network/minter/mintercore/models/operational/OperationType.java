@@ -12,14 +12,24 @@ import java.math.BigInteger;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public enum OperationType {
-    @SerializedName("sendCoin")
-    SendCoin(new BigInteger("1"), SendTx.class);
+    @SerializedName("1")
+    SendCoin((byte)0x01, TxSendCoin.class),
+    @SerializedName("2")
+    ConvertCoin((byte)0x02, TxConvertCoin.class),
+    @SerializedName("3")
+    CreateCoin((byte)0x03, null),
+    @SerializedName("4")
+    DeclareCandidacy((byte)0x04, null),
+    @SerializedName("5")
+    Delegate((byte)0x05, null),
+    @SerializedName("6")
+    Unbond((byte)0x06, null);
 
     BigInteger mValue;
     Class<? extends Operation> mOpClass;
 
-    OperationType(BigInteger value, Class<? extends Operation> opClass) {
-        mValue = value;
+    OperationType(byte value, Class<? extends Operation> opClass) {
+        mValue = new BigInteger(String.valueOf(value));
         mOpClass = opClass;
     }
 

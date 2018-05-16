@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-abstract class Operation {
+public abstract class Operation {
     /**
      * Encodes all operation fields via RLP
      *
