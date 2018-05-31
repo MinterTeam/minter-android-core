@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import network.minter.mintercore.util.ByteArrayWrapper;
+
 /**
  * Created by Anton Nashatyrev on 06.10.2016.
  */

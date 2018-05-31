@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="54dp"
+    >
+
+    <network.minter.bipwallet.internal.views.widgets.BipCircleImageView
+        android:id="@+id/item.avatar"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="@dimen/margin_min"
+        android:layout_marginTop="@dimen/margin_min"
+        android:elevation="4dp"
+        android:scaleType="centerCrop"
+        app:civ_border_color="@color/white"
+        app:civ_border_overlay="true"
+        app:civ_border_width="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <TextView
+        android:id="@+id/item.title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_min"
+        android:layout_marginEnd="@dimen/margin_min"
+        android:textSize="@dimen/text_size_default"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item.amount"
+        app:layout_constraintStart_toEndOf="@id/item.avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/first_names"
+        />
+
+    <TextView
+        android:id="@+id/item.amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_min"
+        android:fontFamily="@font/_ubuntu_medium"
+        android:textColor="@color/textColorGreen"
+        android:textSize="@dimen/text_size_default"
+        app:layout_constraintBottom_toTopOf="@id/item.subamount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="+50000000.55555"
+        />
+
+    <TextView
+        android:id="@+id/item.subamount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_min"
+        android:fontFamily="@font/_ubuntu_medium"
+        android:textColor="@color/textColorGrey"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item.amount"
+        tools:text="STBX"
+        />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/greySeparator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</android.support.constraint.ConstraintLayout>

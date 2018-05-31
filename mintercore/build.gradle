@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
 
 group = 'network.minter.android'
 version = '1.0.0'
@@ -12,7 +15,7 @@ android {
         versionCode 1
         versionName version
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "network.minter.mintercore.MinterTestRunner"
 
         externalNativeBuild {
             cmake {
@@ -93,16 +96,32 @@ dependencies {
     // network
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    api 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 
-    // ethereum
-    api project(':ethereuman')
-
     //for SHA3 @TODO remove
-    implementation "com.madgag.spongycastle:core:${scastleVersion}"
-    implementation "com.madgag.spongycastle:prov:${scastleVersion}"
+    implementation 'com.implimentz:unsafe:0.0.6'
+    implementation "io.netty:netty-all:4.0.30.Final"
+    implementation ("com.madgag.spongycastle:core:${scastleVersion}") {
+        transitive = true
+    } // for SHA3 and SECP256K1
+    implementation ("com.madgag.spongycastle:prov:${scastleVersion}") {
+        transitive = true
+    } // for SHA3 and SECP256K1
+    implementation "com.cedarsoftware:java-util:1.8.0"
 
     // stuff
     implementation 'com.jakewharton.timber:timber:4.5.1'
+
+
+    // testing
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation "com.android.support:support-annotations:${minterLibSupport}"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    androidTestImplementation 'com.google.code.gson:gson:2.8.2'
+    androidTestImplementation 'com.android.support:multidex:1.0.3'
 }
+
+apply from: '../publisher.gradle'

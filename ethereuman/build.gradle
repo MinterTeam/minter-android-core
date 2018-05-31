@@ -35,6 +35,8 @@ dependencies {
 
     implementation 'com.jakewharton.timber:timber:4.5.1'
 
+    // ethereum
+    api project(':mintercore')
 
     implementation 'com.implimentz:unsafe:0.0.6'
     implementation "io.netty:netty-all:4.0.30.Final"

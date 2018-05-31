@@ -88,12 +88,13 @@ import network.minter.ethereuman.crypto.jce.ECKeyAgreement;
 import network.minter.ethereuman.crypto.jce.ECKeyFactory;
 import network.minter.ethereuman.crypto.jce.ECKeyPairGenerator;
 import network.minter.ethereuman.crypto.jce.ECSignatureFactory;
-import network.minter.ethereuman.crypto.jce.SpongyCastleProvider;
-import network.minter.ethereuman.util.ByteUtil;
+import network.minter.mintercore.crypto.HashUtil;
+import network.minter.mintercore.util.SpongyCastleProvider;
+import network.minter.mintercore.util.ByteUtil;
 import timber.log.Timber;
 
 import static network.minter.ethereuman.util.BIUtil.isLessThan;
-import static network.minter.ethereuman.util.ByteUtil.bigIntegerToBytes;
+import static network.minter.mintercore.util.ByteUtil.bigIntegerToBytes;
 
 /**
  * <p>Represents an elliptic curve public and (optionally) private key, usable for digital signatures but not encryption.
@@ -110,7 +111,6 @@ import static network.minter.ethereuman.util.ByteUtil.bigIntegerToBytes;
  * bitcoinj on GitHub</a>.
  */
 public class ECKey implements Serializable {
-
 
     /**
      * The parameters of the secp256k1 curve that Ethereum uses.

@@ -1,7 +1,7 @@
 package network.minter.mintercore.crypto;
 
 import network.minter.mintercore.MinterApi;
-import network.minter.mintercore.models.BytesData;
+import network.minter.mintercore.util.BytesData;
 
 import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
 

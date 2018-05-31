@@ -1,3 +1,27 @@
 <resources>
-    <string name="app_name">MinterWallet</string>
+    <string name="app_name">Bip Wallet</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="dont_know">I don\'t know</string>
+    <string name="user_local_settings_key">network_minter_settings</string>
+    <string name="btn_copy">Copy</string>
+    <string name="address_generate_description">Save this seed phrase in case you plan to use this address in the future.</string>
+    <string name="btn_retry">Retry</string>
+    <string name="activity_advanced_generate">Generate Address</string>
+    <string name="menu_item_coins">Coins</string>
+    <string name="menu_item_send">Send</string>
+    <string name="menu_item_receive">Receive</string>
+    <string name="menu_item_settings">Settings</string>
+    <string name="frag_coins_my_balance">My balance</string>
+    <string name="frag_coins_last_transactions_title">Latest transactions</string>
+    <string name="btn_continue">Continue</string>
+    <string name="input_signin_password">Your password</string>
+    <string name="input_signin_username">Your @username</string>
+    <string name="input_signin_username_invalid">Invalid username</string>
+    <string name="input_signin_password_invalid">Password must contain at least 6 symbols</string>
+    <string name="input_signin_password_not_match">Password does not match</string>
+    <string name="btn_change_avatar">Change userpic</string>
+    <string name="logout">Logout</string>
+    <string name="btn_save">Save</string>
 </resources>

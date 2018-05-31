@@ -1,6 +1,6 @@
 package network.minter.mintercore.crypto;
 
-import network.minter.mintercore.models.BytesData;
+import network.minter.mintercore.util.BytesData;
 
 /**
  * MinterWallet. 2018
@@ -46,5 +46,10 @@ public class PublicKey extends BytesData implements java.security.PublicKey {
     @Override
     public byte[] getEncoded() {
         return new byte[0];
+    }
+
+    public boolean verify(PrivateKey privateKey) {
+        PublicKey pk = privateKey.getPublicKey(false);
+        return pk.equals(this);
     }
 }

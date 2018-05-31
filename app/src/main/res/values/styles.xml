@@ -1,11 +1,107 @@
-<resources>
-
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Wallet" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorControlHighlight">@color/colorHighlight</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:textColorHint">#60000000</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+        <item name="android:fontFamily">@font/ubuntu</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:colorBackground">@android:color/white</item>
+
+        <item name="buttonStyle">@style/Wallet.Button</item>
+        <item name="android:buttonStyle">@style/Wallet.Button</item>
+        <item name="borderlessButtonStyle">@style/Wallet.Button</item>
+        <item name="android:borderlessButtonStyle">@style/Wallet.Button</item>
+        <!--<item name="actionButtonStyle">@style/Wallet.Button</item>-->
+        <!--<item name="android:actionButtonStyle">@style/Wallet.Button</item>-->
     </style>
+
+    <style name="Wallet.Splash" parent="Wallet">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
+    <style name="Wallet.Progress" parent="Wallet">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+    <style name="Wallet.Progress.White" parent="Wallet">
+        <item name="colorAccent">@android:color/white</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="Wallet.Button" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textColor">@color/textColorWhite</item>
+        <item name="android:minHeight">@dimen/btn_long_height</item>
+        <item name="android:minWidth">@dimen/btn_min_width</item>
+        <item name="android:background">@drawable/btn_blue</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="Wallet.Button.White" parent="Wallet.Button">
+        <item name="android:background">@drawable/btn_white</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="Wallet.Button.Blue.WhiteBorder" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textColor">@color/textColorWhite</item>
+        <item name="android:minHeight">@dimen/btn_long_height</item>
+        <item name="android:minWidth">@dimen/btn_min_width</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:background">@drawable/btn_blue_wb</item>
+    </style>
+
+    <style name="Wallet.Button.Transparent.BlueBorder" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:minHeight">@dimen/btn_long_height</item>
+        <item name="android:minWidth">@dimen/btn_min_width</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:background">@drawable/btn_transparent_bb</item>
+    </style>
+
+    <style name="WalletDrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/colorPrimary</item>
+    </style>
+
+    <style name="WalletPrimaryToolbar" parent="Wallet">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="background">@color/colorPrimary</item>
+        <item name="drawerArrowStyle">@style/WalletDrawerArrowStyle</item>
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
+    <style name="Wallet.DialogFragment" parent="Base.Theme.AppCompat.Light.Dialog">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowBackground">@color/greyBackground</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
 
 </resources>

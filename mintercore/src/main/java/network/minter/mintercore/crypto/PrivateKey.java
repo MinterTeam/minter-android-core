@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import network.minter.mintercore.models.BytesData;
+import network.minter.mintercore.util.BytesData;
 
 /**
  * MinterWallet. 2018

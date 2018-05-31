@@ -17,6 +17,8 @@
  */
 package network.minter.ethereuman.vm;
 
+import network.minter.mintercore.util.DataWord;
+
 /**
  * A wrapper for a message call from a contract to another account.
  * This can either be a normal CALL, CALLCODE, DELEGATECALL or POST call.
