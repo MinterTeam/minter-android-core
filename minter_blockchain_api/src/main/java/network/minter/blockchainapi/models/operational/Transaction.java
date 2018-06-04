@@ -5,12 +5,12 @@ import android.util.Base64;
 
 import java.math.BigInteger;
 
-import network.minter.mintercore.util.DecodeResult;
-import network.minter.mintercore.util.RLP;
 import network.minter.mintercore.MinterApi;
+import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.NativeSecp256k1;
 import network.minter.mintercore.crypto.PrivateKey;
-import network.minter.mintercore.util.BytesData;
+import network.minter.mintercore.util.DecodeResult;
+import network.minter.mintercore.util.RLP;
 import timber.log.Timber;
 
 import static network.minter.mintercore.internal.common.Preconditions.checkArgument;

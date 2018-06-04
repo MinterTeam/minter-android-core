@@ -10,6 +10,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.internal.Wallet;
+import network.minter.bipwallet.internal.common.CallbackProvider;
 import network.minter.bipwallet.internal.common.DeferredCall;
 import network.minter.bipwallet.internal.views.list.multirow.MultiRowAdapter;
 import network.minter.bipwallet.internal.views.list.multirow.MultiRowContract;
@@ -22,18 +23,24 @@ import network.minter.bipwallet.internal.views.list.multirow.MultiRowContract;
 public class SettingsButtonRow implements MultiRowContract.Row<SettingsButtonRow.ViewHolder> {
 
     private CharSequence mKey;
-    private String mValue;
+    private CallbackProvider<String> mValue;
     private String mDefValue;
     private OnClickListener mListener;
     private boolean mInactive = false;
     private DeferredCall<ViewHolder> mDefer = DeferredCall.createWithSize(1);
 
-    public SettingsButtonRow(CharSequence key, String value, String defValue, OnClickListener listener) {
+    public SettingsButtonRow(CharSequence key, CallbackProvider<String> value, String defValue, OnClickListener listener) {
         this(key, value, listener);
         mDefValue = defValue;
     }
 
     public SettingsButtonRow(CharSequence key, String value, OnClickListener listener) {
+        mKey = key;
+        mValue = () -> value;
+        mListener = listener;
+    }
+
+    public SettingsButtonRow(CharSequence key, CallbackProvider<String> value, OnClickListener listener) {
         mKey = key;
         mValue = value;
         mListener = listener;
@@ -48,7 +55,7 @@ public class SettingsButtonRow implements MultiRowContract.Row<SettingsButtonRow
         return this;
     }
 
-    public SettingsButtonRow setValue(String value, OnClickListener listener) {
+    public SettingsButtonRow setValue(CallbackProvider<String> value, OnClickListener listener) {
         mValue = value;
         mListener = listener;
         mDefer.call(this::fill);
@@ -56,7 +63,7 @@ public class SettingsButtonRow implements MultiRowContract.Row<SettingsButtonRow
         return this;
     }
 
-    public SettingsButtonRow setValue(String value) {
+    public SettingsButtonRow setValue(CallbackProvider<String> value) {
         mValue = value;
         mDefer.call(this::fill);
         return this;
@@ -100,7 +107,7 @@ public class SettingsButtonRow implements MultiRowContract.Row<SettingsButtonRow
         }
 
         vh.key.setText(mKey);
-        vh.value.setText(mValue);
+        vh.value.setText(mValue.get());
 
         if (mDefValue == null) {
             if (mInactive) {
@@ -109,18 +116,18 @@ public class SettingsButtonRow implements MultiRowContract.Row<SettingsButtonRow
                 vh.value.setTextColor(Wallet.app().res().getColor(R.color.textColorPrimary));
             }
         } else {
-            if (mValue == null || mValue.isEmpty()) {
+            if (mValue.get() != null && mValue.get().isEmpty()) {
                 vh.value.setTextColor(Wallet.app().res().getColor(R.color.textColorGrey));
                 vh.value.setText(mDefValue);
             } else {
                 vh.value.setTextColor(Wallet.app().res().getColor(R.color.textColorPrimary));
-                vh.value.setText(mValue);
+                vh.value.setText(mValue.get());
             }
         }
 
         vh.itemView.setOnClickListener(v -> {
             if (mListener != null) {
-                mListener.onClick(vh.itemView, vh.key, mValue);
+                mListener.onClick(vh.itemView, vh.key, mValue.get());
             }
         });
     }

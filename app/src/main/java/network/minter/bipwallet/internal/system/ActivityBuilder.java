@@ -64,7 +64,7 @@ public abstract class ActivityBuilder {
     }
 
     public ActivityBuilder addSharedView(String name, View view) {
-        if (mActivity == null || mFragment == null) {
+        if (mActivity == null && mFragment == null) {
             Timber.w("Attaching shared views make sense only from activity or fragment context");
             return this;
         }
@@ -93,7 +93,7 @@ public abstract class ActivityBuilder {
         }
 
         Stream.of(views)
-                .filter(item -> item != null)
+                .filter(item -> item != null && ViewCompat.getTransitionName(item) != null)
                 .forEach(item -> mSharedViews.put(ViewCompat.getTransitionName(item), item));
         return this;
     }
@@ -219,6 +219,7 @@ public abstract class ActivityBuilder {
         Stream.of(mSharedViews.entrySet())
                 .forEachIndexed((idx, item) -> pairs[idx] = Pair.create(item.getValue(), item.getKey()));
 
+        assert a != null;
         final Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(a, pairs).toBundle();
 
         if (mBundle != null) {

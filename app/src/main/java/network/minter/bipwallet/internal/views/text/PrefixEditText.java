@@ -1,12 +1,11 @@
 package network.minter.bipwallet.internal.views.text;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.support.design.widget.TextInputEditText;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
-
-import network.minter.bipwallet.R;
 
 /**
  * MinterWallet. 2018
@@ -14,81 +13,86 @@ import network.minter.bipwallet.R;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class PrefixEditText extends TextInputEditText {
-    private float mOriginalLeftPadding = -1;
-    private String mPrefix;
-    private boolean mPrefixOnEmptyText = true;
+    private String prefix = this.getText().toString().trim();
+    private String fix;
 
     public PrefixEditText(Context context) {
         super(context);
+        this.init();
     }
 
     public PrefixEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
+        this.init();
     }
 
     public PrefixEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(attrs, defStyleAttr);
+        this.init();
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if(getText().length() == 0 && !mPrefixOnEmptyText) {
-            return;
-        }
-        canvas.drawText(
-                mPrefix,
-                mOriginalLeftPadding,
-                getLineBounds(0, null),
-                getPaint()
-        );
-    }
-
-    public void setPrefix(String prefix) {
-        mPrefix = prefix;
-        invalidate();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        calculatePrefix();
-    }
-
-    private void init(AttributeSet attrs, int defStyleAttr) {
-        TypedArray a = getContext().getTheme().obtainStyledAttributes(
-                attrs, R.styleable.PrefixEditText, defStyleAttr, 0);
-        mPrefix = a.getString(R.styleable.PrefixEditText_prefix);
-        mPrefixOnEmptyText = a.getBoolean(R.styleable.PrefixEditText_prefixOnEmpty, true);
-
-        a.recycle();
-    }
-
-    private void calculatePrefix() {
-        if (mPrefix == null) {
-            return;
-        }
-
-        if(getText().length() == 0 && !mPrefixOnEmptyText) {
-            mOriginalLeftPadding = -1;
-            return;
-        }
-
-
-        if (mOriginalLeftPadding == -1) {
-            float[] widths = new float[mPrefix.length()];
-            getPaint().getTextWidths(mPrefix, widths);
-            float textWidth = 0;
-            for (float w : widths) {
-                textWidth += w;
+    private void init() {
+        this.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
             }
-            mOriginalLeftPadding = getCompoundPaddingLeft();
-            setPadding((int) (textWidth + mOriginalLeftPadding),
-                       getPaddingRight(), getPaddingTop(),
-                       getPaddingBottom());
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                PrefixEditText.this.fix = s.toString().replace(PrefixEditText.this.prefix, "");
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String string = s.toString();
+                int fl = PrefixEditText.this.prefix.length();
+                int sl = string.length();
+                String cek;
+                if (sl < fl) {
+                    cek = PrefixEditText.this.prefix;
+                    PrefixEditText.this.setText(cek);
+                    PrefixEditText.this.setSelection(cek.length());
+                } else {
+                    cek = string.substring(0, fl);
+                    if (!cek.equals(PrefixEditText.this.prefix)) {
+                        String in;
+                        if (string.matches(PrefixEditText.this.rubah(PrefixEditText.this.prefix))) {
+                            in = PrefixEditText.this.prefix + string.replace(PrefixEditText.this.prefix, "");
+                            PrefixEditText.this.setText(in);
+                            PrefixEditText.this.setSelection(in.length());
+                        } else {
+                            in = PrefixEditText.this.prefix + PrefixEditText.this.fix;
+                            PrefixEditText.this.setText(in);
+                            PrefixEditText.this.setSelection(in.length());
+                        }
+                    }
+                }
+
+            }
+        });
+    }
+
+    public void setPrefix(String s) {
+        this.prefix = s.trim();
+        this.setText(s);
+    }
+
+    public String getValue() {
+        if (getText().length() == 0) {
+            return "";
         }
+
+        return getText().toString().substring(prefix.length());
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void setValue(CharSequence text) {
+        if (text == null) {
+            return;
+        }
+
+        super.setText(prefix + text.toString());
+    }
+
+    private String rubah(String s) {
+        s = s.replace("+", "\\+").replace("$", "\\$").replace("^", "\\^").replace("*", "\\*").replace("?", "\\?");
+        return s;
     }
 }

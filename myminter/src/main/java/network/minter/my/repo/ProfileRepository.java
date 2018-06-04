@@ -36,6 +36,10 @@ public class ProfileRepository extends DataRepository<ProfileEndpoint> {
         return true;
     }
 
+    public Call<MyResult<User.Data>> getProfile() {
+        return getService().getProfile();
+    }
+
     public Call<MyResult<ProfileRequestResult>> updateProfile(@NonNull User.Data data) {
         checkNotNull(data);
         return getService().updateProfile(data);

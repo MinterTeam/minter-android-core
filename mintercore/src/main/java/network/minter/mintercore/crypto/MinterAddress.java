@@ -1,7 +1,8 @@
 package network.minter.mintercore.crypto;
 
+import org.parceler.Parcel;
+
 import network.minter.mintercore.MinterApi;
-import network.minter.mintercore.util.BytesData;
 
 import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
 
@@ -10,7 +11,11 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class MinterAddress extends PublicKey {
+    MinterAddress() {
+    }
+
     public MinterAddress(byte[] data) {
         super(
                 checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")

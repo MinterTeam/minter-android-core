@@ -12,10 +12,10 @@ import network.minter.bipwallet.internal.storage.KVStorage;
 import network.minter.mintercore.bip39.HDKey;
 import network.minter.mintercore.bip39.MnemonicResult;
 import network.minter.mintercore.bip39.NativeHDKeyEncoder;
+import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.mintercore.crypto.PublicKey;
-import network.minter.mintercore.util.BytesData;
 
 import static network.minter.bipwallet.internal.common.Preconditions.checkArgument;
 import static network.minter.bipwallet.internal.common.Preconditions.checkNotNull;

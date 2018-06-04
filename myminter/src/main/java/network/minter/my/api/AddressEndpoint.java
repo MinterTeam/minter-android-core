@@ -3,7 +3,6 @@ package network.minter.my.api;
 import java.util.List;
 
 import network.minter.my.models.AddressData;
-import network.minter.my.models.AddressInfoResult;
 import network.minter.my.models.MyResult;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -76,7 +75,7 @@ public interface AddressEndpoint {
      * @return
      */
     @DELETE("/api/v1/addresses/{id}")
-    Call<MyResult<AddressData>> deleteAddress(@Path("id") int addressId);
+    Call<MyResult<Void>> deleteAddress(@Path("id") long addressId);
 
 
 

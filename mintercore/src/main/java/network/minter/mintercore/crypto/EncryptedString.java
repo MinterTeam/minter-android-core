@@ -1,7 +1,10 @@
-package network.minter.mintercore.internal.data;
+package network.minter.mintercore.crypto;
 
 import android.support.annotation.NonNull;
 
+import org.parceler.Parcel;
+
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -11,9 +14,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import network.minter.mintercore.crypto.AES256Crypt;
 import network.minter.mintercore.internal.helpers.StringHelper;
-import network.minter.mintercore.util.BytesData;
 
 import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
@@ -23,9 +24,14 @@ import static network.minter.mintercore.internal.common.Preconditions.checkNotNu
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class EncryptedString {
+@Parcel
+public class EncryptedString implements Serializable {
     private final static String IV = "Minter seed";
-    private String mEncrypted;
+    String mEncrypted;
+
+    //parcel
+    EncryptedString() {
+    }
 
     public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {

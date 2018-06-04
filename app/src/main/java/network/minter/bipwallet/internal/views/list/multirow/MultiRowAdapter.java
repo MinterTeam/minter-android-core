@@ -253,7 +253,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
     }
 
     /**
-     * Nullptr safe remove row
+     * Nullptr safe delete row
      *
      * @param row MultiRowContract.Row
      * @param <T> Result

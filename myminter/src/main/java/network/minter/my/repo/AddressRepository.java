@@ -29,6 +29,10 @@ public class AddressRepository extends DataRepository<AddressEndpoint> {
         return getService().getAddressesWithEncrypted();
     }
 
+    public Call<MyResult<Void>> delete(AddressData address) {
+        return getService().deleteAddress(address.id);
+    }
+
     @Override
     protected boolean isAuthRequired() {
         return true;

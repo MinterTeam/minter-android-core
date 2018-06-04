@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import java.math.BigInteger;
 
 import network.minter.mintercore.BuildConfig;
+import network.minter.mintercore.crypto.BytesData;
+import network.minter.mintercore.crypto.EncryptedString;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.api.converters.BigIntegerDeserializer;
@@ -16,8 +18,6 @@ import network.minter.mintercore.internal.api.converters.EncryptedStringSerializ
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressSerializer;
 import network.minter.mintercore.internal.api.converters.UriDeserializer;
-import network.minter.mintercore.internal.data.EncryptedString;
-import network.minter.mintercore.util.BytesData;
 import network.minter.my.repo.AddressRepository;
 import network.minter.my.repo.AuthRepository;
 import network.minter.my.repo.InfoRepository;

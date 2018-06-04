@@ -1,13 +1,16 @@
 package network.minter.my.models;
 
+import org.parceler.Parcel;
+
+import network.minter.mintercore.crypto.EncryptedString;
 import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.internal.data.EncryptedString;
 
 /**
  * MinterWallet. Май 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class AddressData {
     public long id;
     public MinterAddress address;

@@ -7,7 +7,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import network.minter.mintercore.internal.data.EncryptedString;
+import network.minter.mintercore.crypto.EncryptedString;
 
 /**
  * MinterWallet. 2018

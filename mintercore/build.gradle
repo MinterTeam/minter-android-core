@@ -112,7 +112,8 @@ dependencies {
 
     // stuff
     implementation 'com.jakewharton.timber:timber:4.5.1'
-
+    implementation 'org.parceler:parceler-api:1.1.10'
+    annotationProcessor 'org.parceler:parceler:1.1.10'
 
     // testing
     testImplementation 'junit:junit:4.12'

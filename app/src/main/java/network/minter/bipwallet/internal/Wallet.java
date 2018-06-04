@@ -18,11 +18,11 @@ import dagger.android.HasServiceInjector;
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import network.minter.bipwallet.BuildConfig;
-import network.minter.bipwallet.internal.di.WalletComponent;
-import network.minter.bipwallet.internal.di.WalletModule;
 import network.minter.bipwallet.internal.di.DaggerWalletComponent;
 import network.minter.bipwallet.internal.di.HelpersModule;
 import network.minter.bipwallet.internal.di.RepoModule;
+import network.minter.bipwallet.internal.di.WalletComponent;
+import network.minter.bipwallet.internal.di.WalletModule;
 import network.minter.bipwallet.internal.mvp.ErrorView;
 import network.minter.bipwallet.internal.mvp.ProgressView;
 import network.minter.mintercore.internal.exceptions.NetworkException;
@@ -35,6 +35,12 @@ import static network.minter.bipwallet.internal.common.Preconditions.firstNonNul
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+//@ParcelClasses({
+//        @ParcelClass(AddressData.class),
+//        @ParcelClass(MinterAddress.class),
+//        @ParcelClass(BytesData.class),
+//        @ParcelClass(EncryptedString.class),
+//})
 public class Wallet extends MultiDexApplication implements HasActivityInjector, HasServiceInjector {
 
     public static final Locale LC_EN = Locale.US;

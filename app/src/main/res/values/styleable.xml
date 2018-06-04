@@ -6,12 +6,15 @@
     </declare-styleable>
 
     <declare-styleable name="ToolbarProgress">
-
         <attr name="navigationIcon"/>
         <attr name="title"/>
         <attr name="titleTextColor"/>
         <attr name="actionIcon" format="integer"/>
         <attr name="enableAction" format="boolean"/>
         <attr name="progressColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ColoredProgressBar">
+        <attr name="color" format="color"/>
     </declare-styleable>
 </resources>

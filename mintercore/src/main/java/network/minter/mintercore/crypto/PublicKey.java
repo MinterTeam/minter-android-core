@@ -1,13 +1,17 @@
 package network.minter.mintercore.crypto;
 
-import network.minter.mintercore.util.BytesData;
+import org.parceler.Parcel;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class PublicKey extends BytesData implements java.security.PublicKey {
+    PublicKey() {
+    }
+
     public PublicKey(byte[] data) {
         super(data);
     }

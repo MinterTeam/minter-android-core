@@ -74,6 +74,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:background="@drawable/bg_image_round_shadow"
+                        android:elevation="4dp"
                         />
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.Toolbar>

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.annimon.stream.Stream;
 import com.arellomobile.mvp.InjectViewState;
 
 import javax.inject.Inject;
@@ -13,6 +14,7 @@ import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.R;
+import network.minter.bipwallet.advanced.repo.SecretLocalRepository;
 import network.minter.bipwallet.coins.CoinsTabModule;
 import network.minter.bipwallet.coins.views.rows.ListWithButtonRow;
 import network.minter.bipwallet.internal.ReactiveAdapter;
@@ -21,7 +23,6 @@ import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.bipwallet.internal.views.list.SimpleRecyclerAdapter;
 import network.minter.bipwallet.internal.views.list.multirow.MultiRowAdapter;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
-import network.minter.bipwallet.advanced.repo.SecretLocalRepository;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.TransactionRepository;
 import network.minter.mintercore.crypto.MinterAddress;
@@ -78,7 +79,7 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
                 .observeOn(AndroidSchedulers.mainThread())
                 .retryWhen(getErrorResolver())
                 .subscribe(res -> {
-                    mTransactionsAdapter.setItems(res.result);
+                    mTransactionsAdapter.setItems(Stream.of(res.result).limit(5).toList());
                     mTransactionsAdapter.notifyDataSetChanged();
                 }, Wallet.Rx.errorHandler(getViewState()));
 
@@ -86,6 +87,12 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
 
         });
 
+        getViewState().setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
         mAdapter.addRow(
                 new ListWithButtonRow.Builder("Latest transactions")
                         .setAction("All transactions", null)
@@ -93,8 +100,6 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
                         .setEmptyTitle("No transactions found")
                         .build()
         );
-
-        getViewState().setAdapter(mAdapter);
     }
 
 

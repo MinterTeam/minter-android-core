@@ -36,6 +36,12 @@
         <activity android:name=".home.ui.HomeActivity"/>
         <activity android:name=".auth.ui.RegisterActivity"/>
         <activity android:name=".auth.ui.SigninActivity"/>
+        <activity android:name=".addresses.ui.AddressListActivity"/>
+        <activity android:name=".addresses.ui.AddressItemActivity"/>
+        <activity
+            android:name=".internal.dialogs.DialogSequenceActivity"
+            android:theme="@style/Wallet.DialogActivity"
+            />
     </application>
 
 </manifest>

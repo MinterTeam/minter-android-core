@@ -1,25 +1,27 @@
-package network.minter.mintercore.util;
+package network.minter.mintercore.crypto;
 
 import android.support.annotation.NonNull;
 
+import org.parceler.Parcel;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import network.minter.mintercore.crypto.HashUtil;
 import network.minter.mintercore.internal.helpers.BytesHelper;
 import network.minter.mintercore.internal.helpers.StringHelper;
+import network.minter.mintercore.util.FastByteComparisons;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class BytesData implements Comparable<BytesData>, Serializable, Cloneable {
     protected byte[] mData;
-    private boolean mValid = true;
-    private int mHashCode = 0;
+    boolean mValid = true;
+    int mHashCode = 0;
 
     @SuppressWarnings("CopyConstructorMissesField")
     public BytesData(BytesData data) {
@@ -39,6 +41,9 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
         this(StringHelper.hexStringToBytes(hexData.toString()));
     }
 
+    BytesData() {
+    }
+
     @Override
     public int hashCode() {
         return mHashCode;
@@ -54,20 +59,8 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        super.clone();
-        return new BytesData(getDataImmutable());
-    }
-
-    @Override
     public String toString() {
         return Hex.toHexString(mData);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        cleanup();
-        super.finalize();
     }
 
     @Override
@@ -161,7 +154,7 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
      * @see #isValid()
      */
     public void cleanup() {
-        if(mData == null || size() == 0) {
+        if (mData == null || size() == 0) {
             mValid = false;
             return;
         }
@@ -250,5 +243,16 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
         return this;
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        super.clone();
+        return new BytesData(getDataImmutable());
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        cleanup();
+        super.finalize();
+    }
 
 }

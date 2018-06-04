@@ -1,19 +1,22 @@
 package network.minter.bipwallet.settings.views;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 
 import com.arellomobile.mvp.InjectViewState;
 
 import javax.inject.Inject;
 
+import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.home.HomeScope;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.bipwallet.settings.SettingsTabModule;
+import network.minter.bipwallet.settings.ui.SettingsFieldType;
 import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
 import network.minter.my.repo.ProfileRepository;
+
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
 
 /**
  * MinterWallet. 2018
@@ -28,10 +31,14 @@ public class SettingsUpdateFieldPresenter extends MvpBasePresenter<SettingsTabMo
     private CharSequence mLabel;
     private String mField;
     private String mValue;
+    private SettingsFieldType mType;
+
 
     @Inject
     public SettingsUpdateFieldPresenter() {
     }
+
+    private boolean mValid = false;
 
     @Override
     public void handleExtras(Bundle bundle) {
@@ -40,29 +47,33 @@ public class SettingsUpdateFieldPresenter extends MvpBasePresenter<SettingsTabMo
         mLabel = bundle.getCharSequence(SettingsUpdateFieldDialog.ARG_LABEL);
         mField = bundle.getString(SettingsUpdateFieldDialog.ARG_FIELD_NAME);
         mValue = bundle.getString(SettingsUpdateFieldDialog.ARG_VALUE, null);
+        mType = SettingsFieldType.values()[bundle.getInt(SettingsUpdateFieldDialog.ARG_TYPE)];
 
         getViewState().setLabel(mLabel);
         getViewState().setValue(mValue);
-
-        getViewState().setOnSubmit(this::onSubmit);
-
-        getViewState().setOnTextChangedListener(new TextWatcher() {
+        getViewState().configureInput(mType, new InputGroup.OnTextChangedListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mValue = s.toString();
+            public void onTextChanged(EditText editText, boolean valid) {
+                getViewState().setEnableSubmit(valid);
+                mValid = valid;
+                if (valid) {
+                    mValue = editText.getText().toString();
+                }
             }
         });
+
+        getViewState().setOnSubmit(this::onSubmit);
     }
 
     private void onSubmit(View view) {
+        if (!mValid) {
+            return;
+        }
 
+        safeSubscribeIoToUi(rxCall(profileRepo.updateField(mField, mValue)))
+                .subscribe(res -> {
+                    getViewState().callOnSaveListener();
+                    getViewState().dismiss();
+                });
     }
 }

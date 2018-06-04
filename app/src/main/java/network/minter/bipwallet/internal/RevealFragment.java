@@ -114,7 +114,7 @@ public class RevealFragment extends BaseInjectFragment {
     }
 
     /**
-     * Hide and remove fragment with loss state
+     * Hide and delete fragment with loss state
      */
     public void dismiss() {
         onDismiss();

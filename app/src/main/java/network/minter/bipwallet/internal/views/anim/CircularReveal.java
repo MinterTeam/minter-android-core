@@ -3,7 +3,6 @@ package network.minter.bipwallet.internal.views.anim;
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -181,7 +180,7 @@ public class CircularReveal {
 
         if (Build.VERSION.SDK_INT >= 21) {
             // To run the animation as soon as the view is layout in the view hierarchy we add this
-            // listener and remove it
+            // listener and delete it
             // as soon as it runs to prevent multiple animations if the view changes bounds
             mRootView.get().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)

@@ -21,11 +21,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bg_image_round_shadow"
+        android:elevation="4dp"
         />
 
     <Button
         android:id="@+id/action"
-        style="@style/Wallet.Button.Transparent.BlueBorder"
+        style="@style/Wallet.Button.White.BlueBorder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_inset"

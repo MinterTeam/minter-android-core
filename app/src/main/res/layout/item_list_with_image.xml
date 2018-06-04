@@ -14,7 +14,6 @@
         android:layout_height="34dp"
         android:layout_marginStart="@dimen/margin_min"
         android:layout_marginTop="@dimen/margin_min"
-        android:elevation="4dp"
         android:scaleType="centerCrop"
         app:civ_border_color="@color/white"
         app:civ_border_overlay="true"
@@ -22,6 +21,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars"
+        android:background="@drawable/bg_image_round_shadow"
+        android:elevation="4dp"
         />
 
     <TextView
@@ -51,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="+50000000.55555"
+        tools:text="+50.102030405060708090"
         />
 
     <TextView

@@ -5,10 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import java.math.BigInteger;
 import java.util.List;
 
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.util.BytesData;
 import network.minter.blockchainapi.models.operational.Operation;
 import network.minter.blockchainapi.models.operational.OperationType;
+import network.minter.mintercore.crypto.BytesData;
+import network.minter.mintercore.crypto.MinterAddress;
 
 /**
  * MinterCore. 2018

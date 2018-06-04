@@ -3,14 +3,17 @@ package network.minter.bipwallet.internal.di;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
-import network.minter.bipwallet.auth.ui.AuthActivity;
-import network.minter.bipwallet.auth.ui.RegisterActivity;
-import network.minter.bipwallet.auth.ui.SigninActivity;
-import network.minter.bipwallet.auth.ui.SplashFragment;
+import network.minter.bipwallet.addresses.AddressManageModule;
+import network.minter.bipwallet.addresses.ui.AddressItemActivity;
+import network.minter.bipwallet.addresses.ui.AddressListActivity;
 import network.minter.bipwallet.advanced.AdvancedModeModule;
 import network.minter.bipwallet.advanced.ui.AdvancedGenerateActivity;
 import network.minter.bipwallet.advanced.ui.AdvancedMainActivity;
+import network.minter.bipwallet.auth.ui.AuthActivity;
 import network.minter.bipwallet.auth.ui.AuthFragment;
+import network.minter.bipwallet.auth.ui.RegisterActivity;
+import network.minter.bipwallet.auth.ui.SigninActivity;
+import network.minter.bipwallet.auth.ui.SplashFragment;
 import network.minter.bipwallet.internal.di.annotations.ActivityScope;
 import network.minter.bipwallet.internal.di.annotations.FragmentScope;
 
@@ -50,12 +53,12 @@ public interface InjectorsModule {
     @ActivityScope
     AdvancedGenerateActivity advancedGenerateActivity();
 
-//    @ContributesAndroidInjector
-//    @FragmentScope
-//    SettingsListsFragment settingsListsFragmentInjector();
-//
-//    @ContributesAndroidInjector
-//    @FragmentScope
-//    SettingsUpdateFieldFragment settingsUpdateFieldFragmentInjector();
+    @ContributesAndroidInjector(modules = AddressManageModule.class)
+    @ActivityScope
+    AddressListActivity addressListActivityInjector();
+
+    @ContributesAndroidInjector(modules = AddressManageModule.class)
+    @ActivityScope
+    AddressItemActivity addressItemActivityInjector();
 
 }

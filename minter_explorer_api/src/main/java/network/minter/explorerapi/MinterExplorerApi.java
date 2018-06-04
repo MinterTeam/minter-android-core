@@ -2,17 +2,16 @@ package network.minter.explorerapi;
 
 import com.google.gson.GsonBuilder;
 
-
 import java.math.BigInteger;
 
 import network.minter.explorerapi.repo.TransactionRepository;
 import network.minter.mintercore.BuildConfig;
+import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.api.converters.BigIntegerDeserializer;
 import network.minter.mintercore.internal.api.converters.BytesDataDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
-import network.minter.mintercore.util.BytesData;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**

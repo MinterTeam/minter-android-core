@@ -1,10 +1,13 @@
 package network.minter.my.models;
 
+import org.parceler.Parcel;
+
 /**
  * MyMinter SDK. May 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class LoginData {
     public String username;
     public String password;

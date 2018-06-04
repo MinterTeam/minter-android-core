@@ -1,14 +1,13 @@
 package network.minter.mintercore.internal.api.converters;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-import network.minter.mintercore.internal.data.EncryptedString;
+import network.minter.mintercore.crypto.EncryptedString;
 
 /**
  * MinterWallet. 2018

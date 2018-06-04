@@ -8,7 +8,6 @@ import network.minter.bipwallet.home.ui.HomeActivity;
 import network.minter.bipwallet.internal.di.WalletComponent;
 import network.minter.bipwallet.receiving.ui.ReceivingTabFragment;
 import network.minter.bipwallet.sending.ui.SendingTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsListsFragment;
 import network.minter.bipwallet.settings.ui.SettingsTabFragment;
 import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
 
@@ -28,7 +27,6 @@ public interface HomeComponent {
     void inject(SendingTabFragment fragment);
     void inject(ReceivingTabFragment fragment);
     void inject(SettingsTabFragment fragment);
-    void inject(SettingsListsFragment fragment);
     void inject(SettingsUpdateFieldDialog fragment);
 
     @HomeTabsClasses

@@ -10,12 +10,12 @@ import network.minter.blockchainapi.repo.AccountRepository;
 import network.minter.blockchainapi.repo.CoinRepository;
 import network.minter.blockchainapi.repo.TransactionRepository;
 import network.minter.mintercore.BuildConfig;
+import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.api.converters.BigIntegerDeserializer;
 import network.minter.mintercore.internal.api.converters.BytesDataDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
-import network.minter.mintercore.util.BytesData;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**

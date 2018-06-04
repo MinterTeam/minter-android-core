@@ -1,13 +1,10 @@
 package network.minter.explorerapi.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
+import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.util.BytesData;
 
 /**
  * MinterCore. 2018

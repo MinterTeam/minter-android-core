@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/margin_edges"
+    >
+
+    <TextView
+        android:id="@+id/tx.description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/margin_edges"
+        android:paddingEnd="@dimen/margin_edges"
+        android:text="Coins will be received in"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_14"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tx.countdown"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:fontFamily="@font/_ubuntu_bold"
+        android:paddingStart="@dimen/margin_edges"
+        android:paddingEnd="@dimen/margin_edges"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tx.description"
+        tools:text="54 seconds"
+        />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_edges"
+        android:background="@color/greySeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tx.countdown"
+        />
+
+    <TextView
+        android:id="@+id/tx.fee"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges"
+        android:paddingStart="@dimen/margin_edges"
+        android:paddingEnd="@dimen/margin_edges"
+        android:text="Too long? You can make a faster  transaction for 0.000000010000000000 BIP"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_14"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator"
+        />
+
+    <Button
+        android:id="@+id/action.express"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_edges"
+        android:layout_marginTop="@dimen/margin_edges_medium"
+        android:layout_marginEnd="@dimen/margin_edges"
+        android:text="Express transaction"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tx.fee"
+        />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="@dimen/margin_edges"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action.express"
+        />
+
+</android.support.constraint.ConstraintLayout>

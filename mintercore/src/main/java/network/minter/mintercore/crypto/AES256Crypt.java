@@ -70,7 +70,7 @@ public class AES256Crypt {
      * @param inputString
      * @return md5 hash of the input string
      */
-    public static final String md5(final String inputString) {
+    public static String md5(final String inputString) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash

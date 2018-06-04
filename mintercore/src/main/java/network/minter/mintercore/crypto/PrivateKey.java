@@ -1,19 +1,23 @@
 package network.minter.mintercore.crypto;
 
+import org.parceler.Parcel;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import network.minter.mintercore.util.BytesData;
-
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class PrivateKey extends BytesData implements java.security.PrivateKey {
+    //parcel - be carefully
+    PrivateKey() {
+    }
     public PrivateKey(String pk) {
         super(pk);
     }

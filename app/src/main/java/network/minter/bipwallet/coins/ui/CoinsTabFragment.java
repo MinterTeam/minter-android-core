@@ -1,7 +1,6 @@
 package network.minter.bipwallet.coins.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -22,12 +20,10 @@ import javax.inject.Provider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
-import network.minter.bipwallet.auth.ui.AuthActivity;
 import network.minter.bipwallet.coins.CoinsTabModule;
 import network.minter.bipwallet.coins.views.CoinsTabPresenter;
 import network.minter.bipwallet.home.HomeModule;
 import network.minter.bipwallet.home.HomeTabFragment;
-import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
 
 /**
@@ -58,14 +54,6 @@ public class CoinsTabFragment extends HomeTabFragment implements CoinsTabModule.
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab_coins, container, false);
         ButterKnife.bind(this, view);
-
-        avatar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                avatar.getViewTreeObserver().removeOnPreDrawListener(this);
-                return false;
-            }
-        });
         return view;
     }
 

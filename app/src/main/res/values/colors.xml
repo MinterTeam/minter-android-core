@@ -19,5 +19,7 @@
     <color name="bottom_navigation_color">@color/colorPrimaryDark</color>
     <color name="textColorGrey">#929292</color>
     <color name="greyBackground">#F0F0F0</color>
+    <color name="bg_alert_dialog">#B2FFFFFF</color>
+    <color name="btn_disabled">#929292</color>
 
 </resources>
