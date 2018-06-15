@@ -1,6 +1,33 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.mintercore.internal.helpers;
 
-import network.minter.mintercore.MinterApi;
+import java.math.BigDecimal;
+
+import network.minter.mintercore.MinterSDK;
 
 /**
  * MinterWallet. 2018
@@ -75,7 +102,7 @@ public class StringHelper {
             return new byte[0];
         }
 
-        String in = s.replace(MinterApi.MINTER_PREFIX, "").replace("0x", "");
+        String in = s.replace(MinterSDK.PREFIX_ADDRESS, "").replace("0x", "");
 
         int len = in.length();
         byte[] data = new byte[len / 2];
@@ -104,5 +131,38 @@ public class StringHelper {
         }
 
         return new String(out);
+    }
+
+    /**
+     * @param num
+     * @return always 2 elements
+     */
+    public static DecimalFraction splitDecimalFractions(BigDecimal num) {
+        final String sNum = num.toPlainString();
+        final String[] fractions = sNum.split("\\.");
+        final long[] out = new long[2];
+        // just in case
+        if (fractions.length == 0) {
+            out[0] = 0L;
+            out[1] = 0L;
+        } else if (fractions.length == 1) {
+            out[0] = Long.parseLong(fractions[0]);
+            out[1] = 0L;
+        } else {
+            out[0] = Long.parseLong(fractions[0]);
+            out[1] = Long.parseLong(fractions[1]);
+        }
+
+        return new DecimalFraction(out[0], out[1]);
+    }
+
+    public static class DecimalFraction {
+        public long intPart;
+        public long fractionalPart;
+
+        public DecimalFraction(long intPart, long fractionalPart) {
+            this.intPart = intPart;
+            this.fractionalPart = fractionalPart;
+        }
     }
 }

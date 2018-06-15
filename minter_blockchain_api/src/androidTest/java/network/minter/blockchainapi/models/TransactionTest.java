@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.blockchainapi.models;
 
 import android.support.test.runner.AndroidJUnit4;
@@ -8,13 +33,13 @@ import org.junit.runner.RunWith;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import network.minter.mintercore.MinterApi;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.blockchainapi.models.operational.OperationType;
-import network.minter.blockchainapi.models.operational.TxSendCoin;
 import network.minter.blockchainapi.models.operational.Transaction;
 import network.minter.blockchainapi.models.operational.TransactionSign;
+import network.minter.blockchainapi.models.operational.TxSendCoin;
+import network.minter.mintercore.MinterSDK;
+import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.mintercore.crypto.PrivateKey;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -59,7 +84,7 @@ public class TransactionTest {
         OperationType type = OperationType.SendCoin;
         long valueHuman = 1L;
         BigInteger value = new BigInteger("1").multiply(new BigInteger(Transaction.VALUE_MUL.toString()));
-        String coin = MinterApi.DEFAULT_COIN;
+        String coin = MinterSDK.DEFAULT_COIN;
 
         Transaction<TxSendCoin> tx = Transaction.fromEncoded(encodedTransaction, TxSendCoin.class);
 

@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.blockchainapi.models.operational;
 
 import android.support.annotation.NonNull;
@@ -5,12 +30,12 @@ import android.support.annotation.NonNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import network.minter.mintercore.util.DecodeResult;
-import network.minter.mintercore.util.RLP;
-import network.minter.mintercore.MinterApi;
+import network.minter.mintercore.MinterSDK;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.helpers.BytesHelper;
 import network.minter.mintercore.internal.helpers.StringHelper;
+import network.minter.mintercore.util.DecodeResult;
+import network.minter.mintercore.util.RLP;
 
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
 
@@ -20,7 +45,7 @@ import static network.minter.mintercore.internal.common.Preconditions.checkNotNu
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public final class TxSendCoin extends Operation {
-    String coin = MinterApi.DEFAULT_COIN;
+    String coin = MinterSDK.DEFAULT_COIN;
     MinterAddress to;
     BigInteger value;
 

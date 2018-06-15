@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.blockchainapi.repo;
 
 import android.support.annotation.NonNull;
@@ -14,16 +39,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import network.minter.blockchainapi.api.AccountEndpoint;
-import network.minter.mintercore.internal.api.ApiService;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.blockchainapi.models.Balance;
 import network.minter.blockchainapi.models.BCResult;
+import network.minter.blockchainapi.models.Balance;
 import network.minter.blockchainapi.models.TransactionSendResult;
 import network.minter.blockchainapi.models.operational.TransactionSign;
+import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
 import retrofit2.Call;
 
-import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
 import static network.minter.mintercore.internal.helpers.CollectionsHelper.asMap;
 

@@ -1,4 +1,32 @@
-apply plugin: 'com.android.application'
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 android {
     compileSdkVersion minterMaxSdk
@@ -12,6 +40,10 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     lintOptions {
@@ -47,18 +79,15 @@ ext {
 }
 
 dependencies {
-    // for test only
     implementation 'com.android.support:multidex:1.0.3'
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // sdk
     implementation project(':mintercore')
     implementation project(':minter_blockchain_api')
     implementation project(':minter_explorer_api')
-    implementation project(':myminter')
-    // stuff
-    implementation 'com.jakewharton.timber:timber:4.5.1'
-    implementation 'org.parceler:parceler-api:1.1.10'
-    annotationProcessor 'org.parceler:parceler:1.1.10'
+    implementation project(path: ':myminter')
+
+    // support
     implementation "com.android.support:appcompat-v7:${minterLibSupport}"
     implementation "com.android.support:support-annotations:${minterLibSupport}"
     implementation "com.android.support:recyclerview-v7:${minterLibSupport}"
@@ -66,9 +95,17 @@ dependencies {
     implementation "com.android.support:support-v13:${minterLibSupport}"
     implementation "com.android.support:design:${minterLibSupport}"
     implementation "com.android.support:support-vector-drawable:${minterLibSupport}"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+
+    // android arch
+    implementation "android.arch.paging:runtime:1.0.0"
+    implementation "android.arch.paging:rxjava2:1.0.0-rc1"
 
     // common
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'org.parceler:parceler-api:1.1.10'
+    annotationProcessor 'org.parceler:parceler:1.1.10'
     implementation "com.orhanobut:hawk:2.0.1"
     implementation 'com.annimon:stream:1.1.9'
     implementation 'net.danlew:android.joda:2.9.9.1'
@@ -78,13 +115,13 @@ dependencies {
     }
 
     // Annotations and DI
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.15'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.15'
-    implementation 'com.google.dagger:dagger:2.15'
-    implementation 'com.google.dagger:dagger-android-support:2.15'
-    implementation 'javax.annotation:jsr250-api:1.0'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
+    implementation 'com.google.dagger:dagger:2.16'
+    implementation 'com.google.dagger:dagger-android-support:2.16'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    // Moxy
+    // MVP
     implementation 'com.arello-mobile:moxy:1.5.3'
     implementation 'com.arello-mobile:moxy-android:1.5.3'
     implementation 'com.arello-mobile:moxy-app-compat:1.5.3'
@@ -114,6 +151,20 @@ dependencies {
     annotationProcessor 'com.edwardstock.android:barber-compiler:1.0.0'
     implementation 'com.edwardstock.android:barber-api:1.0.0'
     compileOnly 'com.edwardstock.android:barber-annotations:1.0.0'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.+'
+    implementation 'com.redmadrobot:inputmask:3.4.4'
+
+    // anim
+    implementation 'ru.bullyboo.animation:text_counter:1.0.2'
+
+    // testing
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation "com.android.support:support-annotations:${minterLibSupport}"
+    testImplementation "com.android.support:support-annotations:${minterLibSupport}"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    testImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    testImplementation 'com.android.support.test:rules:1.0.2'
 
 }
 repositories {

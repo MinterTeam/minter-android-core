@@ -1,6 +1,29 @@
-package network.minter.mintercore.crypto;
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-import android.util.Base64;
+package network.minter.mintercore.crypto;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -16,31 +39,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * MIT License
- * <p>
- * Copyright (c) 2017 Kavin Varnan
- * <p>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p>
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * <p>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * @link https://github.com/skavinvarnan/Cross-Platform-AES
- */
+import network.minter.mintercore.internal.helpers.StringHelper;
+
 public class AES256Crypt {
 
 
@@ -218,7 +218,7 @@ public class AES256Crypt {
      * @param _encryptionKey Encryption key to used for encryption / decryption
      * @param _mode          specify the mode encryption / decryption
      * @param _initVector    Initialization vector
-     * @return encrypted or decrypted string based on the mode
+     * @return encrypted HEX or decrypted raw string based on the mode
      * @throws UnsupportedEncodingException
      * @throws InvalidKeyException
      * @throws InvalidAlgorithmParameterException
@@ -273,7 +273,8 @@ public class AES256Crypt {
             // multi-part
             // transformation
             // (encryption)
-            _out = Base64.encodeToString(results, Base64.DEFAULT); // ciphertext
+//            _out = Base64.encodeToString(results, Base64.DEFAULT); // ciphertext
+            _out = StringHelper.bytesToHexString(results);
             // output
         }
 
@@ -281,13 +282,14 @@ public class AES256Crypt {
         if (_mode.equals(EncryptMode.DECRYPT)) {
             _cx.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);// Initialize this ipher instance
 
-            byte[] decodedValue = Base64.decode(_inputText.getBytes(),
-                                                Base64.DEFAULT);
+//            byte[] decodedValue = Base64.decode(_inputText.getBytes(),
+//                                                Base64.DEFAULT);
+            byte[] decodedValue = StringHelper.hexStringToBytes(_inputText);
             byte[] decryptedVal = _cx.doFinal(decodedValue); // Finish
             // multi-part
             // transformation
             // (decryption)
-            _out = new String(decryptedVal);
+            _out = new String(decryptedVal, "UTF-8");
         }
         return _out; // return encrypted/decrypted string
     }

@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.internal;
 
 import android.annotation.SuppressLint;
@@ -19,9 +44,14 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasFragmentInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+import network.minter.bipwallet.BuildConfig;
 import network.minter.bipwallet.R;
+import network.minter.bipwallet.internal.dialogs.WalletConfirmDialog;
+import network.minter.bipwallet.internal.dialogs.WalletProgressDialog;
 import network.minter.bipwallet.internal.mvp.ErrorView;
 import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
+import network.minter.bipwallet.internal.mvp.ProgressTextView;
+import network.minter.bipwallet.internal.views.SnackbarBuilder;
 import timber.log.Timber;
 
 import static network.minter.bipwallet.internal.common.Preconditions.checkNotNull;
@@ -33,7 +63,7 @@ import static network.minter.bipwallet.internal.common.Preconditions.checkNotNul
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @SuppressLint("Registered")
-public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFragmentInjector, HasSupportFragmentInjector, ErrorView, ErrorViewWithRetry {
+public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFragmentInjector, HasSupportFragmentInjector, ErrorView, ErrorViewWithRetry, ProgressTextView {
 
     @Inject DispatchingAndroidInjector<Fragment> fragmentInjector;
     @Inject DispatchingAndroidInjector<android.support.v4.app.Fragment> supportFragmentInjector;
@@ -93,9 +123,23 @@ public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFr
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private WalletProgressDialog mProgress;
+
     @Override
     public void onError(Throwable t) {
         Timber.e(t);
+        if (BuildConfig.DEBUG && t != null) {
+            new WalletConfirmDialog.Builder(this, "Error")
+                    .setPositiveAction("Ok")
+                    .setText(t)
+                    .create()
+                    .show();
+        }
+    }
+
+    @Override
+    public void onErrorWithRetry(String errorMessage, View.OnClickListener errorResolver) {
+        onErrorWithRetry(errorMessage, getResources().getString(R.string.btn_retry), errorResolver);
     }
 
     @Override
@@ -103,24 +147,13 @@ public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFr
         Timber.e(err);
         runOnUiThread(() -> {
             if (err != null) {
-//                if (mStatusView != null) {
-//                    mStatusView
-//                            .withText(err)
-//                            .withoutRetryButton()
-//                            .showStatus();
-//                } else {
-//                    new SnackbarBuilder(this)
-//                            .setMessage(err)
-//                            .setDurationLong()
-//                            .show();
-//                }
+                new WalletConfirmDialog.Builder(this, "Error")
+                        .setPositiveAction("Ok")
+                        .setText(err)
+                        .create()
+                        .show();
             }
         });
-    }
-
-    @Override
-    public void onErrorWithRetry(String errorMessage, View.OnClickListener errorResolver) {
-        onErrorWithRetry(errorMessage, getResources().getString(R.string.btn_retry), errorResolver);
     }
 
     @Override
@@ -133,13 +166,37 @@ public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFr
 //                        .withRetryButton(actionName, errorResolver)
 //                        .showStatus();
 //            } else {
-//                new SnackbarBuilder(this)
-//                        .setMessage(errorMessage)
-//                        .setAction(actionName, errorResolver)
-//                        .setDurationIndefinite()
-//                        .show();
-//            }
+            new SnackbarBuilder(this)
+                    .setMessage(errorMessage)
+                    .setAction(actionName, errorResolver)
+                    .setDurationIndefinite()
+                    .show();
         });
+    }
+
+    @Override
+    public void showProgress(CharSequence title, CharSequence message) {
+        if (mProgress == null) {
+            mProgress = new WalletProgressDialog.Builder(this, title == null ? "Please, wait a few seconds" : title)
+                    .setText(message == null ? "working on..." : message)
+                    .create();
+            mProgress.setCancelable(false);
+            mProgress.setCanceledOnTouchOutside(false);
+        }
+
+        if (!mProgress.isShowing()) {
+            mProgress.show();
+        }
+    }
+
+    @Override
+    public void hideProgress() {
+        if (mProgress == null) {
+            return;
+        }
+
+        mProgress.dismiss();
+        mProgress = null;
     }
 
 //    protected void setupStatusView(final StatusView statusView) {

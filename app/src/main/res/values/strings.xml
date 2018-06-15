@@ -1,3 +1,28 @@
+<!--
+  ~ Copyright (C) 2018 by MinterTeam
+  ~ @link https://github.com/MinterTeam
+  ~
+  ~ The MIT License
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
 <resources>
     <string name="app_name">Bip Wallet</string>
 
@@ -27,4 +52,21 @@
     <string name="activity_address_manage_description">Addresses are similar to bank accounts except for being operated only by you.\n\nAll funds are received and sent from Main Address which is linked to your profile data—@username, email, or mobile number.</string>
     <string name="activity_address_item_secured_bip_description">This address is secured by Bip Wallet. We recommend you to get full control over your address by using one of the following options:</string>
     <string name="progress_wait">Please, wait</string>
+    <string name="btn_submit">Submit</string>
+    <string name="tx_detail_from">From</string>
+    <string name="tx_detail_to">To</string>
+    <string name="tx_detail_date">Date</string>
+    <string name="tx_detail_time">Time</string>
+    <string name="tx_detail_coin">Coin</string>
+    <string name="tx_detail_amount">Amount</string>
+    <string name="btn_explorer">Explorer</string>
+    <string name="today">Today</string>
+    <string name="title_send_coins">Send Coins</string>
+    <string name="tx_send_coin_hint">Coin</string>
+    <string name="tx_send_recipient_hint">To (@username, email, mobile or Mx address)</string>
+    <string name="tx_send_amount_hint">Amount</string>
+    <string name="tx_send_fee_hint">Transaction Fee</string>
+    <string name="tx_send_fee_value">0.00000001 BIP</string>
+    <string name="tx_send_free_hint">Send for Free!</string>
+    <string name="btn_send">Send!</string>
 </resources>

@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.internal.views.list.multirow;
 
 import android.support.annotation.LayoutRes;
@@ -161,7 +186,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
     @NonNull
     @Override
     public RowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final String tag = String.format("ViewHolder instancing: %s", parent.getContext().getResources().getResourceEntryName(viewType));
+        final String tag = String.format("TxViewHolder instancing: %s", parent.getContext().getResources().getResourceEntryName(viewType));
 //        TimeProfiler.start(tag);
 
         if (layoutInflater == null) {
@@ -180,16 +205,16 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
             viewHolder = findViewHolder(viewType, v);
         } catch (NoSuchMethodException e) {
             cause = e;
-            Timber.e(e, "Error finding ViewHolder");
+            Timber.e(e, "Error finding TxViewHolder");
         } catch (IllegalAccessException e) {
             cause = e;
-            Timber.e(e, "Error finding ViewHolder");
+            Timber.e(e, "Error finding TxViewHolder");
         } catch (InvocationTargetException e) {
             cause = e;
-            Timber.e(e, "Error finding ViewHolder");
+            Timber.e(e, "Error finding TxViewHolder");
         } catch (InstantiationException e) {
             cause = e;
-            Timber.e(e, "Error finding ViewHolder");
+            Timber.e(e, "Error finding TxViewHolder");
         }
 
         if (viewHolder == null) {
@@ -329,7 +354,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
 
 
     /**
-     * Кэшированный список классов ViewHolder'ов чтоб итеративно каждый раз не искать
+     * Кэшированный список классов TxViewHolder'ов чтоб итеративно каждый раз не искать
      */
     @SuppressWarnings("unchecked")
     protected void makeHoldersCache() {
@@ -342,10 +367,10 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
             checkNotNull(item);
             if (item instanceof SortableRow) {
                 checkNotNull(item.getViewHolderClass(),
-                        "Row " + (((SortableRow) item).getRow().getClass()) + " does not have valid ViewHolder class");
+                        "Row " + (((SortableRow) item).getRow().getClass()) + " does not have valid TxViewHolder class");
             } else {
                 checkNotNull(item.getViewHolderClass(),
-                        "Row " + item.getClass() + " does not have valid ViewHolder class");
+                        "Row " + item.getClass() + " does not have valid TxViewHolder class");
             }
 
             rowsViewIdClassCache.put(item.getItemView(), item);
@@ -375,7 +400,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
         }
         holderClass = holderViewIdClassCache.get(viewId);
         if (holderClass == null) {
-            throw new RuntimeException("Can't findStream ViewHolder for view " + String.valueOf(viewId));
+            throw new RuntimeException("Can't findStream TxViewHolder for view " + String.valueOf(viewId));
         }
         if (isInnerClass(holderClass)) {
             throw new RuntimeException("Class should be static!");

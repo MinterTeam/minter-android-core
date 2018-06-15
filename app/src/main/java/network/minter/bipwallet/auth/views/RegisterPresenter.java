@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.auth.views;
 
 import android.view.View;
@@ -5,34 +30,21 @@ import android.widget.EditText;
 
 import com.arellomobile.mvp.InjectViewState;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Locale;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.R;
-import network.minter.bipwallet.advanced.repo.SecretLocalRepository;
+import network.minter.bipwallet.advanced.models.SecretData;
+import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.auth.AuthModule;
 import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.di.annotations.ActivityScope;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.mintercore.bip39.MnemonicResult;
-import network.minter.mintercore.bip39.NativeBip39;
-import network.minter.mintercore.crypto.EncryptedString;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.internal.helpers.StringHelper;
-import network.minter.my.models.AddressData;
 import network.minter.my.models.LoginData;
 import network.minter.my.models.ProfileRequestResult;
 import network.minter.my.models.RegisterData;
@@ -50,7 +62,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
 @InjectViewState
 public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView> {
     @Inject AuthRepository authRepo;
-    @Inject SecretLocalRepository secretRepo;
+    @Inject SecretStorage secretRepo;
     @Inject AuthSession session;
 
     private RegisterData mRegisterData;
@@ -78,7 +90,7 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
                         }
                         break;
                     case R.id.inputPasswordRepeat:
-                        mRegisterData.password = val;
+                        mRegisterData.rawPassword = val;
                         break;
                     case R.id.inputEmail:
                         mRegisterData.email = val;
@@ -105,23 +117,18 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
         getViewState().clearErrors();
         getViewState().showProgress();
 
-        final SecureRandom mRandom = new SecureRandom();
-        final MnemonicResult mnemonicResult = NativeBip39.encodeBytes(mRandom.generateSeed(16));
-        MinterAddress address = secretRepo.add(mnemonicResult);
+        final SecretData secretData = SecretStorage.generateAddress();
+        secretRepo.setEncryptionKey(mRegisterData.rawPassword);
         mRegisterData.language = Locale.getDefault().toString();
-        mRegisterData.mainAddress = new AddressData();
-        mRegisterData.mainAddress.address = address;
-        mRegisterData.mainAddress.isMain = true;
-        mRegisterData.mainAddress.isServerSecured = true;
         try {
-            mRegisterData.mainAddress.encrypted = new EncryptedString(StringHelper.bytesToHexString(mnemonicResult.toSeed()), mRegisterData.password);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException | UnsupportedEncodingException e) {
-            getViewState().onError(e);
+            mRegisterData.mainAddress = secretData.toAddressData(true, true, secretRepo.getEncryptionKey());
+        } catch (Throwable t) {
+            getViewState().onError(t);
             secretRepo.destroy();
             return;
         }
 
-        rxCall(authRepo.register(mRegisterData))
+        rxCall(authRepo.register(mRegisterData.preparePassword()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .onErrorResumeNext(convertToErrorResult())
@@ -134,17 +141,21 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
                         return;
                     }
 
+                    secretRepo.add(secretData);
+
                     if(userResult.data.confirmations != null && !userResult.data.confirmations.isEmpty()) {
                         ProfileRequestResult.Confirmation confirmation = userResult.data.confirmations.get(0);
-                        if(confirmation.type != null) {
-                            getViewState().startConfirmation(confirmation.endpoint);
-                            return;
-                        }
+//                        if(confirmation.type != null) {
+                        // @TODO
+//                            getViewState().startConfirmation(confirmation.endpoint);
+//                            return;
+//                        }
                     }
 
                     final LoginData loginData = new LoginData();
                     loginData.username = mRegisterData.username;
                     loginData.password = mRegisterData.password;
+
                     safeSubscribeIoToUi(rxCall(authRepo.login(loginData)))
                             .subscribe(loginResult -> {
                                 getViewState().hideProgress();

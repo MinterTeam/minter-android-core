@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.addresses.ui;
 
 import android.app.Activity;
@@ -45,6 +70,7 @@ public class AddressItemActivity extends BaseMvpInjectActivity implements Addres
     @BindView(R.id.address) TextView address;
     @BindView(R.id.secured_value) TextView securedBy;
     @BindView(R.id.action_remove) Button actionDelete;
+    @BindView(R.id.action_copy) View actionCopy;
     @BindView(R.id.toolbar) Toolbar toolbar;
     private WalletProgressDialog mProgress;
 
@@ -100,9 +126,20 @@ public class AddressItemActivity extends BaseMvpInjectActivity implements Addres
         }
     }
 
+    @Override
+    public void setOnCopy(View.OnClickListener listener) {
+        actionCopy.setOnClickListener(listener);
+    }
+
     @ProvidePresenter
     AddressItemPresenter providePresenter() {
         return presenterProvider.get();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        presenter.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
