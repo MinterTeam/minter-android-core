@@ -29,26 +29,22 @@ import android.arch.paging.PagedList;
 import android.arch.paging.RxPagedListBuilder;
 import android.content.Intent;
 
-import com.annimon.stream.Stream;
 import com.arellomobile.mvp.InjectViewState;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
 import network.minter.bipwallet.addresses.AddressManageModule;
 import network.minter.bipwallet.addresses.adapters.AddressListAdapter;
-import network.minter.bipwallet.addresses.adapters.AddressListDataSource;
-import network.minter.bipwallet.advanced.models.SecretData;
+import network.minter.bipwallet.addresses.adapters.AddressListFactory;
+import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.my.models.AddressData;
-import network.minter.my.repo.AddressRepository;
+import network.minter.explorerapi.repo.ExplorerAddressRepository;
+import network.minter.my.repo.MyAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
 /**
  * MinterWallet. 2018
@@ -59,55 +55,45 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
 public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.AddressListView> {
     private final static int REQUEST_ADDRESS_ITEM = 100;
     private final static int REQUEST_FOR_RESULT = 200;
-    @Inject AuthSession session;
     @Inject SecretStorage secretRepo;
-    private AddressRepository addressRepo;
+    @Inject AuthSession session;
+    @Inject MyAddressRepository myAddressRepo;
+    @Inject ExplorerAddressRepository explorerAddressRepository;
     private AddressListAdapter mAdapter;
-    private List<AddressData> mItems = new ArrayList<>(0);
-    private RxPagedListBuilder<Integer, AddressData> mPageBuilder;
+    private RxPagedListBuilder<Integer, AddressItem> mPageBuilder;
     private Disposable mPageDisposable;
 
     @Inject
-    public AddressListPresenter(AddressRepository repo) {
-        addressRepo = repo;
-
+    public AddressListPresenter() {
         mAdapter = new AddressListAdapter();
         mAdapter.setOnAddressClickListener((v, address) -> getViewState().startAddressItem(REQUEST_ADDRESS_ITEM, address));
         mAdapter.setOnSetMainListener(this::onSetMain);
-
-        AddressListDataSource.Factory pageFactory = new AddressListDataSource.Factory(addressRepo);
-        final PagedList.Config cfg = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPageSize(20)
-                .build();
-
-        mPageBuilder = new RxPagedListBuilder<>(pageFactory, cfg);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         reload();
-//        mAdapter.clear();
-//        loadAddresses();
     }
 
     public void onClickAddAddress() {
         if (session.getRole() == AuthSession.AuthType.Advanced) {
             getViewState().startCreateAddress(REQUEST_FOR_RESULT);
         } else {
-            getViewState().showProgress("Please, wait", "Creating address...");
+            /*
+//            getViewState().showProgress("Please, wait", "Creating address...");
             final SecretData secretData = SecretStorage.generateAddress();
-            secretRepo.add(secretData);
+            secretStorage.add(secretData);
             boolean isMain = Stream.of(mItems).filter(item -> item.isMain).count() == 0;
             safeSubscribeIoToUi(
-                    rxCall(addressRepo.addAddress(secretData.toAddressData(isMain, true, secretRepo.getEncryptionKey())))
+                    rxCallMy(myAddressRepo.addAddress(secretData.toAddressData(isMain, true, secretStorage.getEncryptionKey())))
             ).subscribe(res -> {
                 reload();
                 getViewState().hideProgress();
 //                mAdapter.clear();
 //                loadAddresses();
             });
+            */
         }
     }
 
@@ -120,6 +106,27 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
+
+        final AddressListFactory pageFactory;
+        final PagedList.Config cfg;
+        if (session.getRole() == AuthSession.AuthType.Basic) {
+            pageFactory = new AddressListFactory(myAddressRepo, explorerAddressRepository);
+            cfg = new PagedList.Config.Builder()
+                    .setEnablePlaceholders(false)
+                    .setPageSize(20)
+                    .build();
+        } else {
+            pageFactory = new AddressListFactory(secretRepo, explorerAddressRepository);
+            cfg = new PagedList.Config.Builder()
+                    .setEnablePlaceholders(false)
+                    .setPageSize(secretRepo.getSecrets().size())
+                    .build();
+        }
+
+        mPageBuilder = new RxPagedListBuilder<>(pageFactory, cfg);
+
+
+        getViewState().showProgress();
         reload();
     }
 
@@ -136,8 +143,12 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
                 });
     }
 
-    private void onSetMain(boolean isMain, AddressData addressData) {
-        safeSubscribeIoToUi(rxCall(addressRepo.setAddressMain(isMain, addressData)))
+    private void onSetMain(boolean isMain, AddressItem addressItem) {
+        if (!addressItem.isServerSecured || addressItem.myAddressData == null) {
+            return;
+        }
+
+        safeSubscribeIoToUi(rxCallMy(myAddressRepo.setAddressMain(isMain, addressItem.myAddressData)))
                 .subscribe(res -> {
                     getViewState().scrollToPosition(0);
                     reload();

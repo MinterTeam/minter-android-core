@@ -57,7 +57,7 @@ public class WalletProgressDialog extends WalletDialog {
 
         title.setText(mBuilder.mTitle);
         if (mBuilder.mText == null) {
-            text.setText(R.string.progress_wait);
+            text.setText(R.string.please_wait);
         } else {
             text.setText(mBuilder.mText);
         }

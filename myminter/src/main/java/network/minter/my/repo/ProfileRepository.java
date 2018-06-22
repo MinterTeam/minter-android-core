@@ -32,7 +32,7 @@ import java.util.Map;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
 import network.minter.mintercore.internal.helpers.CollectionsHelper;
-import network.minter.my.api.ProfileEndpoint;
+import network.minter.my.api.MyProfileEndpoint;
 import network.minter.my.models.MyResult;
 import network.minter.my.models.ProfileRequestResult;
 import network.minter.my.models.User;
@@ -45,7 +45,7 @@ import static network.minter.mintercore.internal.common.Preconditions.checkNotNu
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class ProfileRepository extends DataRepository<ProfileEndpoint> {
+public class ProfileRepository extends DataRepository<MyProfileEndpoint> {
     public ProfileRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
@@ -70,8 +70,8 @@ public class ProfileRepository extends DataRepository<ProfileEndpoint> {
 
     @NonNull
     @Override
-    protected Class<ProfileEndpoint> getServiceClass() {
-        return ProfileEndpoint.class;
+    protected Class<MyProfileEndpoint> getServiceClass() {
+        return MyProfileEndpoint.class;
     }
 
     @Override

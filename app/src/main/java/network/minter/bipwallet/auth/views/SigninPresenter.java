@@ -42,13 +42,13 @@ import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.di.annotations.ActivityScope;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.my.models.AddressData;
 import network.minter.my.models.LoginData;
-import network.minter.my.repo.AddressRepository;
+import network.minter.my.models.MyAddressData;
 import network.minter.my.repo.AuthRepository;
+import network.minter.my.repo.MyAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.convertToErrorResult;
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
 /**
  * MinterWallet. 2018
@@ -61,7 +61,7 @@ public class SigninPresenter extends MvpBasePresenter<AuthModule.SigninView> {
     @Inject AuthRepository authRepo;
     @Inject SecretStorage secretRepo;
     @Inject AuthSession session;
-    @Inject AddressRepository addressRepo;
+    @Inject MyAddressRepository addressRepo;
 
     private LoginData mLoginData = new LoginData();
     private boolean mValid = false;
@@ -103,10 +103,10 @@ public class SigninPresenter extends MvpBasePresenter<AuthModule.SigninView> {
         getViewState().clearErrors();
         getViewState().showProgress();
 
-        rxCall(authRepo.login(mLoginData.preparePassword()))
+        rxCallMy(authRepo.login(mLoginData.preparePassword()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .onErrorResumeNext(convertToErrorResult())
+                .onErrorResumeNext(convertToMyErrorResult())
                 .retryWhen(getErrorResolver())
                 .subscribe(userResult -> {
                     if (userResult.isSuccess()) {
@@ -123,16 +123,16 @@ public class SigninPresenter extends MvpBasePresenter<AuthModule.SigninView> {
                         return;
                     }
 
-                    rxCall(addressRepo.getAddressesWithEncrypted())
+                    rxCallMy(addressRepo.getAddressesWithEncrypted())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
-                            .onErrorResumeNext(convertToErrorResult())
+                            .onErrorResumeNext(convertToMyErrorResult())
                             .subscribe(addressResult -> {
                                 getViewState().hideProgress();
                                 getViewState().setEnableSubmit(true);
                                 secretRepo.setEncryptionKey(mLoginData.rawPassword);
                                 if (addressResult.isSuccess()) {
-                                    for (AddressData addressData : addressResult.data) {
+                                    for (MyAddressData addressData : addressResult.data) {
                                         if(addressData.encrypted != null) {
                                             secretRepo.add(addressData.encrypted.decrypt(secretRepo.getEncryptionKey()));
                                         }

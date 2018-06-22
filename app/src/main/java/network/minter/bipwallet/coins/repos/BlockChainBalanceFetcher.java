@@ -44,11 +44,11 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.blockchainapi.models.Balance;
-import network.minter.blockchainapi.repo.AccountRepository;
+import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import timber.log.Timber;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallBc;
 
 /**
  * MinterWallet. 2018
@@ -61,9 +61,9 @@ public class BlockChainBalanceFetcher implements ObservableOnSubscribe<List<Bala
     private final Object mLock = new Object();
     private final List<MinterAddress> mAddresses;
     private final CountDownLatch mWaiter;
-    private final AccountRepository mAccountRepo;
+    private final BlockChainAccountRepository mAccountRepo;
 
-    public BlockChainBalanceFetcher(AccountRepository accountRepo, @NonNull final List<MinterAddress> addresses) {
+    public BlockChainBalanceFetcher(BlockChainAccountRepository accountRepo, @NonNull final List<MinterAddress> addresses) {
         mAddresses = addresses;
         mAccountRepo = accountRepo;
         mWaiter = new CountDownLatch(addresses.size());
@@ -79,7 +79,7 @@ public class BlockChainBalanceFetcher implements ObservableOnSubscribe<List<Bala
         }
 
         for (MinterAddress address : mAddresses) {
-            rxCall(mAccountRepo.getBalance(address))
+            rxCallBc(mAccountRepo.getBalance(address))
                     .subscribeOn(Schedulers.io())
                     .subscribe(res -> {
                         synchronized (mLock) {

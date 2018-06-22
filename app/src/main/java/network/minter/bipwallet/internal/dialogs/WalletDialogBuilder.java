@@ -50,6 +50,9 @@ public abstract class WalletDialogBuilder<D extends WalletDialog, B extends Wall
         setTitle(title);
     }
 
+    public CharSequence getTitle() {
+        return mTitle;
+    }
 
     public WalletDialogBuilder setTitle(CharSequence title) {
         mTitle = title;
@@ -58,39 +61,39 @@ public abstract class WalletDialogBuilder<D extends WalletDialog, B extends Wall
 
     public abstract D create();
 
-    protected CharSequence getPositiveTitle() {
+    public CharSequence getPositiveTitle() {
         return mPositiveTitle;
     }
 
-    protected CharSequence getNegativeTitle() {
+    public CharSequence getNegativeTitle() {
         return mNegativeTitle;
     }
 
-    protected CharSequence getNeutralTitle() {
+    public CharSequence getNeutralTitle() {
         return mNeutralTitle;
     }
 
-    protected Dialog.OnClickListener getPositiveListener() {
+    public Dialog.OnClickListener getPositiveListener() {
         return mPositiveListener;
     }
 
-    protected boolean hasPositiveListener() {
+    public boolean hasPositiveListener() {
         return mPositiveListener != null;
     }
 
-    protected boolean hasNegativeListener() {
+    public boolean hasNegativeListener() {
         return mNegativeListener != null;
     }
 
-    protected boolean hasNeutralListener() {
+    public boolean hasNeutralListener() {
         return mNeutralListener != null;
     }
 
-    protected Dialog.OnClickListener getNegativeListener() {
+    public Dialog.OnClickListener getNegativeListener() {
         return mNegativeListener;
     }
 
-    protected Dialog.OnClickListener getNeutralListener() {
+    public Dialog.OnClickListener getNeutralListener() {
         return mNeutralListener;
     }
 

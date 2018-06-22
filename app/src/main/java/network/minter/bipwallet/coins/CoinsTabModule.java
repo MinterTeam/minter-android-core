@@ -25,6 +25,7 @@
 
 package network.minter.bipwallet.coins;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.arellomobile.mvp.MvpView;
 
 import dagger.Module;
 import network.minter.bipwallet.internal.mvp.ProgressView;
+import network.minter.bipwallet.tx.adapters.TransactionDataSource;
 
 /**
  * MinterWallet. 2018
@@ -49,6 +51,7 @@ public interface CoinsTabModule {
         void setAdapter(RecyclerView.Adapter<?> adapter);
         void setOnAvatarClick(View.OnClickListener listener);
         void startTransactionList();
+        void hideAvatar();
     }
 
     interface TransactionListView extends MvpView, ProgressView {
@@ -58,5 +61,6 @@ public interface CoinsTabModule {
         void hideRefreshProgress();
         void scrollTo(int pos);
         void startExplorer(String hash);
+        void syncProgress(MutableLiveData<TransactionDataSource.LoadState> loadState);
     }
 }

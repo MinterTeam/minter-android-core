@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.my;
 
 import android.net.Uri;
@@ -18,9 +43,9 @@ import network.minter.mintercore.internal.api.converters.EncryptedStringSerializ
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressSerializer;
 import network.minter.mintercore.internal.api.converters.UriDeserializer;
-import network.minter.my.repo.AddressRepository;
 import network.minter.my.repo.AuthRepository;
 import network.minter.my.repo.InfoRepository;
+import network.minter.my.repo.MyAddressRepository;
 import network.minter.my.repo.ProfileRepository;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -35,7 +60,7 @@ public class MyMinterApi {
     private ApiService.Builder mApiService;
     private AuthRepository mAuthRepository;
     private InfoRepository mInfoRepository;
-    private AddressRepository mAddressRepository;
+    private MyAddressRepository mAddressRepository;
     private ProfileRepository mProfileRepository;
 
     private MyMinterApi() {
@@ -94,9 +119,9 @@ public class MyMinterApi {
         return mInfoRepository;
     }
 
-    public AddressRepository address() {
+    public MyAddressRepository address() {
         if (mAddressRepository == null) {
-            mAddressRepository = new AddressRepository(mApiService);
+            mAddressRepository = new MyAddressRepository(mApiService);
         }
 
         return mAddressRepository;

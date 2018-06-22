@@ -38,8 +38,10 @@ import network.minter.blockchainapi.models.operational.Transaction;
 import network.minter.blockchainapi.models.operational.TransactionSign;
 import network.minter.blockchainapi.models.operational.TxSendCoin;
 import network.minter.mintercore.MinterSDK;
+import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.crypto.PrivateKey;
+import network.minter.mintercore.crypto.PublicKey;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -55,35 +57,53 @@ public class TransactionTest {
 
     @Test
     public void testSignPredefinedTransaction() {
-        final String validSign = "Mxf86d0b0101a6e58a4d4e540000000000000094c3a55cdb5bcb97fd5657794247de4ed5e4a49f0d8405f5e1001ca014d7cc6217325e58a3884d7abe9e99d2d03f86f8d0019328e69cbdad8dda8272a07f655e0cf5845cfe142f637cad3378900eb66cceb6d04addaec1ab1c3f16d44e";
+        final String validSign = "f873010101aae98a4d4e540000000000000094fe60014a6e9ac91618f5d1cab3fd58cded61ee99880de0b6b3a764000080801ca0ae0ee912484b9bf3bee785f4cbac118793799450e0de754667e2c18faa510301a04f1e4ed5fad4b489a1065dc1f5255b356ab9a2ce4b24dde35bcb9dc43aba019c";
 
-        final PrivateKey privateKey = new PrivateKey(
-                "418e4be028dcaed85aa58b643979f644f806a42bb6d1912848720788a53bb8a4");
-        final MinterAddress address = new MinterAddress("Mxc3a55cdb5bcb97fd5657794247de4ed5e4a49f0d");
+        final PrivateKey senderPrivateKey = new PrivateKey(
+                "b574d2a7151fcf0df573feae58015f85f6ebf38ea4b38c49196c6aceee27e189");
+        final MinterAddress recipientAddress = new MinterAddress("Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99");
+        final MinterAddress senderAddress = new MinterAddress("Mx887c5de2515e788abb422c3e483496e1b1f3dff4");
+        final PublicKey senderPublicKey = senderPrivateKey.getPublicKey();
+        assertEquals(senderAddress, senderPublicKey.toMinter());
 
         Transaction<TxSendCoin> tx = Transaction
-                .newSendTransaction(new BigInteger("11"), new BigInteger("1"))
+                .newSendTransaction(new BigInteger("1"))
                 .setCoin("MNT")
-                .setTo(address)
+                .setTo(recipientAddress)
                 .setValue(new BigDecimal(1))
                 .build();
 
-        TransactionSign sign = tx.sign(privateKey);
+        TransactionSign sign = tx.sign(senderPrivateKey);
         assertNotNull(sign);
         assertEquals(validSign.length(), sign.getTxSign().length());
         assertEquals(validSign, sign.getTxSign());
     }
 
     @Test
+    public void testSignRealTransaction() {
+        final String validTx = "f873010101aae98a4d4e540000000000000094857ce4c4a55929bcbe43c7e386e4ede004e3fbfc8801c6bf526340000080801ca0fb7d1cf0ab1a444c18199cd74215c81dab4bbb95a30209ca2689fe4d8788da74a019bde5302bc9e5121c69434d535423b050292974195ed28dce7b4cb0cf3f2604";
+        final MinterAddress address = new MinterAddress("Mx790053b45145188729465477876e0f04b5c5b1f9");
+        final PrivateKey privateKey = new PrivateKey("7ec91ba19d0221a125aaedaddadb81b9b88bd536b92825147f9a7859864b4ccc");
+        final PublicKey publicKey = new PublicKey("030ac3746fa6305cf1e0c6ebe92a1441d4802d36c7e820068f973bc6478107cd7d");
+        final BytesData seed = new BytesData("f88392faf3c460b05bbd50278362d12b19dc8e0cf2ebd5c97cc9ce01b5db819c7364f4d72d3f2ef85c96328bcc49763ad31bf546f8d0e56009524fe3b9b01502");
+        final String phrase = "royal park wage travel execute focus brother click twin stove drift margin";
+
+        assertEquals(publicKey, privateKey.getPublicKey(true));
+        assertEquals(address, publicKey.toMinter());
+
+
+    }
+
+    @Test
     public void testDecodeSendTransaction() {
-        MinterAddress fromAddress = new MinterAddress("Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99");
-        MinterAddress toAddress = new MinterAddress("Mxc3a55cdb5bcb97fd5657794247de4ed5e4a49f0d");
-        final String encodedTransaction = "+G0LAQGm5YpNTlQAAAAAAAAAlMOlXNtby5f9Vld5QkfeTtXkpJ8NhAX14QAcoBTXzGIXMl5Yo4hNer6emdLQP4b40AGTKOacva2N2oJyoH9lXgz1hFz+FC9jfK0zeJAOtmzOttBK3a7Bqxw/FtRO";
-        BigInteger nonce = new BigInteger("11");
+        MinterAddress fromAddress = new MinterAddress("Mx887c5de2515e788abb422c3e483496e1b1f3dff4");
+        MinterAddress toAddress = new MinterAddress("Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99");
+        final String encodedTransaction = "Mxf873010101aae98a4d4e540000000000000094fe60014a6e9ac91618f5d1cab3fd58cded61ee99880de0b6b3a764000080801ca0ae0ee912484b9bf3bee785f4cbac118793799450e0de754667e2c18faa510301a04f1e4ed5fad4b489a1065dc1f5255b356ab9a2ce4b24dde35bcb9dc43aba019c";
+        BigInteger nonce = new BigInteger("1");
         BigInteger gasPrice = new BigInteger("1");
         OperationType type = OperationType.SendCoin;
         long valueHuman = 1L;
-        BigInteger value = new BigInteger("1").multiply(new BigInteger(Transaction.VALUE_MUL.toString()));
+        BigInteger value = new BigInteger("1").multiply(Transaction.VALUE_MUL);
         String coin = MinterSDK.DEFAULT_COIN;
 
         Transaction<TxSendCoin> tx = Transaction.fromEncoded(encodedTransaction, TxSendCoin.class);

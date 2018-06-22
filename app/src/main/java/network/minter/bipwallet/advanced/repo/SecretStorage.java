@@ -56,9 +56,9 @@ import static network.minter.bipwallet.internal.common.Preconditions.checkNotNul
  */
 public class SecretStorage {
 
-    private final static String KEY_SECRETS = "mnemonic_secret_list";
-    private final static String KEY_ADDRESSES = "addresses_list";
-    private final static String KEY_ENCRYPTION_PASS = "encryption_key";
+    private final static String KEY_SECRETS = "secret_storage_mnemonic_secret_list";
+    private final static String KEY_ADDRESSES = "secret_storage_addresses_list";
+    private final static String KEY_ENCRYPTION_PASS = "secret_storage_encryption_key";
     private final KVStorage mStorage;
 
     public SecretStorage(KVStorage storage) {
@@ -72,7 +72,7 @@ public class SecretStorage {
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getData());
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
         final PrivateKey privateKey = extKey.getPrivateKey();
-        final PublicKey publicKey = extKey.getPublicKey();
+        final PublicKey publicKey = privateKey.getPublicKey(false);
 
         return new SecretData(mnemonicResult.getMnemonic(), seed, privateKey, publicKey);
     }
@@ -105,7 +105,7 @@ public class SecretStorage {
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getData());
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
         final PrivateKey privateKey = extKey.getPrivateKey();
-        final PublicKey publicKey = extKey.getPublicKey();
+        final PublicKey publicKey = privateKey.getPublicKey(false);
 
         final SecretData data = new SecretData(mnemonicResult.getMnemonic(), seed, privateKey, publicKey);
         return add(data);
@@ -166,6 +166,7 @@ public class SecretStorage {
 
         return address;
     }
+
 
     public SecretData getSecret(MinterAddress address) {
         return mStorage.<Map<String, SecretData>>get(KEY_SECRETS).get(address.toString());

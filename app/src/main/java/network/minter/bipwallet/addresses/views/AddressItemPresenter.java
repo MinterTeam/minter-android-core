@@ -36,14 +36,14 @@ import javax.inject.Inject;
 
 import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.addresses.AddressManageModule;
+import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.addresses.ui.AddressItemActivity;
 import network.minter.bipwallet.internal.helpers.ContextHelper;
 import network.minter.bipwallet.internal.helpers.IntentHelper;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.my.models.AddressData;
-import network.minter.my.repo.AddressRepository;
+import network.minter.my.repo.MyAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
 /**
  * MinterWallet. 2018
@@ -52,9 +52,9 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
  */
 @InjectViewState
 public class AddressItemPresenter extends MvpBasePresenter<AddressManageModule.AddressItemView> {
-    @Inject AddressRepository addressRepo;
+    @Inject MyAddressRepository addressRepo;
 
-    private AddressData mAddress;
+    private AddressItem mAddress;
 
     @Inject
     public AddressItemPresenter() {
@@ -63,7 +63,12 @@ public class AddressItemPresenter extends MvpBasePresenter<AddressManageModule.A
     @Override
     public void handleExtras(Intent intent) {
         super.handleExtras(intent);
-        mAddress = IntentHelper.getParcelExtraOrError(intent, AddressItemActivity.EXTRA_ADDRESS_DATA, "AddressData required");
+        mAddress = IntentHelper.getParcelExtraOrError(intent, AddressItemActivity.EXTRA_ADDRESS_DATA, "AddressItem required");
+
+        if (!mAddress.isServerSecured) {
+            getViewState().hideActions();
+            getViewState().setDescription("This address is secured by You");
+        }
     }
 
     @Override
@@ -86,13 +91,16 @@ public class AddressItemPresenter extends MvpBasePresenter<AddressManageModule.A
 
     private void onClickDeleteAddress(DialogInterface dialogInterface, int which) {
         getViewState().showProgress("Deleting in progress");
-        rxCall(addressRepo.delete(mAddress))
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(res -> {
-                    getViewState().hideProgress();
-                    getViewState().finishWithResult(Activity.RESULT_FIRST_USER);
-                });
+        if (mAddress.isServerSecured) {
+            rxCallMy(addressRepo.delete(mAddress.id))
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(res -> {
+                        getViewState().hideProgress();
+                        getViewState().finishWithResult(Activity.RESULT_FIRST_USER);
+                    });
+        }
+
 
     }
 }

@@ -37,7 +37,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import network.minter.mintercore.crypto.EncryptedString;
-import network.minter.mintercore.crypto.HashUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,11 +53,10 @@ public class EncryptedStringTest {
     public void testEncrypting() throws NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         String mnemonic = "globe arrange forget twice potato nurse ice dwarf arctic piano scorpion tube";
         String rawPassword = "123456";
-        String IV = "pjSfpWAjdSaYpOBy";
-        String hexPassword = HashUtil.sha256Hex(rawPassword);
-        EncryptedString enc = new EncryptedString(mnemonic, hexPassword.substring(0, 32), IV);
+        String IV = "Minter seed";
+        EncryptedString enc = new EncryptedString(mnemonic, rawPassword, IV);
         assertEquals(
-                "b5e32fcc8c54fa00c42242cd8be2ce2b1d23d80113c1ba60b8f7ff2fd809b092b564249dd7feb4cb8fb65486412402d81cd4d17e67e2276a66b6b10773b71914706c2748a769847ec7d8817ab57f9f63",
+                "e28513acd2336aa048b68cf382a45ec0bc7bed1e7d35f2b7bf0b6c1406e6f3c57fc91c08ba972f7ed82050e54867e1624b2e2f145aa8d0a40d51ad4eb258faa7e2a9ccaed555d15d7830df188897c054",
                 enc.getEncrypted()
         );
     }
@@ -67,17 +65,17 @@ public class EncryptedStringTest {
     public void testDecrypting() throws NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         String mnemonic = "globe arrange forget twice potato nurse ice dwarf arctic piano scorpion tube";
         String rawPassword = "123456";
-        String IV = "pjSfpWAjdSaYpOBy";
-        String hexPassword = HashUtil.sha256Hex(rawPassword);
-        EncryptedString enc = new EncryptedString(mnemonic, hexPassword.substring(0, 32), IV);
-        String encrypted = "b5e32fcc8c54fa00c42242cd8be2ce2b1d23d80113c1ba60b8f7ff2fd809b092b564249dd7feb4cb8fb65486412402d81cd4d17e67e2276a66b6b10773b71914706c2748a769847ec7d8817ab57f9f63";
+        String IV = "Minter seed";
+
+        EncryptedString enc = new EncryptedString(mnemonic, rawPassword, IV);
+        String encrypted = "e28513acd2336aa048b68cf382a45ec0bc7bed1e7d35f2b7bf0b6c1406e6f3c57fc91c08ba972f7ed82050e54867e1624b2e2f145aa8d0a40d51ad4eb258faa7e2a9ccaed555d15d7830df188897c054";
         assertEquals(
                 encrypted,
                 enc.getEncrypted()
         );
 
 
-        String decrypted = enc.decrypt(hexPassword, IV);
+        String decrypted = enc.decrypt(rawPassword, IV);
         assertNotNull(decrypted);
         assertEquals(mnemonic, decrypted);
     }

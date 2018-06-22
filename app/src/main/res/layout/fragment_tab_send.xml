@@ -52,8 +52,7 @@
             android:theme="@style/WalletPrimaryToolbar"
             app:enableAction="false"
             app:layout_collapseMode="none"
-            app:navigationIcon="@drawable/ic_arrow_back_white_compat"
-            app:title="@string/title_send_coins"
+            app:title="@string/tab_sending_title"
             app:titleTextColor="@android:color/white"
             />
     </android.support.design.widget.AppBarLayout>
@@ -70,7 +69,9 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
+            >
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/coin.layout"
@@ -129,7 +130,7 @@
                     android:id="@+id/recipient.input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text|phone|textEmailSubject"
+                    android:inputType="text"
                     tools:text="\@PavelDurov"
                     />
             </android.support.design.widget.TextInputLayout>
@@ -207,6 +208,7 @@
                 />
 
             <Switch
+                android:checked="true"
                 android:id="@+id/free.value"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

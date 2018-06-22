@@ -40,9 +40,10 @@ import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.mintercore.bip39.NativeBip39;
 import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.my.repo.AddressRepository;
+import network.minter.my.models.User;
+import network.minter.my.repo.MyAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
 /**
  * MinterWallet. 2018
@@ -56,7 +57,7 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
 
     @Inject SecretStorage repo;
     @Inject AuthSession session;
-    @Inject AddressRepository addressRepo;
+    @Inject MyAddressRepository addressRepo;
     private String mPhrase;
     private boolean mForResult;
 
@@ -84,7 +85,7 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
 
             MinterAddress address = repo.add(mPhrase);
 
-            if (session.isLoggedIn() && session.getRole() == AuthSession.AuthType.Basic) {
+            if (session.isLoggedIn()) {
                 if (session.getRole() == AuthSession.AuthType.Basic) {
                     // if basic user, we adding address to local repo and to server
                     // here we ask password to encrypt seed and send to server, and then finishing with success result
@@ -99,6 +100,13 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
                     // here we already added seed to local repo, added first address, staring home
                     getViewState().startHome();
                 }
+            } else {
+                session.login(
+                        AuthSession.AUTH_TOKEN_ADVANCED,
+                        new User(AuthSession.AUTH_TOKEN_ADVANCED),
+                        AuthSession.AuthType.Advanced
+                );
+                getViewState().startHome();
             }
         });
 
@@ -123,7 +131,7 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
     private boolean onPasswordConfirmed(String fieldName, String value, final MinterAddress address) {
         getViewState().showProgress(null, "Encrypting...");
         safeSubscribeIoToUi(
-                rxCall(addressRepo.addAddress(repo.getSecret(address).toAddressData(repo.getAddresses().isEmpty(), true, value)))
+                rxCallMy(addressRepo.addAddress(repo.getSecret(address).toAddressData(repo.getAddresses().isEmpty(), true, value)))
         )
                 .retryWhen(getErrorResolver())
                 .subscribe(res -> {

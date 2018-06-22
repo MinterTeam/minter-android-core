@@ -103,17 +103,24 @@ public final class TxSendCoin extends Operation {
         }
 
         public Builder setCoin(final String coin) {
-            TxSendCoin.this.coin = StringHelper.strrpad(10, coin);
+            TxSendCoin.this.coin = StringHelper.strrpad(10, coin.toUpperCase());
             return this;
         }
 
-        public Builder setTo(MinterAddress publicKey) {
-            to = publicKey;
+        public Builder setTo(MinterAddress address) {
+            checkNotNull(address);
+            to = address;
             return this;
         }
 
         public Builder setTo(String address) {
+            checkNotNull(address);
             return setTo(new MinterAddress(address));
+        }
+
+        public Builder setTo(CharSequence address) {
+            checkNotNull(address);
+            return setTo(address.toString());
         }
 
         /**
@@ -128,7 +135,7 @@ public final class TxSendCoin extends Operation {
 
         /**
          *
-         * @param decimalValue Floating point string value. Precision up to 18 digits: 0.101010101010101010
+         * @param decimalValue Floating point string value. Precision up to 18 digits: 0.10203040506078090
          * @return
          */
         public Builder setValue(@NonNull final CharSequence decimalValue) {
@@ -143,7 +150,7 @@ public final class TxSendCoin extends Operation {
          * @return
          */
         public Builder setValue(BigDecimal value) {
-            TxSendCoin.this.value = value.setScale(18, BigDecimal.ROUND_UP).multiply(new BigDecimal(Transaction.VALUE_MUL)).toBigInteger();
+            TxSendCoin.this.value = value.multiply(Transaction.VALUE_MUL_DEC).toBigInteger();
             return this;
         }
 
@@ -153,7 +160,7 @@ public final class TxSendCoin extends Operation {
         }
 
         private Builder setValue(BigInteger value) {
-            TxSendCoin.this.value = value.multiply(new BigInteger(Transaction.VALUE_MUL.toString(), 10));
+            TxSendCoin.this.value = value.multiply(Transaction.VALUE_MUL);
             return this;
         }
 

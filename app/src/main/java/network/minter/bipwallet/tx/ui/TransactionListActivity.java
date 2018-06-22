@@ -25,6 +25,7 @@
 
 package network.minter.bipwallet.tx.ui;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.coins.CoinsTabModule;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
+import network.minter.bipwallet.tx.adapters.TransactionDataSource;
 import network.minter.bipwallet.tx.views.TransactionListPresenter;
 import network.minter.explorerapi.MinterExplorerApi;
 
@@ -97,6 +99,26 @@ public class TransactionListActivity extends BaseMvpInjectActivity implements Co
     @Override
     public void startExplorer(String hash) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MinterExplorerApi.FRONT_URL + "/transactions/" + hash)));
+    }
+
+    @Override
+    public void syncProgress(MutableLiveData<TransactionDataSource.LoadState> loadState) {
+        loadState.observe(this, s -> {
+            if (s == null) {
+                showProgress();
+                return;
+            }
+            switch (s) {
+                case Loaded:
+                case Failed:
+                    hideRefreshProgress();
+                    hideProgress();
+                    break;
+                case Loading:
+                    showProgress();
+                    break;
+            }
+        });
     }
 
     @Override

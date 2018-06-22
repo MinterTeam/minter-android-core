@@ -79,7 +79,7 @@
                 android:layout_marginStart="@dimen/margin_edges"
                 android:layout_marginTop="@dimen/margin_edges_medium"
                 android:layout_marginEnd="@dimen/margin_edges"
-                android:text="@string/address_generate_description"
+                android:text="@string/advanced_generate_seed_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

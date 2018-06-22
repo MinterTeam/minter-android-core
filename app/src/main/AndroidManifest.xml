@@ -58,7 +58,10 @@
             android:launchMode="singleTop"
             />
 
-        <activity android:name=".home.ui.HomeActivity"/>
+        <activity
+            android:name=".home.ui.HomeActivity"
+            android:windowSoftInputMode="stateHidden"
+            />
         <activity android:name=".auth.ui.RegisterActivity"/>
         <activity android:name=".auth.ui.SigninActivity"/>
         <activity android:name=".addresses.ui.AddressListActivity"/>
@@ -68,7 +71,7 @@
             android:theme="@style/Wallet.CropImage"
             />
         <activity
-            android:name=".internal.dialogs.DialogSequenceActivity"
+            android:name=".sending.ui.DialogTxSendActivity"
             android:theme="@style/Wallet.DialogActivity"
             />
         <activity android:name=".tx.ui.TransactionListActivity"/>

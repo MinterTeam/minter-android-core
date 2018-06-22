@@ -78,7 +78,7 @@ public class User {
         public String phone;
         public String language;
         public Avatar avatar;
-        public AddressData mainAddress;
+        public MyAddressData mainAddress;
 
         public boolean hasAvatar() {
             return avatar != null;

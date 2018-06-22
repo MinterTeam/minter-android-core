@@ -43,7 +43,7 @@ import timber.log.Timber;
 public class BaseApiTest {
 
     static {
-        MinterSDK.initialize(true);
+        MinterSDK.initialize();
         //noinspection ConstantConditions
         Timber.plant(new Timber.DebugTree() {
             @Override

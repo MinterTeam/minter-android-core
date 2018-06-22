@@ -32,8 +32,8 @@ import android.view.View;
 import com.arellomobile.mvp.MvpView;
 
 import dagger.Module;
-import network.minter.bipwallet.internal.mvp.ProgressTextView;
-import network.minter.my.models.AddressData;
+import network.minter.bipwallet.addresses.models.AddressItem;
+import network.minter.bipwallet.internal.mvp.ProgressView;
 
 /**
  * MinterWallet. 2018
@@ -52,12 +52,13 @@ public class AddressManageModule {
         void showProgress(CharSequence text);
         void hideProgress();
         void setOnCopy(View.OnClickListener listener);
-
+        void hideActions();
+        void setDescription(CharSequence description);
     }
 
-    public interface AddressListView extends MvpView, ProgressTextView {
+    public interface AddressListView extends MvpView, ProgressView {
         void setAdapter(RecyclerView.Adapter<?> adapter);
-        void startAddressItem(int requestCode, AddressData address);
+        void startAddressItem(int requestCode, AddressItem address);
         void startCreateAddress(int requestCode);
         void scrollToPosition(int position);
     }

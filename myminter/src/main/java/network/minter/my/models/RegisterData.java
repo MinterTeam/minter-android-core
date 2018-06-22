@@ -43,7 +43,7 @@ public class RegisterData {
     public String language;
     public String password;
     public transient String rawPassword;
-    public AddressData mainAddress;
+    public MyAddressData mainAddress;
 
     public RegisterData preparePassword() {
         password = HashUtil.sha256HexDouble(rawPassword);

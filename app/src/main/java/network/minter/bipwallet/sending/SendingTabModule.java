@@ -25,11 +25,19 @@
 
 package network.minter.bipwallet.sending;
 
+import android.content.Context;
+import android.view.View;
+
 import com.arellomobile.mvp.MvpView;
 
+import java.util.List;
+
 import dagger.Module;
+import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.auth.ui.InputGroup;
+import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
+import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
 
 /**
  * MinterWallet. 2018
@@ -39,8 +47,24 @@ import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
 @Module
 public class SendingTabModule {
 
+    public interface DialogExecutor {
+        WalletDialog run(Context ctx);
+    }
+
     public interface SendingView extends MvpView, ErrorViewWithRetry {
+        void setOnClickAccountSelectedListener(View.OnClickListener listener);
         void setOnTextChangedListener(InputGroup.OnTextChangedListener listener);
+        void setFormValidationListener(InputGroup.OnFormValidateListener listener);
+        void startAccountSelector(List<AccountItem> accounts, AccountSelectedAdapter.OnClickListener clickListener);
+        void setAccountName(CharSequence accountName);
+        void setOnSubmit(View.OnClickListener listener);
+        void setSubmitEnabled(boolean enabled);
+        void clearInputs();
+        void startDialog(DialogExecutor executor);
+        void startExplorer(String txHash);
+    }
+
+    public static class TxData {
 
     }
 }

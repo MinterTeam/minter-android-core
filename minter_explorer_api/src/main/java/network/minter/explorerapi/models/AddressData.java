@@ -26,7 +26,11 @@
 package network.minter.explorerapi.models;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
+
+import network.minter.mintercore.MinterSDK;
+import network.minter.mintercore.crypto.MinterAddress;
 
 /**
  * MinterWallet. 2018
@@ -35,17 +39,61 @@ import java.util.Map;
  */
 public class AddressData {
     public Map<String, CoinBalance> coins;
-    public Map<String, CoinBalance> coinsInUsd;
-    public BigDecimal bipTotal;
-    public BigDecimal usdTotal;
     public long txCount;
+    // not null only if get list of balances by addresses
+    public MinterAddress address;
+
+    public AddressData() {
+        coins = new HashMap<>();
+    }
+
+    public void fillDefaultsOnEmpty() {
+        if (coins == null) {
+            coins = new HashMap<>(1);
+        }
+        if (coins.isEmpty()) {
+            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(MinterSDK.DEFAULT_COIN, new BigDecimal(0), new BigDecimal(0)));
+        }
+    }
+
+    public BigDecimal getTotalBalance() {
+        if (coins == null || coins.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        // @TODO ?
+        BigDecimal totalOut = new BigDecimal(0.0f);
+        for (Map.Entry<String, CoinBalance> entry : coins.entrySet()) {
+            totalOut = totalOut.add(entry.getValue().amount);
+        }
+
+        return totalOut;
+    }
 
     public static class CoinBalance {
         public String coin;
-        public BigDecimal balance;
+        public BigDecimal amount;
+        public BigDecimal usdAmount;
 
-        public BigDecimal getBalance() {
-            return balance;
+        public CoinBalance() {
+        }
+
+        public CoinBalance(String coin, BigDecimal value, BigDecimal valueUsd) {
+            this.coin = coin;
+            this.amount = value;
+            this.usdAmount = valueUsd;
+        }
+
+        public String getCoin() {
+            return coin;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public BigDecimal getUsdAmount() {
+            return usdAmount;
         }
     }
 }

@@ -145,7 +145,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
-                        android:text="@string/frag_coins_my_balance"
+                        android:text="@string/tab_coins_title"
                         android:textColor="@color/textColorWhite"
                         android:textSize="15sp"
                         android:textStyle="normal"

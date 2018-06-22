@@ -34,20 +34,25 @@ import com.google.gson.GsonBuilder;
 import javax.inject.Named;
 
 import dagger.Component;
+import network.minter.bipwallet.advanced.models.UserAccount;
+import network.minter.bipwallet.advanced.repo.AccountStorage;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.auth.SessionStorage;
+import network.minter.bipwallet.internal.data.CacheManager;
+import network.minter.bipwallet.internal.data.CachedRepository;
 import network.minter.bipwallet.internal.helpers.DisplayHelper;
 import network.minter.bipwallet.internal.helpers.ImageHelper;
 import network.minter.bipwallet.internal.helpers.NetworkHelper;
 import network.minter.bipwallet.internal.storage.KVStorage;
-import network.minter.blockchainapi.repo.AccountRepository;
-import network.minter.explorerapi.repo.TransactionRepository;
+import network.minter.blockchainapi.repo.BlockChainAccountRepository;
+import network.minter.explorerapi.repo.ExplorerAddressRepository;
+import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.internal.api.ApiService;
-import network.minter.my.repo.AddressRepository;
 import network.minter.my.repo.AuthRepository;
 import network.minter.my.repo.InfoRepository;
+import network.minter.my.repo.MyAddressRepository;
 import network.minter.my.repo.ProfileRepository;
 
 /**
@@ -60,6 +65,7 @@ import network.minter.my.repo.ProfileRepository;
         HelpersModule.class,
         RepoModule.class,
         InjectorsModule.class,
+        CacheModule.class,
 })
 @WalletApp
 public interface WalletComponent {
@@ -84,15 +90,18 @@ public interface WalletComponent {
     ImageHelper image();
     SharedPreferences prefs();
     GsonBuilder gsonBuilder();
+    CacheManager cache();
 
     // repositories
-    SecretStorage secretRepo();
-    TransactionRepository explorerTransactionsRepo();
+    SecretStorage secretStorage();
+    AccountStorage accountStorage();
+    CachedRepository<UserAccount, AccountStorage> accountStorageCache();
+    ExplorerTransactionRepository explorerTransactionsRepo();
     AuthRepository authRepo();
     InfoRepository infoRepo();
-    AddressRepository addressMyRepo();
-    network.minter.explorerapi.repo.AddressRepository addressExplorerRepo();
+    MyAddressRepository addressMyRepo();
+    ExplorerAddressRepository addressExplorerRepo();
 
     ProfileRepository profileRepo();
-    AccountRepository accountRepoBlockChain();
+    BlockChainAccountRepository accountRepoBlockChain();
 }

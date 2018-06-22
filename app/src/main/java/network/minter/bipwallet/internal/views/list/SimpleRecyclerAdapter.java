@@ -28,6 +28,7 @@ package network.minter.bipwallet.internal.views.list;
 import android.support.annotation.CheckResult;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +65,10 @@ public class SimpleRecyclerAdapter<Data, VH extends RecyclerView.ViewHolder> ext
         return mBuilder.data;
     }
 
+    public void setItems(List<Data> items) {
+        mBuilder.data = items;
+    }
+
     public void setItems(Stream<Data> stream) {
         setItems(stream.toList());
     }
@@ -76,8 +81,40 @@ public class SimpleRecyclerAdapter<Data, VH extends RecyclerView.ViewHolder> ext
         setItems(CollectionsHelper.asList(items));
     }
 
-    public void setItems(List<Data> items) {
-        mBuilder.data = items;
+    /**
+     * @param diffUtilCallbackCls Class must contain constructor with 2 lists (old and new)
+     * @param items
+     * @param <T>
+     */
+    public <T extends DiffUtil.Callback> void dispatchChanges(Class<T> diffUtilCallbackCls, @NonNull List<Data> items, boolean detectMoves) {
+        checkNotNull(items, "Data can't be null. Provide empty list if you have no data");
+
+        if (getItemCount() == 0 && !items.isEmpty()) {
+            setItems(items);
+            notifyItemRangeInserted(0, items.size());
+            return;
+        }
+
+        final List<Data> old = getItems();
+        DiffUtil.Callback cb;
+
+        try {
+            cb = diffUtilCallbackCls.getDeclaredConstructor(List.class, List.class).newInstance(old, items);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(cb, detectMoves);
+        diffResult.dispatchUpdatesTo(this);
+    }
+
+    /**
+     * @param diffUtilCallbackCls Object must contains construct with 2 lists (old and new)
+     * @param items
+     * @param <T>
+     */
+    public <T extends DiffUtil.Callback> void dispatchChanges(Class<T> diffUtilCallbackCls, @NonNull List<Data> items) {
+        dispatchChanges(diffUtilCallbackCls, items, false);
     }
 
     public void addItem(Data item) {

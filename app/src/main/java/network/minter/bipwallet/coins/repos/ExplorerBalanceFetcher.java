@@ -30,66 +30,79 @@ import android.support.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.explorerapi.models.AddressData;
-import network.minter.explorerapi.repo.AddressRepository;
+import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import timber.log.Timber;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallExp;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class ExplorerBalanceFetcher implements ObservableOnSubscribe<AddressData> {
+public class ExplorerBalanceFetcher implements ObservableOnSubscribe<List<AccountItem>> {
     @GuardedBy("mLock")
-    private final Map<MinterAddress, List<AddressData.CoinBalance>> mOut = new HashMap<>();
+    private final Map<MinterAddress, AddressData> mRawBalances = new HashMap<>();
     private final Object mLock = new Object();
     private final List<MinterAddress> mAddresses;
     private final CountDownLatch mWaiter;
-    private final AddressRepository mAddressRepository;
+    private final ExplorerAddressRepository mAddressRepository;
 
-    public ExplorerBalanceFetcher(AddressRepository addressRepository, @NonNull final List<MinterAddress> addresses) {
+    public ExplorerBalanceFetcher(ExplorerAddressRepository addressRepository, @NonNull final List<MinterAddress> addresses) {
         mAddresses = addresses;
         mAddressRepository = addressRepository;
         mWaiter = new CountDownLatch(addresses.size());
     }
 
+    public static Observable<List<AccountItem>> create(@NonNull ExplorerAddressRepository addressRepository, @NonNull final List<MinterAddress> addresses) {
+        return Observable.create(new ExplorerBalanceFetcher(addressRepository, addresses));
+    }
+
+    public static Observable<BigDecimal> createSingle(ExplorerAddressRepository addressRepository, MinterAddress address) {
+        return rxCallExp(addressRepository.getAddressData(address))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .map(item -> {
+                    Timber.d("Balance is really loaded");
+                    return item.result.getTotalBalance();
+                });
+    }
+
     @Override
-    public void subscribe(ObservableEmitter<AddressData> emitter) throws Exception {
+    public void subscribe(ObservableEmitter<List<AccountItem>> emitter) throws Exception {
+        Timber.d("Fetching amount in thread: %s", Thread.currentThread().getName());
         if (mAddresses.isEmpty()) {
             Timber.w("No one address");
-            emitter.onNext(null);
+            emitter.onNext(Collections.emptyList());
             emitter.onComplete();
             return;
         }
 
-        final AddressData[] totalData = {null};
-
         for (MinterAddress address : mAddresses) {
-            rxCall(mAddressRepository.getAddressData(address))
+            rxCallExp(mAddressRepository.getAddressData(address))
                     .subscribeOn(Schedulers.io())
                     .subscribe(res -> {
-                        if (totalData[0] == null) {
-                            totalData[0] = res.result;
-                        }
                         synchronized (mLock) {
-                            if (!mOut.containsKey(address)) {
-                                mOut.put(address, new ArrayList<>());
+                            res.result.fillDefaultsOnEmpty();
+                            if (address == null) {
+                                Timber.w("Address is null!");
                             }
-
-                            mOut.get(address).addAll(res.result.coins.values());
+                            mRawBalances.put(address, res.result);
                         }
 
                         mWaiter.countDown();
@@ -100,33 +113,23 @@ public class ExplorerBalanceFetcher implements ObservableOnSubscribe<AddressData
         }
 
         mWaiter.await();
-        final List<AddressData.CoinBalance> out = new ArrayList<>();
-        for (List<AddressData.CoinBalance> items : mOut.values()) {
-            out.addAll(items);
-        }
 
-        Map<String, AddressData.CoinBalance> aggregator = new LinkedHashMap<>();
-        for (AddressData.CoinBalance balance : out) {
-            if (!aggregator.containsKey(balance.coin)) {
-                aggregator.put(balance.coin, balance);
-            } else {
-                aggregator.get(balance.coin).getBalance().add(balance.getBalance());
+        List<AccountItem> out = new ArrayList<>();
+        for (Map.Entry<MinterAddress, AddressData> entry : mRawBalances.entrySet()) {
+            if (entry.getKey() == null) continue;
+
+            for (AddressData.CoinBalance balance : entry.getValue().coins.values()) {
+                out.add(new AccountItem(
+                        null,
+                        balance.getCoin(),
+                        entry.getKey(),
+                        balance.getAmount(),
+                        balance.getUsdAmount()
+                ));
             }
         }
 
-        AddressData data = new AddressData();
-        data.coins = aggregator;
-        if (totalData[0] != null) {
-            data.txCount = totalData[0].txCount;
-            data.bipTotal = totalData[0].bipTotal;
-            data.usdTotal = totalData[0].usdTotal;
-        } else {
-            data.txCount = 0;
-            data.bipTotal = new BigDecimal(0);
-            data.usdTotal = new BigDecimal(0);
-        }
-
-        emitter.onNext(data);
+        emitter.onNext(out);
         emitter.onComplete();
     }
 }

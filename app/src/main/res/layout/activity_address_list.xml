@@ -36,8 +36,6 @@
         android:id="@+id/appbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,6 +51,8 @@
             app:enableAction="false"
             app:layout_collapseMode="none"
             app:navigationIcon="@drawable/ic_arrow_back_white_compat"
+            app:popupTheme="@style/WalletPrimaryToolbar"
+            app:theme="@style/WalletPrimaryToolbar"
             app:title="My Addresses"
             app:titleTextColor="@android:color/white"
             />
@@ -87,7 +87,7 @@
                 android:background="@android:color/transparent"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                app:layout_scrollFlags="snap"
+                app:layout_scrollFlags="scroll|enterAlways"
                 >
 
                 <TextView
@@ -101,7 +101,7 @@
                     android:paddingTop="@dimen/margin_edges"
                     android:paddingEnd="@dimen/margin_edges"
                     android:paddingBottom="@dimen/margin_edges"
-                    android:text="@string/activity_address_manage_description"
+                    android:text="@string/address_list_description"
                     android:textSize="@dimen/text_size_14"
                     android:textStyle="normal"
                     app:layout_collapseMode="pin"
@@ -123,6 +123,17 @@
                 tools:itemCount="4"
                 tools:listitem="@layout/item_list_address"
                 />
+
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appbar"
+        />
 </android.support.constraint.ConstraintLayout>

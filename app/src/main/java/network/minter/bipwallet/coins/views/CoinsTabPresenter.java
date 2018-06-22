@@ -33,36 +33,40 @@ import android.widget.TextView;
 import com.annimon.stream.Stream;
 import com.arellomobile.mvp.InjectViewState;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.R;
+import network.minter.bipwallet.advanced.models.AccountItem;
+import network.minter.bipwallet.advanced.models.UserAccount;
+import network.minter.bipwallet.advanced.repo.AccountStorage;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.coins.CoinsTabModule;
-import network.minter.bipwallet.coins.repos.ExplorerBalanceFetcher;
+import network.minter.bipwallet.coins.utils.HistoryTransactionDiffUtil;
 import network.minter.bipwallet.coins.views.rows.ListWithButtonRow;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.auth.AuthSession;
+import network.minter.bipwallet.internal.data.CacheManager;
+import network.minter.bipwallet.internal.data.CachedRepository;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.bipwallet.internal.views.list.SimpleRecyclerAdapter;
 import network.minter.bipwallet.internal.views.list.multirow.MultiRowAdapter;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
 import network.minter.bipwallet.tx.adapters.TransactionDataSource;
-import network.minter.blockchainapi.repo.AccountRepository;
-import network.minter.explorerapi.models.AddressData;
+import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.explorerapi.models.HistoryTransaction;
-import network.minter.explorerapi.repo.AddressRepository;
-import network.minter.explorerapi.repo.TransactionRepository;
+import network.minter.explorerapi.repo.ExplorerAddressRepository;
+import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.helpers.StringHelper;
 import network.minter.my.repo.InfoRepository;
 import timber.log.Timber;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallExp;
 import static network.minter.bipwallet.internal.helpers.Plurals.bips;
 
 /**
@@ -73,15 +77,18 @@ import static network.minter.bipwallet.internal.helpers.Plurals.bips;
 @InjectViewState
 public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabView> {
 
+    @Inject CacheManager cache;
     @Inject AuthSession session;
-    @Inject TransactionRepository repo;
+    @Inject ExplorerTransactionRepository txRepo;
     @Inject SecretStorage secretRepo;
-    @Inject AccountRepository accountRepo;
-    @Inject AddressRepository addressRepo;
+    @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
+    @Inject BlockChainAccountRepository accountRepo;
+    @Inject ExplorerAddressRepository addressRepo;
     @Inject InfoRepository infoRepo;
+    private List<MinterAddress> myAddresses = new ArrayList<>();
     private MultiRowAdapter mAdapter;
     private SimpleRecyclerAdapter<HistoryTransaction, ItemViewHolder> mTransactionsAdapter;
-    private SimpleRecyclerAdapter<AddressData.CoinBalance, ItemViewHolder> mCoinsAdapter;
+    private SimpleRecyclerAdapter<AccountItem, ItemViewHolder> mCoinsAdapter;
     private ListWithButtonRow mTransactionsRow, mCoinsRow;
 
     @Inject
@@ -90,33 +97,30 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
         mTransactionsAdapter = new SimpleRecyclerAdapter.Builder<HistoryTransaction, ItemViewHolder>()
                 .setCreator(R.layout.item_list_with_image, ItemViewHolder.class)
                 .setBinder((itemViewHolder, item, position) -> {
-                    final String addrString;
-                    if (item.isIncoming()) {
-                        addrString = item.data.from.toShortString();
+                    if (item.isIncoming(myAddresses)) {
                         itemViewHolder.amount.setText(String.format("+ %s", item.data.amount.toPlainString()));
                         itemViewHolder.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorGreen));
                     } else {
-                        addrString = item.data.to.toShortString();
-                        itemViewHolder.amount.setText(String.valueOf(item.data.amount.toPlainString().replace("-", "- ")));
+                        itemViewHolder.amount.setText(String.format("- %s", item.data.amount.toPlainString()));
                         itemViewHolder.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorPrimary));
                     }
 
                     if (item.username != null) {
                         itemViewHolder.title.setText(String.format("@%s", item.username));
                     } else {
-                        itemViewHolder.title.setText(addrString);
+                        itemViewHolder.title.setText(item.data.to.toShortString());
                     }
 
                     itemViewHolder.avatar.setImageUrl(item.getAvatar());
                     itemViewHolder.subname.setText(item.data.coin.toUpperCase());
                 }).build();
 
-        mCoinsAdapter = new SimpleRecyclerAdapter.Builder<AddressData.CoinBalance, ItemViewHolder>()
+        mCoinsAdapter = new SimpleRecyclerAdapter.Builder<AccountItem, ItemViewHolder>()
                 .setCreator(R.layout.item_list_with_image, ItemViewHolder.class)
                 .setBinder((itemViewHolder, item, position) -> {
                     itemViewHolder.title.setText(item.coin.toUpperCase());
-                    itemViewHolder.amount.setText(item.getBalance().toPlainString());
-                    itemViewHolder.avatar.setImageUrl(session.getUser().getData().getAvatar().getUrl());
+                    itemViewHolder.amount.setText(item.balance.toPlainString());
+                    itemViewHolder.avatar.setImageUrl(item.getAvatar());
                     itemViewHolder.subname.setVisibility(View.GONE);
                 }).build();
     }
@@ -124,67 +128,29 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
     @Override
     public void attachView(CoinsTabModule.CoinsTabView view) {
         super.attachView(view);
+        myAddresses = secretRepo.getAddresses();
 
-
-        safeSubscribeIoToUi(rxCall(repo.getTransactions(secretRepo.getAddresses())))
-                .switchMap(items -> TransactionDataSource.mapAddressesInfo(infoRepo, items))
-                .retryWhen(getErrorResolver())
+        safeSubscribeIoToUi(rxCallExp(txRepo.getTransactions(myAddresses)))
+                .switchMap(items -> TransactionDataSource.mapAddressesInfo(myAddresses, infoRepo, items))
                 .subscribe(res -> {
-                    int cnt = mTransactionsAdapter.getItemCount();
-
-                    mTransactionsAdapter.setItems(Stream.of(res.result).limit(5).toList());
-                    if (cnt == 0) {
-                        mTransactionsAdapter.notifyItemRangeInserted(0, mTransactionsAdapter.getItemCount());
-                    } else {
-                        mTransactionsAdapter.notifyItemRangeChanged(0, mTransactionsAdapter.getItemCount());
-                    }
-
-                    cnt = mTransactionsAdapter.getItemCount();
-                    if (cnt == 0) {
+                    mTransactionsAdapter.dispatchChanges(HistoryTransactionDiffUtil.class, Stream.of(res.result).limit(5).toList(), true);
+                    if (mTransactionsAdapter.getItemCount() == 0) {
                         mTransactionsRow.setStatus(ListWithButtonRow.Status.Empty);
                     } else {
                         mTransactionsRow.setStatus(ListWithButtonRow.Status.Normal);
                     }
                 }, t -> mTransactionsRow.setError(t.getMessage()));
 
-        Observable.create(new ExplorerBalanceFetcher(addressRepo, secretRepo.getAddresses()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(res -> {
-
-                    if (res == null || res.coins.isEmpty()) {
-                        mCoinsRow.setStatus(ListWithButtonRow.Status.Empty);
-                        return;
-                    }
-
-                    int cnt = mCoinsAdapter.getItemCount();
-
-                    mCoinsAdapter.setItems(res.coins.values());
-                    if (cnt > 0 && res.coins.size() == 0) {
-                        mCoinsAdapter.notifyItemRangeRemoved(0, cnt);
-                    } else if (mCoinsAdapter.getItemCount() == 0) {
-                        mCoinsAdapter.notifyItemInserted(res.coins.size());
-                    } else {
-                        mCoinsAdapter.notifyDataSetChanged();
-                    }
-
-                    Timber.d("Coins count: %d", res.coins.size());
-
-                    final StringHelper.DecimalFraction num = StringHelper.splitDecimalFractions(res.bipTotal);
-                    getViewState().setBalance(num.intPart, num.fractionalPart, bips(num.intPart));
-
-                    mCoinsRow.setStatus(ListWithButtonRow.Status.Normal);
-
-                }, t -> {
-                    mCoinsRow.setError(t.getMessage());
-                });
-
+        accountStorage.update();
         getViewState().setAdapter(mAdapter);
     }
 
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
+        if (session.getRole() == AuthSession.AuthType.Advanced) {
+            getViewState().hideAvatar();
+        }
         getViewState().setAvatar(session.getUser().getData().getAvatar().getUrl());
         mTransactionsRow = new ListWithButtonRow.Builder("Latest transactions")
                 .setAction("All transactions", this::onClickStartTransactionList)
@@ -197,6 +163,17 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
                 .setAdapter(mCoinsAdapter)
                 .setEmptyTitle("You have no one address. Nothing to show.")
                 .build();
+
+        safeSubscribeIoToUi(accountStorage.observe())
+                .map(AccountStorage.groupAccountByCoin())
+                .subscribe(res -> {
+                    Timber.d("Update coins list");
+                    mCoinsAdapter.dispatchChanges(AccountItem.DiffUtilImpl.class, res.getAccounts());
+                    final StringHelper.DecimalFraction num = StringHelper.splitDecimalFractions(res.getTotalBalance());
+                    getViewState().setBalance(num.intPart, num.fractionalPart, bips(num.intPart));
+
+                    mCoinsRow.setStatus(ListWithButtonRow.Status.Normal);
+                });
 
 
         mAdapter.addRow(mTransactionsRow);

@@ -29,8 +29,8 @@ import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
 
-import network.minter.explorerapi.repo.AddressRepository;
-import network.minter.explorerapi.repo.TransactionRepository;
+import network.minter.explorerapi.repo.ExplorerAddressRepository;
+import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.BuildConfig;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
@@ -50,8 +50,8 @@ public class MinterExplorerApi {
     private final static String BASE_API_URL = "https://testnet.explorer.minter.network";
     private static MinterExplorerApi INSTANCE;
     private ApiService.Builder mApiService;
-    private TransactionRepository mTransactionRepository;
-    private AddressRepository mAddressRepository;
+    private ExplorerTransactionRepository mTransactionRepository;
+    private ExplorerAddressRepository mAddressRepository;
 
     public static void initialize(boolean debug) {
         if(INSTANCE != null) {
@@ -78,17 +78,17 @@ public class MinterExplorerApi {
         return INSTANCE;
     }
 
-    public TransactionRepository transactions() {
+    public ExplorerTransactionRepository transactions() {
         if(mTransactionRepository == null) {
-            mTransactionRepository = new TransactionRepository(mApiService);
+            mTransactionRepository = new ExplorerTransactionRepository(mApiService);
         }
 
         return mTransactionRepository;
     }
 
-    public AddressRepository address() {
+    public ExplorerAddressRepository address() {
         if (mAddressRepository == null) {
-            mAddressRepository = new AddressRepository(mApiService);
+            mAddressRepository = new ExplorerAddressRepository(mApiService);
         }
 
         return mAddressRepository;

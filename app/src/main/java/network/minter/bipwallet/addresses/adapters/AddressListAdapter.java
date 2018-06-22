@@ -25,76 +25,60 @@
 
 package network.minter.bipwallet.addresses.adapters;
 
+import android.arch.lifecycle.Observer;
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.recyclerview.extensions.AsyncDifferConfig;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import network.minter.bipwallet.R;
+import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.internal.helpers.ContextHelper;
-import network.minter.my.models.AddressData;
+import timber.log.Timber;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class AddressListAdapter extends PagedListAdapter<AddressData, AddressListAdapter.ViewHolder> {
-    private LayoutInflater mInflater;
-    private OnAddressClickListener mAddressClickListener;
-    private final static DiffUtil.ItemCallback<AddressData> sDiffUtilCallback = new DiffUtil.ItemCallback<AddressData>() {
+public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressListAdapter.ViewHolder> {
+    private final static DiffUtil.ItemCallback<AddressItem> sDiffUtilCallback = new DiffUtil.ItemCallback<AddressItem>() {
         @Override
-        public boolean areItemsTheSame(AddressData oldItem, AddressData newItem) {
-            return oldItem.id == newItem.id;
+        public boolean areItemsTheSame(AddressItem oldItem, AddressItem newItem) {
+            return oldItem.id.equals(newItem.id);
         }
 
         @Override
-        public boolean areContentsTheSame(AddressData oldItem, AddressData newItem) {
+        public boolean areContentsTheSame(AddressItem oldItem, AddressItem newItem) {
             return oldItem.equals(newItem);
         }
     };
+    private LayoutInflater mInflater;
+    private OnAddressClickListener mAddressClickListener;
     private OnSetMainListener mOnSetMainListener;
 
     public AddressListAdapter() {
         super(sDiffUtilCallback);
     }
 
-    private AddressListAdapter(@NonNull AsyncDifferConfig<AddressData> config) {
+    private AddressListAdapter(@NonNull AsyncDifferConfig<AddressItem> config) {
         super(config);
     }
 
     public void setOnSetMainListener(OnSetMainListener listener) {
         mOnSetMainListener = listener;
-    }
-
-    public void setData(final List<AddressData> data) {
-//        mItems = new ArrayList<>(data);
-        resort();
-    }
-
-    public void resort() {
-//        Collections.sort(mItems, new Comparator<AddressData>() {
-//            @Override
-//            public int compare(AddressData o1, AddressData o2) {
-//                if (o1.isMain && !o2.isMain) {
-//                    return 1;
-//                } else {
-//                    noinspection ComparatorMethodParameterNotUsed
-//                    return -1;
-//                }
-//            }
-//        });
     }
 
     @NonNull
@@ -110,13 +94,14 @@ public class AddressListAdapter extends PagedListAdapter<AddressData, AddressLis
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AddressData item = getItem(position);
+        AddressItem item = getItem(position);
 
         if (item.isMain || position == 0) {
             holder.addressTitle.setText("Main address");
         } else {
             holder.addressTitle.setText("Address #" + String.valueOf(position + 1));
         }
+        holder.defSwitch.setChecked(item.isMain || position == 0);
 
         holder.address.setText(item.address.toString());
         holder.address.setOnClickListener(v -> {
@@ -128,20 +113,41 @@ public class AddressListAdapter extends PagedListAdapter<AddressData, AddressLis
             ContextHelper.copyToClipboard(v.getContext(), item.address.toString());
         });
         holder.securedValue.setText(item.isServerSecured ? "Bip Wallet" : "You");
-        holder.defSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    notifyItemMoved(position, 0);
-//                } else {
-//                    notifyItemMoved(position, findByAddress(item.address));
-//                }
-
-                if (mOnSetMainListener != null) {
-                    mOnSetMainListener.onSetMain(isChecked, item);
-                }
+        holder.defSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (mOnSetMainListener != null) {
+                mOnSetMainListener.onSetMain(isChecked, item);
             }
         });
+
+        if (item.balance.getStateLiveData().getValue() == AddressItem.BalanceState.Loading) {
+            Timber.d("Showing progress");
+            holder.balanceValue.setVisibility(View.INVISIBLE);
+            holder.balanceProgress.setVisibility(View.VISIBLE);
+            item.balance.getStateLiveData().observeForever(new Observer<AddressItem.BalanceState>() {
+                @Override
+                public void onChanged(@Nullable AddressItem.BalanceState balanceState) {
+                    Timber.d("State is null");
+                    if (balanceState == null || balanceState == AddressItem.BalanceState.Loading) {
+                        return;
+                    }
+
+                    item.balance.getStateLiveData().removeObserver(this);
+                    Timber.d("State is loaded");
+                    Observable.just(true)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .subscribe(res -> {
+                                notifyItemChanged(holder.getAdapterPosition());
+                            });
+
+                }
+            });
+        } else {
+            Timber.d("Showing amount");
+            holder.balanceValue.setText(item.balance.getAmount().toPlainString());
+            holder.balanceValue.setVisibility(View.VISIBLE);
+            holder.balanceProgress.setVisibility(View.GONE);
+        }
     }
 
     public void setOnAddressClickListener(OnAddressClickListener clickListener) {
@@ -150,7 +156,7 @@ public class AddressListAdapter extends PagedListAdapter<AddressData, AddressLis
 
 //    private int findByAddress(MinterAddress address) {
 //        int pos = 0;
-//        for (AddressData d : mItems) {
+//        for (MyAddressData d : mItems) {
 //            if (d.address.equals(address)) {
 //                return pos;
 //            }
@@ -161,11 +167,11 @@ public class AddressListAdapter extends PagedListAdapter<AddressData, AddressLis
 //    }
 
     public interface OnAddressClickListener {
-        void onClick(View v, AddressData address);
+        void onClick(View v, AddressItem address);
     }
 
     public interface OnSetMainListener {
-        void onSetMain(boolean isMain, AddressData data);
+        void onSetMain(boolean isMain, AddressItem data);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -173,6 +179,7 @@ public class AddressListAdapter extends PagedListAdapter<AddressData, AddressLis
         @BindView(R.id.address) TextView address;
         @BindView(R.id.action_copy) View actionCopy;
         @BindView(R.id.balance_value) TextView balanceValue;
+        @BindView(R.id.balance_progress) ProgressBar balanceProgress;
         @BindView(R.id.secured_value) TextView securedValue;
         @BindView(R.id.default_switch) Switch defSwitch;
         @BindView(R.id.row_address) View rowAddress;

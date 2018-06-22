@@ -55,7 +55,7 @@ import network.minter.my.models.User;
 import network.minter.my.repo.ProfileRepository;
 import timber.log.Timber;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
 /**
  * MinterWallet. 2018
@@ -82,7 +82,7 @@ public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.Set
     }
 
     public void onUpdateProfile() {
-        safeSubscribeIoToUi(rxCall(profileRepo.getProfile()))
+        safeSubscribeIoToUi(rxCallMy(profileRepo.getProfile()))
                 .subscribe(res -> {
                     if (res.isSuccess()) {
                         User u = session.getUser();
@@ -125,7 +125,7 @@ public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.Set
                     return;
                 }
 
-                safeSubscribeIoToUi(rxCall(profileRepo.updateAvatar(ImageHelper.getBase64FromBitmap(avatar, 400))))
+                safeSubscribeIoToUi(rxCallMy(profileRepo.updateAvatar(ImageHelper.getBase64FromBitmap(avatar, 400))))
                         .subscribe(res -> {
                             mChangeAvatarRow.hideProgress();
                             if (res.isSuccess()) {
@@ -147,18 +147,27 @@ public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.Set
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        mChangeAvatarRow = new ChangeAvatarRow(() -> session.getUser().getData().getAvatar(), this::onClickChangeAvatar);
-        mMainAdapter.addRow(mChangeAvatarRow);
+        if (session.getRole() == AuthSession.AuthType.Basic) {
+            mChangeAvatarRow = new ChangeAvatarRow(() -> session.getUser().getData().getAvatar(), this::onClickChangeAvatar);
+            mMainAdapter.addRow(mChangeAvatarRow);
 
-        mMainSettingsRows.put("username", new SettingsButtonRow("Username", () -> "@" + session.getUser().getData().username, this::onClickChangeUsername));
-        mMainSettingsRows.put("phone", new SettingsButtonRow("Mobile", () -> session.getUser().getData().phone, "Add", this::onClickChangePhone));
-        mMainSettingsRows.put("email", new SettingsButtonRow("Email", () -> session.getUser().getData().email, "Add", this::onClickChangeEmail));
-        mMainSettingsRows.put("password", new SettingsButtonRow("Password", "Change", this::onClickChangePassword).setInactive(true));
-        Stream.of(mMainSettingsRows.values()).forEach(item -> mMainAdapter.addRow(item));
+            mMainSettingsRows.put("username", new SettingsButtonRow("Username", () -> session.getUser().getData().username, this::onClickChangeUsername));
+//        mMainSettingsRows.put("phone", new SettingsButtonRow("Mobile", () -> session.getUser().getData().phone, "Add", this::onClickChangePhone));
+            mMainSettingsRows.put("email", new SettingsButtonRow("Email", () -> session.getUser().getData().email, "Add", this::onClickChangeEmail));
+            mMainSettingsRows.put("password", new SettingsButtonRow("Password", "Change", this::onClickChangePassword).setInactive(true));
+            Stream.of(mMainSettingsRows.values()).forEach(item -> mMainAdapter.addRow(item));
+        }
 
-        mAdditionalSettingsRows.put("language", new SettingsButtonRow("Language", session.getUser().getData().getLanguageDisplay(), this::onClickChangePassword).setInactive(true));
-        Stream.of(mAdditionalSettingsRows.values()).forEach(item -> mAdditionalAdapter.addRow(item));
-        mAdditionalAdapter.addRow(new SettingsButtonRow("My Addresses", "Manage", this::onClickAddresses).setInactive(true));
+        if (session.getRole() == AuthSession.AuthType.Advanced) {
+            mMainSettingsRows.put("language", new SettingsButtonRow("Language", session.getUser().getData().getLanguageDisplay(), this::onClickChangePassword).setInactive(true));
+            Stream.of(mMainSettingsRows.values()).forEach(item -> mMainAdapter.addRow(item));
+            mMainAdapter.addRow(new SettingsButtonRow("My Addresses", "Manage", this::onClickAddresses).setInactive(true));
+        } else {
+            mAdditionalSettingsRows.put("language", new SettingsButtonRow("Language", session.getUser().getData().getLanguageDisplay(), this::onClickChangePassword).setInactive(true));
+            Stream.of(mAdditionalSettingsRows.values()).forEach(item -> mAdditionalAdapter.addRow(item));
+            mAdditionalAdapter.addRow(new SettingsButtonRow("My Addresses", "Manage", this::onClickAddresses).setInactive(true));
+        }
+
     }
 
     private void onClickAddresses(View view, View sharedView, String value) {

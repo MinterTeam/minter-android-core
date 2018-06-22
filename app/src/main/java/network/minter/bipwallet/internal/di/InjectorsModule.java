@@ -41,6 +41,7 @@ import network.minter.bipwallet.auth.ui.SigninActivity;
 import network.minter.bipwallet.auth.ui.SplashFragment;
 import network.minter.bipwallet.internal.di.annotations.ActivityScope;
 import network.minter.bipwallet.internal.di.annotations.FragmentScope;
+import network.minter.bipwallet.sending.ui.DialogTxSendActivity;
 import network.minter.bipwallet.tx.ui.TransactionListActivity;
 
 /**
@@ -90,5 +91,9 @@ public interface InjectorsModule {
     @ContributesAndroidInjector
     @ActivityScope
     TransactionListActivity transactionListActivityInjector();
+
+    @ContributesAndroidInjector
+    @ActivityScope
+    DialogTxSendActivity dialogTxSendActivityInjector();
 
 }

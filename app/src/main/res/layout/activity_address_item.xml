@@ -192,7 +192,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/margin_edges"
-                android:text="@string/activity_address_item_secured_bip_description"
+                android:text="@string/address_item_secured_bip_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/address.info"

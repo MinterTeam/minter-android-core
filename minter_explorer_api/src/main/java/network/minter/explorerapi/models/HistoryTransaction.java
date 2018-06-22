@@ -28,6 +28,7 @@ package network.minter.explorerapi.models;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import network.minter.mintercore.crypto.BytesData;
@@ -50,8 +51,12 @@ public class HistoryTransaction {
     public transient String username;
     public transient String avatarUrl;
 
-    public boolean isIncoming() {
-        return data != null && data.amount.compareTo(new BigDecimal(0)) > 0;
+    public boolean isIncoming(List<MinterAddress> addressList) {
+        return addressList.contains(data.to);
+    }
+
+    public boolean isIncoming(MinterAddress address) {
+        return data.to.equals(address);
     }
 
     public String getAvatar() {

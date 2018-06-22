@@ -26,12 +26,10 @@
 package network.minter.blockchainapi.models.operational;
 
 import android.support.annotation.NonNull;
-import android.util.Base64;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import network.minter.mintercore.MinterSDK;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.NativeSecp256k1;
 import network.minter.mintercore.crypto.PrivateKey;
@@ -49,13 +47,16 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
 public class Transaction<OperationData extends Operation> {
     public final static BigInteger VALUE_MUL = new BigInteger("1000000000000000000", 10);
     public final static BigDecimal VALUE_MUL_DEC = new BigDecimal("1000000000000000000");
-    private BigInteger mNonce;
-    private BigInteger mGasPrice = new BigInteger("1000000000", 10);
+    public final static BigDecimal PAID_TX_COST = new BigDecimal("0.00000001");
+    private BigInteger mNonce = new BigInteger("2");
+    private BigInteger mGasPrice = new BigInteger("1");
     private OperationType mType = OperationType.SendCoin;
     private OperationData mOperationData;
     private BigInteger mV = new BigInteger("1");
     private BigInteger mR = new BigInteger("0");
     private BigInteger mS = new BigInteger("0");
+    private BytesData mPayload = new BytesData(new byte[0]);
+    private BytesData mServiceData = new BytesData(new byte[0]);
 
     private Transaction(BigInteger nonce) {
         mNonce = nonce;
@@ -67,7 +68,7 @@ public class Transaction<OperationData extends Operation> {
     public static <T extends Operation> Transaction<T> fromEncoded(String base64encoded, Class<T> type) {
         checkArgument(base64encoded != null && base64encoded.length() > 0, "Base64 encoded transaction is empty");
         checkArgument(type != null, "Class of transaction type must be set");
-        final BytesData bd = new BytesData(Base64.decode(base64encoded, Base64.DEFAULT));
+        final BytesData bd = new BytesData(base64encoded);
         final DecodeResult rlp = RLP.decode(bd.getData(), 0);
         final Object[] decoded = (Object[]) rlp.getDecoded();
 
@@ -91,9 +92,8 @@ public class Transaction<OperationData extends Operation> {
         return transaction;
     }
 
-    public static TxSendCoin.Builder newSendTransaction(BigInteger nonce, BigInteger gasPrice) {
+    public static TxSendCoin.Builder newSendTransaction(BigInteger nonce) {
         Transaction<TxSendCoin> tx = new Builder<TxSendCoin>(nonce)
-                .setGasPrice(gasPrice)
                 .setType(OperationType.SendCoin)
                 .build();
 
@@ -134,9 +134,7 @@ public class Transaction<OperationData extends Operation> {
         mR = new BigInteger(signature.r);
         mS = new BigInteger(signature.s);
 
-        Timber.i(signature.toString());
-
-        return new TransactionSign(MinterSDK.PREFIX_ADDRESS + new BytesData(encode(false)).toHexString());
+        return new TransactionSign(new BytesData(encode(false)).toHexString());
     }
 
     public OperationData getData() {
@@ -149,6 +147,9 @@ public class Transaction<OperationData extends Operation> {
     }
 
     byte[] fromRawRlp(int idx, Object[] raw) {
+        if (raw[idx] instanceof String) {
+            return ((String) raw[idx]).getBytes();
+        }
         return (byte[]) raw[idx];
     }
 
@@ -161,9 +162,11 @@ public class Transaction<OperationData extends Operation> {
         mNonce = new BigInteger(fromRawRlp(0, raw));
         mGasPrice = new BigInteger(fromRawRlp(1, raw));
         mType = OperationType.findByValue(new BigInteger(fromRawRlp(2, raw)));
-        mV = new BigInteger(fromRawRlp(4, raw));
-        mR = new BigInteger(fromRawRlp(5, raw));
-        mS = new BigInteger(fromRawRlp(6, raw));
+        mPayload = new BytesData(fromRawRlp(4, raw));
+        mServiceData = new BytesData(fromRawRlp(5, raw));
+        mV = new BigInteger(fromRawRlp(6, raw));
+        mR = new BigInteger(fromRawRlp(7, raw));
+        mS = new BigInteger(fromRawRlp(8, raw));
     }
 
     byte[] encode(boolean forSignature) {
@@ -171,13 +174,17 @@ public class Transaction<OperationData extends Operation> {
         if (forSignature) {
             return RLP.encode(new Object[]{
                     mNonce, mGasPrice, mType.getValue(),
-                    data
+                    data,
+                    mPayload.getData(),
+                    mServiceData.getData()
             });
         }
 
         return RLP.encode(new Object[]{
                 mNonce, mGasPrice, mType.getValue(),
                 data,
+                mPayload.getData(),
+                mServiceData.getData(),
                 mV, mR, mS
         });
     }

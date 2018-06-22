@@ -184,7 +184,7 @@ public class SettingsTabFragment extends HomeTabFragment implements SettingsTabM
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         Wallet.app().session().logout();
-        Wallet.app().secretRepo().destroy();
+        Wallet.app().secretStorage().destroy();
 
         getActivity().startActivity(intent);
         getActivity().finish();

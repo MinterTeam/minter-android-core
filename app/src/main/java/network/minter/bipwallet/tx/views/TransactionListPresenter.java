@@ -25,6 +25,7 @@
 
 package network.minter.bipwallet.tx.views;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PagedList;
 import android.arch.paging.RxPagedListBuilder;
 import android.view.View;
@@ -41,7 +42,8 @@ import network.minter.bipwallet.tx.adapters.TransactionDataSource;
 import network.minter.bipwallet.tx.adapters.TransactionItem;
 import network.minter.bipwallet.tx.adapters.TransactionListAdapter;
 import network.minter.explorerapi.models.HistoryTransaction;
-import network.minter.explorerapi.repo.TransactionRepository;
+import network.minter.explorerapi.repo.ExplorerTransactionRepository;
+import network.minter.mintercore.MinterSDK;
 import network.minter.my.repo.InfoRepository;
 
 /**
@@ -52,7 +54,7 @@ import network.minter.my.repo.InfoRepository;
 @InjectViewState
 public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.TransactionListView> {
 
-    @Inject TransactionRepository transactionRepo;
+    @Inject ExplorerTransactionRepository transactionRepo;
     @Inject SecretStorage secretRepo;
     @Inject InfoRepository infoRepo;
 
@@ -61,10 +63,10 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
     private Disposable mListDisposable;
     private RxPagedListBuilder<Integer, TransactionItem> listBuilder;
     private int mLastPosition = 0;
+    private MutableLiveData<TransactionDataSource.LoadState> mLoadState;
 
     @Inject
     public TransactionListPresenter() {
-        mAdapter = new TransactionListAdapter();
     }
 
     @Override
@@ -82,14 +84,19 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
+        mAdapter = new TransactionListAdapter(secretRepo.getAddresses());
+
         mAdapter.setOnExplorerOpenClickListener(this::onExplorerClick);
-        mSourceFactory = new TransactionDataSource.Factory(transactionRepo, infoRepo, secretRepo.getAddresses());
+        mLoadState = new MutableLiveData<>();
+        getViewState().syncProgress(mLoadState);
+        mAdapter.setLoadState(mLoadState);
+        mSourceFactory = new TransactionDataSource.Factory(transactionRepo, infoRepo, secretRepo.getAddresses(), mLoadState);
         PagedList.Config cfg = new PagedList.Config.Builder()
                 .setPageSize(50)
                 .setEnablePlaceholders(false)
                 .build();
 
-        getViewState().showProgress();
+
         listBuilder = new RxPagedListBuilder<>(mSourceFactory, cfg);
         refresh();
 
@@ -97,7 +104,6 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
     }
 
     private void onRefresh() {
-        getViewState().showRefreshProgress();
         mListDisposable.dispose();
         getViewState().scrollTo(0);
         refresh();
@@ -106,7 +112,6 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
     private void refresh() {
         mListDisposable = listBuilder.buildObservable()
                 .subscribe(res -> {
-                    getViewState().hideProgress();
                     getViewState().hideRefreshProgress();
                     mAdapter.submitList(res);
                 });
@@ -114,6 +119,6 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
 
     private void onExplorerClick(View view, HistoryTransaction historyTransaction) {
         // @TODO prefix for hash: MinterSDK.PREFIX_TX
-        getViewState().startExplorer(historyTransaction.hash.toHexString("Mx"));
+        getViewState().startExplorer(historyTransaction.hash.toHexString(MinterSDK.PREFIX_ADDRESS));
     }
 }

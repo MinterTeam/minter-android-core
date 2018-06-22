@@ -25,6 +25,7 @@
 
 package network.minter.bipwallet.tx.adapters;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -42,7 +43,8 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +52,9 @@ import network.minter.bipwallet.R;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
 import network.minter.explorerapi.models.HistoryTransaction;
+import network.minter.mintercore.crypto.MinterAddress;
 
+import static network.minter.bipwallet.tx.adapters.TransactionItem.HEADER;
 import static network.minter.bipwallet.tx.adapters.TransactionItem.TX;
 
 
@@ -60,6 +64,8 @@ import static network.minter.bipwallet.tx.adapters.TransactionItem.TX;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class TransactionListAdapter extends PagedListAdapter<TransactionItem, RecyclerView.ViewHolder> {
+    private List<MinterAddress> mMyAddresses = new ArrayList<>();
+
 
     private final static DiffUtil.ItemCallback<TransactionItem> sDiffCallback = new DiffUtil.ItemCallback<TransactionItem>() {
         @Override
@@ -72,16 +78,19 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
             return oldItem.equals(newItem);
         }
     };
+
     private LayoutInflater mInflater;
     private int mExpandedPosition = -1;
     private OnExplorerOpenClickListener mOnExplorerOpenClickListener;
-
-    public TransactionListAdapter() {
-        super(sDiffCallback);
-    }
+    private MutableLiveData<TransactionDataSource.LoadState> mLoadState;
 
     protected TransactionListAdapter(@NonNull AsyncDifferConfig<TransactionItem> config) {
         super(config);
+    }
+
+    public TransactionListAdapter(List<MinterAddress> addresses) {
+        super(sDiffCallback);
+        mMyAddresses = addresses;
     }
 
     @NonNull
@@ -93,15 +102,28 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
         if (viewType == TX) {
             View view = mInflater.inflate(R.layout.item_list_transaction_expandable, parent, false);
             return new TxViewHolder(view);
+        } else if (viewType == HEADER) {
+            View view = mInflater.inflate(R.layout.item_list_transaction_header, parent, false);
+            return new HeaderViewHolder(view);
+        } else if (viewType == R.layout.item_list_transaction_progress) {
+            View view = mInflater.inflate(R.layout.item_list_transaction_progress, parent, false);
+            return new ProgressViewHolder(view);
         }
 
-        View view = mInflater.inflate(R.layout.item_list_transaction_header, parent, false);
-        return new HeaderViewHolder(view);
+        throw new IllegalStateException(String.format("Invalid viewType %d", viewType));
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (hasProgressRow() && position == getItemCount() - 1) {
+            return R.layout.item_list_transaction_progress;
+        }
+
         return getItem(position).getViewType();
+    }
+
+    public void setOnExplorerOpenClickListener(OnExplorerOpenClickListener listener) {
+        mOnExplorerOpenClickListener = listener;
     }
 
     @Override
@@ -116,21 +138,22 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
             ((TxViewHolder) holder).avatar.setImageUrl(txItem.getAvatar());
 
             final String am;
-            if (item.data.amount.compareTo(new BigDecimal(0)) < 0) {
+
+            if (!item.isIncoming(mMyAddresses)) {
                 if (txItem.getUsername() != null) {
                     h.title.setText(String.format("@%s", txItem.getUsername()));
                 } else {
                     h.title.setText(item.data.to.toShortString());
                 }
 
-                am = item.data.amount.toPlainString().replace("-", "- ");
+                am = String.format("- %s", item.data.amount.toPlainString());
                 h.amount.setText(am);
                 h.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorPrimary));
             } else {
                 if (txItem.getUsername() != null) {
                     h.title.setText(txItem.getUsername());
                 } else {
-                    h.title.setText(item.data.from.toShortString());
+                    h.title.setText(item.data.to.toShortString());
                 }
                 am = String.format("+ %s", item.data.amount.toPlainString());
                 h.amount.setText(am);
@@ -165,8 +188,12 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
         }
     }
 
-    public void setOnExplorerOpenClickListener(OnExplorerOpenClickListener listener) {
-        mOnExplorerOpenClickListener = listener;
+    public void setLoadState(MutableLiveData<TransactionDataSource.LoadState> loadState) {
+        mLoadState = loadState;
+    }
+
+    private boolean hasProgressRow() {
+        return mLoadState != null && mLoadState.getValue() != TransactionDataSource.LoadState.Loaded;
     }
 
     public interface OnExplorerOpenClickListener {
@@ -179,6 +206,12 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
         public HeaderViewHolder(View itemView) {
             super(itemView);
             header = ((TextView) ((ViewGroup) itemView).getChildAt(0));
+        }
+    }
+
+    public static final class ProgressViewHolder extends RecyclerView.ViewHolder {
+        public ProgressViewHolder(View itemView) {
+            super(itemView);
         }
     }
 

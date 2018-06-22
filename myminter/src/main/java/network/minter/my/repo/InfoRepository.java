@@ -33,7 +33,7 @@ import java.util.List;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
-import network.minter.my.api.InfoEndpoint;
+import network.minter.my.api.MyInfoEndpoint;
 import network.minter.my.models.AddressInfoResult;
 import network.minter.my.models.MyResult;
 import network.minter.my.models.User;
@@ -44,7 +44,7 @@ import retrofit2.Call;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class InfoRepository extends DataRepository<InfoEndpoint> {
+public class InfoRepository extends DataRepository<MyInfoEndpoint> {
     public InfoRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
@@ -89,8 +89,8 @@ public class InfoRepository extends DataRepository<InfoEndpoint> {
 
     @NonNull
     @Override
-    protected Class<InfoEndpoint> getServiceClass() {
-        return InfoEndpoint.class;
+    protected Class<MyInfoEndpoint> getServiceClass() {
+        return MyInfoEndpoint.class;
     }
 
 }

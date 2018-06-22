@@ -48,6 +48,7 @@ import static network.minter.mintercore.internal.common.Preconditions.checkNotNu
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
+@SuppressWarnings("ConstantConditions")
 public class EncryptedString implements Serializable {
     private final static String IV = "Minter seed";
     String mEncrypted;
@@ -56,10 +57,9 @@ public class EncryptedString implements Serializable {
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
         checkArgument(rawString != null && rawString.length() > 0, "Nothing to encrypt. Raw string is empty");
         checkArgument(encryptionKey != null && encryptionKey.length() > 0, "Encryption key can't be empty");
-        checkArgument(encryptionKey.length() >= 32);
 
         final AES256Crypt crypt = new AES256Crypt();
-        mEncrypted = crypt.encrypt(rawString, encryptionKey.substring(0, 32), iv);
+        mEncrypted = crypt.encryptRaw(rawString, encryptionKey, iv);
     }
 
     public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey)
@@ -78,17 +78,16 @@ public class EncryptedString implements Serializable {
     public String decrypt(@NonNull final String encryptionKey, final String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
 
-        checkArgument(encryptionKey.length() >= 32);
+        checkArgument(encryptionKey != null);
 
         final AES256Crypt crypt = new AES256Crypt();
-        return crypt.decrypt(mEncrypted, encryptionKey.substring(0, 32), iv);
+        return crypt.decryptRaw(mEncrypted, encryptionKey, iv);
     }
 
     public String decrypt(@NonNull final String encryptionKey)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
         return decrypt(encryptionKey, IV);
     }
-
 
     @NonNull
     public String getEncrypted() {

@@ -27,17 +27,19 @@ package network.minter.bipwallet.internal.di;
 
 import dagger.Module;
 import dagger.Provides;
+import network.minter.bipwallet.advanced.repo.AccountStorage;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.storage.KVStorage;
 import network.minter.blockchainapi.MinterBlockChainApi;
-import network.minter.blockchainapi.repo.AccountRepository;
+import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.explorerapi.MinterExplorerApi;
-import network.minter.explorerapi.repo.TransactionRepository;
+import network.minter.explorerapi.repo.ExplorerAddressRepository;
+import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.my.MyMinterApi;
-import network.minter.my.repo.AddressRepository;
 import network.minter.my.repo.AuthRepository;
 import network.minter.my.repo.InfoRepository;
+import network.minter.my.repo.MyAddressRepository;
 import network.minter.my.repo.ProfileRepository;
 
 /**
@@ -56,7 +58,13 @@ public class RepoModule {
 
     @Provides
     @WalletApp
-    public TransactionRepository provideExplorerTransactionsRepo(MinterExplorerApi api) {
+    public AccountStorage provideAccountStorage(KVStorage storage, SecretStorage secretStorage, ExplorerAddressRepository addressRepository) {
+        return new AccountStorage(storage, secretStorage, addressRepository);
+    }
+
+    @Provides
+    @WalletApp
+    public ExplorerTransactionRepository provideExplorerTransactionsRepo(MinterExplorerApi api) {
         return api.transactions();
     }
 
@@ -74,13 +82,13 @@ public class RepoModule {
 
     @Provides
     @WalletApp
-    public AddressRepository provideAddressRepository(MyMinterApi api) {
+    public MyAddressRepository provideAddressRepository(MyMinterApi api) {
         return api.address();
     }
 
     @Provides
     @WalletApp
-    public network.minter.explorerapi.repo.AddressRepository provideExplorerAddressRepository(MinterExplorerApi api) {
+    public ExplorerAddressRepository provideExplorerAddressRepository(MinterExplorerApi api) {
         return api.address();
     }
 
@@ -100,7 +108,7 @@ public class RepoModule {
 
     @Provides
     @WalletApp
-    public AccountRepository provideBlockChainAccountRepo() {
+    public BlockChainAccountRepository provideBlockChainAccountRepo() {
         return MinterBlockChainApi.getInstance().account();
     }
 

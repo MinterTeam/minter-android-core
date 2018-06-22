@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.mintercore;
 
 import android.support.test.runner.AndroidJUnit4;
@@ -5,8 +30,13 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import network.minter.mintercore.bip39.HDKey;
 import network.minter.mintercore.bip39.MnemonicResult;
 import network.minter.mintercore.bip39.NativeBip39;
+import network.minter.mintercore.bip39.NativeHDKeyEncoder;
+import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.mintercore.crypto.PrivateKey;
+import network.minter.mintercore.crypto.PublicKey;
 import network.minter.mintercore.internal.helpers.StringHelper;
 
 import static junit.framework.Assert.assertEquals;
@@ -40,7 +70,7 @@ import static junit.framework.Assert.assertTrue;
 public class NativeBip39MnemonicTest {
 
     static {
-        NativeBip39.init();
+        MinterSDK.initialize();
     }
 
     @Test
@@ -92,5 +122,32 @@ public class NativeBip39MnemonicTest {
                 "f01e96ba468700a7fa92b8fdf500b8d3cef5cd88e1592a83f31631e9c3f3ed86cffbaba747e2d3f00476b17f3c8b4c19f3f6577cf619464886402ce0faeef01c",
                 seedHex
         );
+    }
+
+    @Test
+    public void testBip39SeedToAddress() {
+        final String mnemonic = "royal park wage travel execute focus brother click twin stove drift margin";
+        final MinterAddress address = new MinterAddress("Mx8ab1417f7b0659a60990c91d85b12f368d34fc3a");
+        final byte[] seed = NativeBip39.mnemonicToBip39Seed(mnemonic);
+        assertNotNull(seed);
+        assertEquals(64, seed.length);
+        String seedHex = StringHelper.bytesToHexString(seed);
+        assertEquals(
+                "Given seed: " + seedHex,
+                "f88392faf3c460b05bbd50278362d12b19dc8e0cf2ebd5c97cc9ce01b5db819c7364f4d72d3f2ef85c96328bcc49763ad31bf546f8d0e56009524fe3b9b01502",
+                seedHex
+        );
+
+        // bip 32 root key    with derivation path: m/44'/60'/0'/0
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
+        // bip 39 private key with derivation path: m/44'/60'/0' - dropped external/internal index
+        final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
+        final PrivateKey privateKey = extKey.getPrivateKey();
+        // to get minter address, we should always use uncompressed key
+        final PublicKey publicKey = privateKey.getPublicKey(false);
+        final MinterAddress outAddress = publicKey.toMinter();
+
+        assertEquals(address, outAddress);
+
     }
 }

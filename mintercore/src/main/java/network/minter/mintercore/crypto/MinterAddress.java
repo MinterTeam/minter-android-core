@@ -38,9 +38,6 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
  */
 @Parcel
 public class MinterAddress extends PublicKey {
-    MinterAddress() {
-    }
-
     public MinterAddress(byte[] data) {
         super(
                 checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")
@@ -73,6 +70,20 @@ public class MinterAddress extends PublicKey {
                         .sha3Mutable()
                         .takeLastMutable(20)
         );
+    }
+
+    MinterAddress() {
+    }
+
+    @Override
+    public MinterAddress clone() {
+        super.clone();
+        MinterAddress out = new MinterAddress();
+        out.mValid = mValid;
+        out.mData = new byte[mData.length];
+        System.arraycopy(mData, 0, out.mData, 0, mData.length);
+
+        return out;
     }
 
     /**

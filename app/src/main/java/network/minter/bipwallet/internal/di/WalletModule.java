@@ -33,6 +33,8 @@ import com.fatboyindustrial.gsonjodatime.Converters;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.hawk.Hawk;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.util.UUID;
 
 import javax.inject.Named;
@@ -75,6 +77,7 @@ public class WalletModule {
         MinterBlockChainApi.initialize(debug);
         MinterExplorerApi.initialize(debug);
         MyMinterApi.initialize(debug);
+        JodaTimeAndroid.init(context);
     }
 
     @Provides

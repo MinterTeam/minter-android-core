@@ -31,9 +31,9 @@ import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
 
-import network.minter.blockchainapi.repo.AccountRepository;
-import network.minter.blockchainapi.repo.CoinRepository;
-import network.minter.blockchainapi.repo.TransactionRepository;
+import network.minter.blockchainapi.repo.BlockChainAccountRepository;
+import network.minter.blockchainapi.repo.BlockChainCoinRepository;
+import network.minter.blockchainapi.repo.BlockChainTransactionRepository;
 import network.minter.mintercore.BuildConfig;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
@@ -52,9 +52,9 @@ public class MinterBlockChainApi {
     private final static String BASE_NODE_URL = "http://minter-node-1.testnet.minter.network:8841";
     private static MinterBlockChainApi INSTANCE;
     private ApiService.Builder mApiService;
-    private AccountRepository mAccountRepository;
-    private CoinRepository mCoinRepository;
-    private TransactionRepository mTransactionRepository;
+    private BlockChainAccountRepository mAccountRepository;
+    private BlockChainCoinRepository mCoinRepository;
+    private BlockChainTransactionRepository mTransactionRepository;
 
     public MinterBlockChainApi() {
         this(BASE_NODE_URL);
@@ -101,25 +101,25 @@ public class MinterBlockChainApi {
         return out;
     }
 
-    public AccountRepository account() {
+    public BlockChainAccountRepository account() {
         if (mAccountRepository == null) {
-            mAccountRepository = new AccountRepository(mApiService);
+            mAccountRepository = new BlockChainAccountRepository(mApiService);
         }
 
         return mAccountRepository;
     }
 
-    public TransactionRepository transactions() {
+    public BlockChainTransactionRepository transactions() {
         if (mTransactionRepository == null) {
-            mTransactionRepository = new TransactionRepository(mApiService);
+            mTransactionRepository = new BlockChainTransactionRepository(mApiService);
         }
 
         return mTransactionRepository;
     }
 
-    public CoinRepository coin() {
+    public BlockChainCoinRepository coin() {
         if (mCoinRepository == null) {
-            mCoinRepository = new CoinRepository(mApiService);
+            mCoinRepository = new BlockChainCoinRepository(mApiService);
         }
 
         return mCoinRepository;

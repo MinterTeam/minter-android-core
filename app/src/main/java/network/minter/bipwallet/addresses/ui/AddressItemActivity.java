@@ -49,12 +49,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.addresses.AddressManageModule;
+import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.addresses.views.AddressItemPresenter;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
 import network.minter.bipwallet.internal.dialogs.WalletConfirmDialog;
 import network.minter.bipwallet.internal.dialogs.WalletProgressDialog;
 import network.minter.bipwallet.internal.system.ActivityBuilder;
-import network.minter.my.models.AddressData;
 
 /**
  * MinterWallet. 2018
@@ -72,6 +72,10 @@ public class AddressItemActivity extends BaseMvpInjectActivity implements Addres
     @BindView(R.id.action_remove) Button actionDelete;
     @BindView(R.id.action_copy) View actionCopy;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.secured_description) TextView description;
+    @BindView(R.id.action_backup_seed) Button actionBackupSeed;
+    @BindView(R.id.action_download_utc) Button actionDownloadUtc;
+    @BindView(R.id.action_save_pk) Button actionSavePk;
     private WalletProgressDialog mProgress;
 
     @Override
@@ -131,6 +135,19 @@ public class AddressItemActivity extends BaseMvpInjectActivity implements Addres
         actionCopy.setOnClickListener(listener);
     }
 
+    @Override
+    public void hideActions() {
+        actionBackupSeed.setVisibility(View.GONE);
+        actionDownloadUtc.setVisibility(View.GONE);
+        actionSavePk.setVisibility(View.GONE);
+        actionDelete.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setDescription(CharSequence description) {
+        this.description.setText(description);
+    }
+
     @ProvidePresenter
     AddressItemPresenter providePresenter() {
         return presenterProvider.get();
@@ -153,19 +170,19 @@ public class AddressItemActivity extends BaseMvpInjectActivity implements Addres
     }
 
     public static final class Builder extends ActivityBuilder {
-        private final AddressData mData;
+        private final AddressItem mData;
 
-        public Builder(@NonNull Activity from, AddressData data) {
+        public Builder(@NonNull Activity from, AddressItem data) {
             super(from);
             mData = data;
         }
 
-        public Builder(@NonNull Fragment from, AddressData data) {
+        public Builder(@NonNull Fragment from, AddressItem data) {
             super(from);
             mData = data;
         }
 
-        public Builder(@NonNull Service from, AddressData data) {
+        public Builder(@NonNull Service from, AddressItem data) {
             super(from);
             mData = data;
         }

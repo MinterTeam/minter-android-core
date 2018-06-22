@@ -26,12 +26,13 @@
 package network.minter.bipwallet.advanced.models;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.mintercore.crypto.PublicKey;
-import network.minter.my.models.AddressData;
+import network.minter.my.models.MyAddressData;
 
 /**
  * MinterWallet. 2018
@@ -39,6 +40,7 @@ import network.minter.my.models.AddressData;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public final class SecretData implements Serializable {
+    private String id;
     private String mSeedPhrase;
     private BytesData mSeed;
     private PrivateKey mPrivateKey;
@@ -46,6 +48,7 @@ public final class SecretData implements Serializable {
     private MinterAddress mMinterAddress;
 
     public SecretData(String seedPhrase, BytesData seed, PrivateKey privateKey, PublicKey publicKey) {
+        id = UUID.randomUUID().toString();
         mSeedPhrase = seedPhrase;
         mSeed = seed;
         mPrivateKey = privateKey;
@@ -73,14 +76,18 @@ public final class SecretData implements Serializable {
         return mMinterAddress;
     }
 
-    public AddressData toAddressData(boolean isMain, boolean isServerSecured, String encKey) {
-        return new AddressData(mMinterAddress, isMain, mSeedPhrase, isServerSecured, encKey);
+    public MyAddressData toAddressData(boolean isMain, boolean isServerSecured, String encKey) {
+        return new MyAddressData(mMinterAddress, isMain, mSeedPhrase, isServerSecured, encKey);
     }
 
     public void cleanup() {
         mSeedPhrase = "";
         mSeed.cleanup();
         mPrivateKey.cleanup();
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override

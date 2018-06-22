@@ -128,6 +128,11 @@ public class CoinsTabFragment extends HomeTabFragment implements CoinsTabModule.
         startActivity(new Intent(getActivity(), TransactionListActivity.class));
     }
 
+    @Override
+    public void hideAvatar() {
+        avatar.setVisibility(View.GONE);
+    }
+
     @ProvidePresenter
     CoinsTabPresenter providePresenter() {
         return presenterProvider.get();

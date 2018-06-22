@@ -25,6 +25,7 @@
 
 package network.minter.bipwallet.tx.adapters;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.DataSource;
 import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
@@ -46,12 +47,15 @@ import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.helpers.DateHelper;
 import network.minter.explorerapi.models.ExpResult;
 import network.minter.explorerapi.models.HistoryTransaction;
-import network.minter.explorerapi.repo.TransactionRepository;
+import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.my.models.AddressInfoResult;
 import network.minter.my.repo.InfoRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToExpErrorResult;
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallExp;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
 /**
  * MinterWallet. 2018
@@ -60,19 +64,27 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
  */
 public class TransactionDataSource extends PageKeyedDataSource<Integer, TransactionItem> {
 
-    private TransactionRepository mRepo;
+    private ExplorerTransactionRepository mRepo;
     private InfoRepository mInfoRepo;
     private List<MinterAddress> mAddressList;
     private CompositeDisposable mDisposables = new CompositeDisposable();
     private DateTime mLastDate;
+    private MutableLiveData<LoadState> mLoadState;
 
-    public TransactionDataSource(TransactionRepository repo, InfoRepository infoRepo, List<MinterAddress> addresses) {
+    public enum LoadState {
+        Loading,
+        Loaded,
+        Failed
+    }
+
+    public TransactionDataSource(ExplorerTransactionRepository repo, InfoRepository infoRepo, List<MinterAddress> addresses, MutableLiveData<LoadState> loadState) {
         mRepo = repo;
         mInfoRepo = infoRepo;
         mAddressList = addresses;
+        mLoadState = loadState;
     }
 
-    public static ObservableSource<ExpResult<List<HistoryTransaction>>> mapAddressesInfo(InfoRepository infoRepo, ExpResult<List<HistoryTransaction>> items) {
+    public static ObservableSource<ExpResult<List<HistoryTransaction>>> mapAddressesInfo(List<MinterAddress> addresses, InfoRepository infoRepo, ExpResult<List<HistoryTransaction>> items) {
         if (items.result == null || items.result.isEmpty()) {
             return Observable.just(items);
         }
@@ -81,7 +93,7 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
         final Map<MinterAddress, List<HistoryTransaction>> toFetchAddresses = new LinkedHashMap<>(items.result.size());
         for (HistoryTransaction tx : items.result) {
             final MinterAddress add;
-            if (tx.isIncoming()) {
+            if (tx.isIncoming(addresses)) {
                 add = tx.data.from;
             } else {
                 add = tx.data.to;
@@ -97,8 +109,13 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
             toFetchAddresses.get(add).add(tx);
         }
 
-        return rxCall(infoRepo.getAddressesWithUserInfo(toFetch))
+        return rxCallMy(infoRepo.getAddressesWithUserInfo(toFetch))
+                .onErrorResumeNext(convertToMyErrorResult())
                 .map(listInfoResult -> {
+                    if (listInfoResult.data.isEmpty()) {
+                        return items;
+                    }
+
                     for (AddressInfoResult info : listInfoResult.data) {
                         for (HistoryTransaction t : toFetchAddresses.get(info.address)) {
                             t.setUsername(info.user.username).setAvatar(info.user.getAvatar().getUrl());
@@ -111,33 +128,42 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull LoadInitialCallback<Integer, TransactionItem> callback) {
-        rxCall(mRepo.getTransactions(mAddressList, 1))
-                .switchMap(items -> mapAddressesInfo(mInfoRepo, items))
+        mLoadState.postValue(LoadState.Loading);
+        rxCallExp(mRepo.getTransactions(mAddressList, 1))
+                .onErrorResumeNext(convertToExpErrorResult())
+                .switchMap(items -> mapAddressesInfo(mAddressList, mInfoRepo, items))
                 .map(this::groupByDate)
                 .doOnSubscribe(d -> mDisposables.add(d))
                 .subscribe(res -> {
-                    callback.onResult(res.items, null, res.getMeta().currentPage + 1);
+                    mLoadState.postValue(LoadState.Loaded);
+                    callback.onResult(res.items, null, res.getMeta().lastPage == 1 ? null : res.getMeta().currentPage + 1);
                 });
     }
 
     @Override
     public void loadBefore(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Integer, TransactionItem> callback) {
-        rxCall(mRepo.getTransactions(mAddressList, params.key))
-                .switchMap(items -> mapAddressesInfo(mInfoRepo, items))
+        mLoadState.postValue(LoadState.Loading);
+        rxCallExp(mRepo.getTransactions(mAddressList, params.key))
+                .onErrorResumeNext(convertToExpErrorResult())
+                .switchMap(items -> mapAddressesInfo(mAddressList, mInfoRepo, items))
                 .map(this::groupByDate)
                 .doOnSubscribe(d -> mDisposables.add(d))
                 .subscribe(res -> {
+                    mLoadState.postValue(LoadState.Loaded);
                     callback.onResult(res.items, params.key == 1 ? null : params.key - 1);
                 });
     }
 
     @Override
     public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Integer, TransactionItem> callback) {
-        rxCall(mRepo.getTransactions(mAddressList, params.key))
-                .switchMap(items -> mapAddressesInfo(mInfoRepo, items))
+        mLoadState.postValue(LoadState.Loading);
+        rxCallExp(mRepo.getTransactions(mAddressList, params.key))
+                .onErrorResumeNext(convertToExpErrorResult())
+                .switchMap(items -> mapAddressesInfo(mAddressList, mInfoRepo, items))
                 .map(this::groupByDate)
                 .doOnSubscribe(d -> mDisposables.add(d))
                 .subscribe(res -> {
+                    mLoadState.postValue(LoadState.Loaded);
                     callback.onResult(res.items, params.key + 1 > res.getMeta().lastPage ? null : params.key + 1);
                 });
     }
@@ -191,19 +217,21 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
     }
 
     public static class Factory extends DataSource.Factory<Integer, TransactionItem> {
-        private TransactionRepository mRepo;
+        private ExplorerTransactionRepository mRepo;
         private List<MinterAddress> mAddressList;
         private InfoRepository mInfoRepo;
+        private MutableLiveData<LoadState> mLoadState;
 
-        public Factory(TransactionRepository repo, InfoRepository infoRepo, List<MinterAddress> addresses) {
+        public Factory(ExplorerTransactionRepository repo, InfoRepository infoRepo, List<MinterAddress> addresses, MutableLiveData<LoadState> loadState) {
             mRepo = repo;
             mInfoRepo = infoRepo;
             mAddressList = addresses;
+            mLoadState = loadState;
         }
 
         @Override
         public DataSource<Integer, TransactionItem> create() {
-            return new TransactionDataSource(mRepo, mInfoRepo, mAddressList);
+            return new TransactionDataSource(mRepo, mInfoRepo, mAddressList, mLoadState);
         }
     }
 }

@@ -30,6 +30,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -41,11 +43,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.addresses.AddressManageModule;
+import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.addresses.views.AddressListPresenter;
 import network.minter.bipwallet.advanced.ui.AdvancedMainActivity;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
 import network.minter.bipwallet.internal.views.list.NonScrollableLinearLayoutManager;
-import network.minter.my.models.AddressData;
 
 /**
  * MinterWallet. 2018
@@ -58,6 +60,7 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
     @InjectPresenter AddressListPresenter presenter;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.list) RecyclerView list;
+    @BindView(R.id.progress) ProgressBar progress;
 
     @Override
     public void setAdapter(RecyclerView.Adapter<?> adapter) {
@@ -66,13 +69,14 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
     }
 
     @Override
-    public void startAddressItem(int requestCode, AddressData address) {
+    public void startAddressItem(int requestCode, AddressItem address) {
         new AddressItemActivity.Builder(this, address).start(requestCode);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_address_manage, menu);
+        //@TODO
+        //getMenuInflater().inflate(R.menu.menu_address_manage, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -82,7 +86,6 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
             presenter.onClickAddAddress();
         }
         return super.onOptionsItemSelected(item);
-
     }
 
 
@@ -99,6 +102,16 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
         list.scrollToPosition(position);
     }
 
+    @Override
+    public void hideProgress() {
+        progress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showProgress() {
+        progress.setVisibility(View.VISIBLE);
+    }
+
     @ProvidePresenter
     AddressListPresenter providePresenter() {
         return presenterProvider.get();
@@ -110,5 +123,6 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
         setContentView(R.layout.activity_address_list);
         ButterKnife.bind(this);
         setupToolbar(toolbar);
+        list.setNestedScrollingEnabled(false);
     }
 }

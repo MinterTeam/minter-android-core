@@ -44,9 +44,9 @@ import network.minter.mintercore.bip39.MnemonicResult;
 import network.minter.mintercore.bip39.NativeBip39;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.my.models.User;
-import network.minter.my.repo.AddressRepository;
+import network.minter.my.repo.MyAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCall;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 import static network.minter.bipwallet.internal.helpers.ContextHelper.copyToClipboard;
 
 /**
@@ -60,7 +60,7 @@ public class AdvancedGeneratePresenter extends MvpBasePresenter<AdvancedModeModu
     @Inject Context context;
     @Inject SecretStorage repo;
     @Inject AuthSession session;
-    @Inject AddressRepository addressRepo;
+    @Inject MyAddressRepository addressRepo;
 
     private SecureRandom mRandom = new SecureRandom();
     private MnemonicResult mMnemonicResult;
@@ -121,7 +121,7 @@ public class AdvancedGeneratePresenter extends MvpBasePresenter<AdvancedModeModu
 
     private boolean saveServerAddress(String fieldName, String value, MinterAddress address) {
         getViewState().showProgress(null, "Encrypting...");
-        safeSubscribeIoToUi(rxCall(addressRepo.addAddress(repo.getSecret(address).toAddressData(repo.getAddresses().isEmpty(), true, value))))
+        safeSubscribeIoToUi(rxCallMy(addressRepo.addAddress(repo.getSecret(address).toAddressData(repo.getAddresses().isEmpty(), true, value))))
                 .subscribe(res -> {
                     getViewState().hideProgress();
                     if (!res.isSuccess()) {

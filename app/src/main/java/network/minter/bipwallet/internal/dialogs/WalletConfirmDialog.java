@@ -122,7 +122,7 @@ public final class WalletConfirmDialog extends WalletDialog {
                 }
                 try {
                     String out = ((HttpException) t).response().errorBody().string() + "\n";
-                    MyResult errorResult = ReactiveAdapter.createErrorResult(((HttpException) t));
+                    MyResult errorResult = ReactiveAdapter.createMyErrorResult(((HttpException) t));
                     out += errorResult.getError().message + "\n" + errorResult.getError().message + "\n" + ExceptionHelper.getStackTrace(t);
                     mText = out;
                 } catch (IOException e) {
