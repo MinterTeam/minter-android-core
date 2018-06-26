@@ -23,60 +23,64 @@
  * THE SOFTWARE.
  */
 
-package network.minter.bipwallet.internal.storage;
+package network.minter.bipwallet.share;
 
-import com.orhanobut.hawk.Hawk;
-import com.orhanobut.hawk.Storage;
+import org.parceler.Parcel;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import static network.minter.bipwallet.internal.common.Preconditions.firstNonNull;
+
 
 /**
- * MinterWallet. 2018
+ * AtlasAndroid-Profile. 2017
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public final class KVStorage implements Storage {
-    @Override
-    public <T> boolean put(String key, T value) {
-        return Hawk.put(key, value);
+@Parcel
+public class SharingText {
+    public String title;
+    public String descriptionText;
+    public String url;
+    public String imageUrl;
+
+    public SharingText() {
     }
 
-    @Override
-    public <T> T get(String key) {
-        return Hawk.get(key);
+    public SharingText(String title, String url, String image) {
+        this.title = title;
+        this.url = url;
+        this.imageUrl = image;
     }
 
-    public <T> Queue<T> getQueue(String key) {
-        return new LinkedList<>(Hawk.<ArrayList<T>>get(key));
+    public String getTitle() {
+        return firstNonNull(title, "");
     }
 
-    public <T> boolean putQueue(String key, Queue<T> queue) {
-        return Hawk.put(key, queue);
+    public String getUrl() {
+        return firstNonNull(url, "");
     }
 
-    public <T> T get(String key, T defaultValue) {
-        return Hawk.get(key, defaultValue);
+    public String getImageUrl() {
+        return firstNonNull(imageUrl, "");
     }
 
-    @Override
-    public boolean delete(String key) {
-        return Hawk.delete(key);
+    public String getDescription() {
+        return firstNonNull(descriptionText, "");
     }
 
-    @Override
-    public boolean deleteAll() {
-        return Hawk.deleteAll();
-    }
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        if (title != null) {
+            builder.append(title).append("\n");
+        }
 
-    @Override
-    public long count() {
-        return Hawk.count();
-    }
+        if (descriptionText != null) {
+            builder.append(descriptionText).append("\n");
+        }
 
-    @Override
-    public boolean contains(String key) {
-        return Hawk.contains(key);
+        if (url != null && url.length() > 0) {
+            builder.append(url);
+        }
+
+        return builder.toString();
     }
 }

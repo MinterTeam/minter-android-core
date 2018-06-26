@@ -23,38 +23,21 @@
  * THE SOFTWARE.
  */
 
-package network.minter.bipwallet.home;
+package network.minter.bipwallet.internal;
 
-import java.util.List;
-
-import dagger.Component;
-import network.minter.bipwallet.coins.ui.CoinsTabFragment;
-import network.minter.bipwallet.home.ui.HomeActivity;
-import network.minter.bipwallet.internal.di.WalletComponent;
-import network.minter.bipwallet.receiving.ui.ReceiveTabFragment;
-import network.minter.bipwallet.sending.ui.SendingTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
+import android.app.Application;
+import android.content.Context;
+import android.support.test.runner.AndroidJUnitRunner;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Component(dependencies = WalletComponent.class, modules = {
-        HomeModule.class
-})
-@HomeScope
-public interface HomeComponent {
+public class WalletTestRunner extends AndroidJUnitRunner {
 
-    void inject(HomeActivity activity);
-    void inject(CoinsTabFragment fragment);
-    void inject(SendingTabFragment fragment);
-    void inject(ReceiveTabFragment fragment);
-    void inject(SettingsTabFragment fragment);
-    void inject(SettingsUpdateFieldDialog fragment);
-
-    @HomeTabsClasses
-    List<Class<? extends HomeTabFragment>> tabsClasses();
-    HomeActivity homeActivity();
+    @Override
+    public Application newApplication(ClassLoader cl, String className, Context context) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        return super.newApplication(cl, TestWallet.class.getName(), context);
+    }
 }

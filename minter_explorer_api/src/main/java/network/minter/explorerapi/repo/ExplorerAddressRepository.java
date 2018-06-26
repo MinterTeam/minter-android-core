@@ -89,6 +89,9 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
         apiBuilder.registerTypeAdapter(AddressData.class, new AddressDataDeserializer());
     }
 
+    /*
+    {"txCount":1,"coins":[{"coin":"mnt","amount":39.999999,"baseCoinAmount":39.999999,"usdAmount":0.002999999925}]}
+     */
     public static class AddressDataDeserializer implements JsonDeserializer<AddressData> {
         @Override
         public AddressData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -106,13 +109,12 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
                 final Map<String, AddressData.CoinBalance> out = new HashMap<>();
                 for (int i = 0; i < coins.size(); i++) {
                     final JsonObject coin = coins.get(i).getAsJsonObject();
-                    for (String key : coin.keySet()) {
-                        final AddressData.CoinBalance b = new AddressData.CoinBalance();
-                        b.amount = coin.get(key).getAsBigDecimal();
-                        b.usdAmount = coin.get(key).getAsBigDecimal();
-                        b.coin = key;
-                        out.put(key, b);
-                    }
+                    final AddressData.CoinBalance b = new AddressData.CoinBalance();
+                    b.amount = coin.get("amount").getAsBigDecimal();
+                    b.usdAmount = coin.get("usdAmount").getAsBigDecimal();
+                    b.baseCoinAmount = coin.get("baseCoinAmount").getAsBigDecimal();
+                    b.coin = coin.get("coin").getAsString();
+                    out.put(b.coin, b);
                 }
 
                 data.coins = out;

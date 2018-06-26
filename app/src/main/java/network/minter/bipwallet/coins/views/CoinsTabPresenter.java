@@ -40,11 +40,13 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.advanced.models.UserAccount;
 import network.minter.bipwallet.advanced.repo.AccountStorage;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
+import network.minter.bipwallet.apis.explorer.CachedExplorerTransactionRepository;
 import network.minter.bipwallet.coins.CoinsTabModule;
 import network.minter.bipwallet.coins.utils.HistoryTransactionDiffUtil;
 import network.minter.bipwallet.coins.views.rows.ListWithButtonRow;
@@ -60,13 +62,11 @@ import network.minter.bipwallet.tx.adapters.TransactionDataSource;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
-import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.helpers.StringHelper;
 import network.minter.my.repo.InfoRepository;
 import timber.log.Timber;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallExp;
 import static network.minter.bipwallet.internal.helpers.Plurals.bips;
 
 /**
@@ -79,7 +79,7 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
 
     @Inject CacheManager cache;
     @Inject AuthSession session;
-    @Inject ExplorerTransactionRepository txRepo;
+    @Inject CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> txRepo;
     @Inject SecretStorage secretRepo;
     @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
     @Inject BlockChainAccountRepository accountRepo;
@@ -130,18 +130,9 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
         super.attachView(view);
         myAddresses = secretRepo.getAddresses();
 
-        safeSubscribeIoToUi(rxCallExp(txRepo.getTransactions(myAddresses)))
-                .switchMap(items -> TransactionDataSource.mapAddressesInfo(myAddresses, infoRepo, items))
-                .subscribe(res -> {
-                    mTransactionsAdapter.dispatchChanges(HistoryTransactionDiffUtil.class, Stream.of(res.result).limit(5).toList(), true);
-                    if (mTransactionsAdapter.getItemCount() == 0) {
-                        mTransactionsRow.setStatus(ListWithButtonRow.Status.Empty);
-                    } else {
-                        mTransactionsRow.setStatus(ListWithButtonRow.Status.Normal);
-                    }
-                }, t -> mTransactionsRow.setError(t.getMessage()));
-
+        txRepo.update();
         accountStorage.update();
+
         getViewState().setAdapter(mAdapter);
     }
 
@@ -173,6 +164,18 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
                     getViewState().setBalance(num.intPart, num.fractionalPart, bips(num.intPart));
 
                     mCoinsRow.setStatus(ListWithButtonRow.Status.Normal);
+                });
+
+        safeSubscribeIoToUi(
+                txRepo.observe().switchMap(items -> TransactionDataSource.mapAddressesInfo(myAddresses, infoRepo, items)).subscribeOn(Schedulers.io())
+        )
+                .subscribe(res -> {
+                    mTransactionsAdapter.dispatchChanges(HistoryTransactionDiffUtil.class, Stream.of(res).limit(5).toList(), true);
+                    if (mTransactionsAdapter.getItemCount() == 0) {
+                        mTransactionsRow.setStatus(ListWithButtonRow.Status.Empty);
+                    } else {
+                        mTransactionsRow.setStatus(ListWithButtonRow.Status.Normal);
+                    }
                 });
 
 

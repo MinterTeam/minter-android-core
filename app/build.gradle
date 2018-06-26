@@ -37,7 +37,7 @@ android {
         targetSdkVersion minterMaxSdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "network.minter.bipwallet.internal.WalletTestRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
@@ -102,6 +102,10 @@ dependencies {
     implementation "android.arch.paging:rxjava2:1.0.0-rc1"
 
     // common
+    implementation 'com.budiyev.android:code-scanner:1.9.0'
+    implementation 'com.google.zxing:core:3.3.3'
+    implementation 'com.google.zxing:android-core:3.3.0'
+    implementation 'com.google.zxing:android-integration:3.3.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.5.1'
     implementation 'org.parceler:parceler-api:1.1.10'
@@ -113,6 +117,11 @@ dependencies {
         exclude group: 'joda-time'
         exclude group: 'com.google.code.gson'
     }
+    implementation("com.github.hotchemi:permissionsdispatcher:3.3.1") {
+        // if you don't use android.app.Fragment you can exclude support for them
+        exclude module: "support-v13"
+    }
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.3.1"
 
     // Annotations and DI
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'

@@ -30,8 +30,10 @@ import android.support.annotation.NonNull;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import network.minter.bipwallet.advanced.models.SecretData;
 import network.minter.bipwallet.internal.storage.KVStorage;
@@ -57,6 +59,7 @@ import static network.minter.bipwallet.internal.common.Preconditions.checkNotNul
 public class SecretStorage {
 
     private final static String KEY_SECRETS = "secret_storage_mnemonic_secret_list";
+    private final static String KEY_SECRETS_MIGRATION = "secret_storage_mnemonic_secret_list_migration";
     private final static String KEY_ADDRESSES = "secret_storage_addresses_list";
     private final static String KEY_ENCRYPTION_PASS = "secret_storage_encryption_key";
     private final KVStorage mStorage;
@@ -172,4 +175,10 @@ public class SecretStorage {
         return mStorage.<Map<String, SecretData>>get(KEY_SECRETS).get(address.toString());
     }
 
+    public Queue<SecretData> createMigrationQueue() {
+        Queue<SecretData> secretQueue = new LinkedList<>(getSecrets().values());
+        mStorage.putQueue(KEY_SECRETS_MIGRATION, secretQueue);
+
+        return secretQueue;
+    }
 }

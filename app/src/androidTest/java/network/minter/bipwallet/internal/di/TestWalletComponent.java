@@ -40,6 +40,7 @@ import network.minter.bipwallet.advanced.models.UserAccount;
 import network.minter.bipwallet.advanced.repo.AccountStorage;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.apis.explorer.CachedExplorerTransactionRepository;
+import network.minter.bipwallet.data.KVStorageQueueSaveTest;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.auth.SessionStorage;
@@ -72,9 +73,10 @@ import network.minter.my.repo.ProfileRepository;
         CacheModule.class,
 })
 @WalletApp
-public interface WalletComponent {
+public interface TestWalletComponent {
 
     void inject(Wallet app);
+    void inject(KVStorageQueueSaveTest test);
 
     // app
     Context context();

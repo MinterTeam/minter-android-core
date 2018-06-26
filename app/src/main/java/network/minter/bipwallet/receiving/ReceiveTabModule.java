@@ -23,38 +23,34 @@
  * THE SOFTWARE.
  */
 
-package network.minter.bipwallet.home;
+package network.minter.bipwallet.receiving;
 
-import java.util.List;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.view.View;
 
-import dagger.Component;
-import network.minter.bipwallet.coins.ui.CoinsTabFragment;
-import network.minter.bipwallet.home.ui.HomeActivity;
-import network.minter.bipwallet.internal.di.WalletComponent;
-import network.minter.bipwallet.receiving.ui.ReceiveTabFragment;
-import network.minter.bipwallet.sending.ui.SendingTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
+import com.arellomobile.mvp.MvpView;
+
+import dagger.Module;
+import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
+import network.minter.mintercore.crypto.MinterAddress;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Component(dependencies = WalletComponent.class, modules = {
-        HomeModule.class
-})
-@HomeScope
-public interface HomeComponent {
+@Module
+public class ReceiveTabModule {
 
-    void inject(HomeActivity activity);
-    void inject(CoinsTabFragment fragment);
-    void inject(SendingTabFragment fragment);
-    void inject(ReceiveTabFragment fragment);
-    void inject(SettingsTabFragment fragment);
-    void inject(SettingsUpdateFieldDialog fragment);
-
-    @HomeTabsClasses
-    List<Class<? extends HomeTabFragment>> tabsClasses();
-    HomeActivity homeActivity();
+    public interface ReceiveTabView extends MvpView, ErrorViewWithRetry {
+        void setQRCode(Bitmap bmp);
+        void setAddress(MinterAddress address);
+        void setOnActionShareQR(View.OnClickListener listener);
+        void setOnActionQR(View.OnClickListener listener);
+        void startQRPreview(View shared, String filePath);
+        void showQRProgress();
+        void hideQRProgress();
+        void startShare(Intent intent);
+    }
 }

@@ -118,9 +118,7 @@ public class AccountItem implements Serializable, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountItem that = (AccountItem) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(avatar, that.avatar) &&
-                Objects.equals(coin, that.coin) &&
+        return Objects.equals(coin, that.coin) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(balance, that.balance) &&
                 Objects.equals(balanceUsd, that.balanceUsd);
@@ -154,7 +152,7 @@ public class AccountItem implements Serializable, Cloneable {
             AccountItem oldItem = mOldList.get(oldItemPosition);
             AccountItem newItem = mNewList.get(newItemPosition);
 
-            return oldItem.id.equals(newItem.id);
+            return oldItem.address.equals(newItem.address) && oldItem.coin.equals(newItem.coin);
         }
 
         @Override

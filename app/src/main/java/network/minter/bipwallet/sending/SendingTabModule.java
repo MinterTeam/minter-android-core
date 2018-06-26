@@ -62,6 +62,10 @@ public class SendingTabModule {
         void clearInputs();
         void startDialog(DialogExecutor executor);
         void startExplorer(String txHash);
+        void setOnClickScanQR(View.OnClickListener listener);
+        void startScanQR(int requestCode);
+        void startScanQRWithPermissions(int requestCode);
+        void setRecipient(CharSequence to);
     }
 
     public static class TxData {

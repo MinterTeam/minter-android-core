@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.internal;
 
 import android.graphics.Rect;
@@ -21,7 +46,7 @@ import timber.log.Timber;
  * <p>
  * Usage:
  * 1. Inheritance:
- * public static Builder<MyRevealFragment> newBuilder() {
+ * public static IntentBuilder<MyRevealFragment> newBuilder() {
  * return newBuilder(MyRevealFragment.class);
  * }
  * <p>
@@ -286,7 +311,7 @@ public class RevealFragment extends BaseInjectFragment {
          * Add custom arguments to fragment
          *
          * @param args Bundle params
-         * @return Builder
+         * @return IntentBuilder
          */
         public Builder<T> setArguments(Bundle args) {
             mCustomArgs = args;
@@ -296,7 +321,7 @@ public class RevealFragment extends BaseInjectFragment {
         /**
          * @param cx reveal and un-reveal animation center X
          * @param cy reveal and un-reveal animation center Y
-         * @return Builder
+         * @return IntentBuilder
          */
         public Builder<T> setCenter(int cx, int cy) {
             setCenterStart(cx, cy);
@@ -307,7 +332,7 @@ public class RevealFragment extends BaseInjectFragment {
         /**
          * @param cx Start reveal animation center X
          * @param cy Start reveal animation center Y
-         * @return Builder
+         * @return IntentBuilder
          */
         public Builder<T> setCenterStart(int cx, int cy) {
             mStartX = cx;
@@ -318,7 +343,7 @@ public class RevealFragment extends BaseInjectFragment {
         /**
          * @param cx un-reveal animation target center X
          * @param cy un-reveal animation target center X
-         * @return Builder
+         * @return IntentBuilder
          */
         public Builder<T> setCenterEnd(int cx, int cy) {
             mEndX = cx;

@@ -74,6 +74,7 @@ public class AddressData {
         public String coin;
         public BigDecimal amount;
         public BigDecimal usdAmount;
+        public BigDecimal baseCoinAmount;
 
         public CoinBalance() {
         }

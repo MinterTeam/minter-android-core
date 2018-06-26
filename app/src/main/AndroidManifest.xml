@@ -30,6 +30,7 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name="network.minter.bipwallet.internal.Wallet"
@@ -40,6 +41,19 @@
         android:supportsRtl="true"
         android:theme="@style/Wallet"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <provider
+            android:name=".internal.system.WalletFileProvider"
+            android:authorities="${applicationId}.file.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"
+                />
+        </provider>
+
         <activity
             android:name="network.minter.bipwallet.auth.ui.AuthActivity"
             android:theme="@style/Wallet.Splash">
@@ -59,6 +73,11 @@
             />
 
         <activity
+            android:name="com.blikoon.qrcodescanner.QrCodeActivity"
+            android:theme="@style/Wallet"
+            />
+
+        <activity
             android:name=".home.ui.HomeActivity"
             android:windowSoftInputMode="stateHidden"
             />
@@ -75,6 +94,14 @@
             android:theme="@style/Wallet.DialogActivity"
             />
         <activity android:name=".tx.ui.TransactionListActivity"/>
+        <activity
+            android:name=".sending.ui.QRCodeScannerActivity"
+            android:theme="@style/Wallet"
+            />
+        <activity
+            android:name=".receiving.ui.QRPreviewActivity"
+            android:theme="@style/Wallet"
+            />
     </application>
 
 </manifest>

@@ -63,6 +63,7 @@ public class ListWithButtonRow implements MultiRowContract.Row<ListWithButtonRow
 
     private ListWithButtonRow(Builder builder) {
         mBuilder = builder;
+        mCommand.onNext(mBuilder.mStatus);
     }
 
     @Override
@@ -108,7 +109,6 @@ public class ListWithButtonRow implements MultiRowContract.Row<ListWithButtonRow
         viewHolder.list.addItemDecoration(new BorderedItemSeparator(viewHolder.itemView.getContext(), R.drawable.shape_bottom_separator, false, true));
         viewHolder.list.setAdapter(mBuilder.mAdapter);
         viewHolder.list.setNestedScrollingEnabled(false);
-
     }
 
     public void setStatus(Status command) {
@@ -182,6 +182,7 @@ public class ListWithButtonRow implements MultiRowContract.Row<ListWithButtonRow
         private CharSequence mActionTitle;
         private View.OnClickListener mActionListener;
         private CharSequence mEmptyListTitle;
+        private Status mStatus = Progress;
 
         public Builder(CharSequence title) {
             mTitle = title;

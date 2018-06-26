@@ -96,6 +96,7 @@ public class SimpleRecyclerAdapter<Data, VH extends RecyclerView.ViewHolder> ext
         }
 
         final List<Data> old = getItems();
+        setItems(items);
         DiffUtil.Callback cb;
 
         try {

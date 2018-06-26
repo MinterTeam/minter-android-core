@@ -25,6 +25,7 @@
 
 package network.minter.explorerapi.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
@@ -39,7 +40,7 @@ import network.minter.mintercore.crypto.MinterAddress;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class HistoryTransaction {
+public class HistoryTransaction implements Serializable {
     public BytesData hash;
     public BigInteger nonce;
     public long block;
@@ -92,7 +93,7 @@ public class HistoryTransaction {
         return Objects.hash(hash, nonce, block, timestamp, fee, type, data);
     }
 
-    public static class TxResult {
+    public static class TxResult implements Serializable {
         public MinterAddress from;
         public MinterAddress to;
         public String coin;

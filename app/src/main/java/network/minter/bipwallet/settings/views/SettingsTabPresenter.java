@@ -39,9 +39,12 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.inject.Inject;
 
+import network.minter.bipwallet.advanced.models.SecretData;
+import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.home.HomeScope;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.helpers.ImageHelper;
@@ -67,6 +70,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.SettingsTabView> {
     private final static int REQUEST_ATTACH_AVATAR = CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE;
     @Inject AuthSession session;
+    @Inject SecretStorage secretStorage;
     @Inject ProfileRepository profileRepo;
     @Inject Context context;
 
@@ -175,7 +179,8 @@ public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.Set
     }
 
     private void onClickChangePassword(View view, View sharedView, String value) {
-        getViewState().startChangePassword();
+        Queue<SecretData> secrets = secretStorage.createMigrationQueue();
+//        getViewState().startChangePassword();
     }
 
     private void onClickChangeEmail(View view, View sharedView, String value) {

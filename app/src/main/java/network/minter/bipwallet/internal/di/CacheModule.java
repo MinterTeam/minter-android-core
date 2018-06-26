@@ -25,16 +25,23 @@
 
 package network.minter.bipwallet.internal.di;
 
+import java.util.List;
 import java.util.Map;
 
+import dagger.Binds;
 import dagger.MapKey;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import network.minter.bipwallet.advanced.models.UserAccount;
 import network.minter.bipwallet.advanced.repo.AccountStorage;
+import network.minter.bipwallet.advanced.repo.SecretStorage;
+import network.minter.bipwallet.apis.explorer.CachedExplorerTransactionRepository;
 import network.minter.bipwallet.internal.data.CacheManager;
 import network.minter.bipwallet.internal.data.CachedRepository;
+import network.minter.bipwallet.internal.storage.KVStorage;
+import network.minter.explorerapi.MinterExplorerApi;
+import network.minter.explorerapi.models.HistoryTransaction;
 
 /**
  * MinterWallet. 2018
@@ -42,12 +49,12 @@ import network.minter.bipwallet.internal.data.CachedRepository;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Module
-public class CacheModule {
+public abstract class CacheModule {
 
     @SuppressWarnings("unchecked")
     @Provides
     @WalletApp
-    public CacheManager provideCacheManager(@CachedMapKey Map<String, CachedRepository> cachedDependencies) {
+    public static CacheManager provideCacheManager(@CachedMapKey Map<String, CachedRepository> cachedDependencies) {
         CacheManager cache = new CacheManager();
         if (cachedDependencies == null) return cache;
 
@@ -60,17 +67,21 @@ public class CacheModule {
 
     @Provides
     @WalletApp
-    public CachedRepository<UserAccount, AccountStorage> provideAccountStorage(AccountStorage accountStorage) {
+    public static CachedRepository<UserAccount, AccountStorage> provideAccountStorage(AccountStorage accountStorage) {
         return new CachedRepository<>(accountStorage);
     }
 
     @Provides
+    @WalletApp
+    public static CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> provideExplorerRepo(KVStorage storage, SecretStorage secretStorage, MinterExplorerApi api) {
+        return new CachedRepository<>(new CachedExplorerTransactionRepository(storage, secretStorage, api.getApiService()));
+    }
+
+    @Binds
     @IntoMap
     @CachedMapKey
     @WalletApp
-    public CachedRepository provideCachedAccountStorage(CachedRepository<UserAccount, AccountStorage> cache) {
-        return cache;
-    }
+    public abstract CachedRepository provideCachedAccountStorage(CachedRepository<UserAccount, AccountStorage> cache);
 
     @MapKey
     @interface CachedMapKey {

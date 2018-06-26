@@ -85,5 +85,8 @@
     <string name="btn_view_tx">View transaction</string>
     <string name="btn_close">Close</string>
     <string name="btn_explorer">Explorer</string>
+    <string name="tab_receiving_title">Receive coins</string>
+    <string name="btn_share_address">Share address</string>
+    <string name="tab_receive_label_address">Your address</string>
 
 </resources>

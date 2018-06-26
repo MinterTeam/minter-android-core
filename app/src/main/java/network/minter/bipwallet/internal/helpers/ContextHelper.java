@@ -30,21 +30,44 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.net.Uri;
 import android.widget.Toast;
+
+import timber.log.Timber;
 
 public class ContextHelper {
 
     public static Activity parseActivity(Context context) {
         if (context instanceof Activity)
-            return (Activity)context;
+            return (Activity) context;
         else if (context instanceof ContextWrapper)
-            return parseActivity(((ContextWrapper)context).getBaseContext());
+            return parseActivity(((ContextWrapper) context).getBaseContext());
 
         return null;
     }
 
+    public static void copyToClipboard(Context ctx, Uri uri) {
+        copyToClipboard(ctx, uri, "");
+    }
+
+    public static void copyToClipboard(Context ctx, Uri uri, CharSequence label) {
+        ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard == null) {
+            Timber.e("Clipboard is null. Is this requires some access?");
+            return;
+        }
+
+        ClipData data = ClipData.newUri(ctx.getContentResolver(), label, uri);
+        clipboard.setPrimaryClip(data);
+        Toast.makeText(ctx, "Copied", Toast.LENGTH_LONG).show();
+    }
+
     public static void copyToClipboard(Context ctx, String text) {
         ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard == null) {
+            Timber.e("Clipboard is null. Is this requires some access?");
+            return;
+        }
         ClipData data = ClipData.newPlainText("", text);
         clipboard.setPrimaryClip(data);
         Toast.makeText(ctx, "Copied", Toast.LENGTH_LONG).show();

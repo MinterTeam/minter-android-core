@@ -25,13 +25,16 @@
 
 package network.minter.bipwallet.sending.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,11 +52,13 @@ import javax.inject.Provider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import network.minter.bipwallet.BuildConfig;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.home.HomeModule;
 import network.minter.bipwallet.home.HomeTabFragment;
+import network.minter.bipwallet.internal.dialogs.WalletConfirmDialog;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.helpers.forms.validators.RegexValidator;
 import network.minter.bipwallet.sending.SendingTabModule;
@@ -62,22 +67,32 @@ import network.minter.bipwallet.sending.account.WalletAccountSelectorDialog;
 import network.minter.bipwallet.sending.views.SendingTabPresenter;
 import network.minter.explorerapi.MinterExplorerApi;
 import network.minter.mintercore.internal.helpers.StringHelper;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@RuntimePermissions
 public class SendingTabFragment extends HomeTabFragment implements SendingTabModule.SendingView {
     @Inject Provider<SendingTabPresenter> presenterProvider;
     @InjectPresenter SendingTabPresenter presenter;
     @BindView(R.id.coin_input) TextInputEditText coinInput;
+    @BindView(R.id.recipient_layout) TextInputLayout recipientLayout;
     @BindView(R.id.recipient_input) TextInputEditText recipientInput;
+    @BindView(R.id.amount_layout) TextInputLayout amountLayout;
     @BindView(R.id.amount_input) TextInputEditText amountInput;
     @BindView(R.id.free_value) Switch freeValue;
-    @BindView(R.id.action) Button action;
+    @BindView(R.id.action) Button actionSend;
+    @BindView(R.id.action_read_qr) View actionScanQR;
     private Unbinder mUnbinder;
     private InputGroup mInputGroup;
+    private WalletDialog mCurrentDialog = null;
 
     @Override
     public void onAttach(Context context) {
@@ -90,8 +105,6 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
         HomeModule.getComponent().inject(this);
         super.onCreate(savedInstanceState);
     }
-
-    private WalletDialog mCurrentDialog = null;
 
     @Override
     public void onDestroyView() {
@@ -144,16 +157,18 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
 
     @Override
     public void setOnSubmit(View.OnClickListener listener) {
-        action.setOnClickListener(listener);
+        actionSend.setOnClickListener(listener);
     }
 
     @Override
     public void setSubmitEnabled(boolean enabled) {
-        action.setEnabled(enabled);
+        actionSend.setEnabled(enabled);
     }
 
     @Override
     public void clearInputs() {
+        recipientLayout.setErrorEnabled(false);
+        amountLayout.setErrorEnabled(false);
         recipientInput.setError(null);
         recipientInput.setText(null);
         amountInput.setError(null);
@@ -177,6 +192,34 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
     }
 
     @Override
+    public void setOnClickScanQR(View.OnClickListener listener) {
+        actionScanQR.setOnClickListener(listener);
+    }
+
+    @NeedsPermission(Manifest.permission.CAMERA)
+    @Override
+    public void startScanQR(int requestCode) {
+        Intent i = new Intent(getActivity(), QRCodeScannerActivity.class);
+        getActivity().startActivityForResult(i, requestCode);
+    }
+
+    @Override
+    public void startScanQRWithPermissions(int requestCode) {
+        SendingTabFragmentPermissionsDispatcher.startScanQRWithPermissionCheck(this, requestCode);
+    }
+
+    @Override
+    public void setRecipient(CharSequence to) {
+        recipientInput.setText(to);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        presenter.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void setFormValidationListener(InputGroup.OnFormValidateListener listener) {
         mInputGroup.addFormValidateListener(listener);
     }
@@ -187,6 +230,46 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
                 .setItems(accounts)
                 .setOnClickListener(clickListener)
                 .create().show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        SendingTabFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @OnShowRationale(Manifest.permission.CAMERA)
+    void showRationaleForCamera(final PermissionRequest request) {
+        new WalletConfirmDialog.Builder(getActivity(), "Camera request")
+                .setText("We need access to your camera to take a shot with Minter Address QR Code")
+                .setPositiveAction("Sure", (d, w) -> {
+                    request.proceed();
+                    d.dismiss();
+                })
+                .setNegativeAction("No, I've change my mind", (d, w) -> {
+                    request.cancel();
+                    d.dismiss();
+                }).create()
+                .show();
+    }
+
+    @OnPermissionDenied(Manifest.permission.CAMERA)
+    void showOpenPermissionsForCamera() {
+        new WalletConfirmDialog.Builder(getActivity(), "Camera request")
+                .setText("We need access to your camera to take a shot with Minter Address QR Code")
+                .setPositiveAction("Open settings", (d, w) -> {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                    d.dismiss();
+                })
+                .setNegativeAction("Cancel", (d, w) -> {
+                    d.dismiss();
+                })
+                .create()
+                .show();
     }
 
     @ProvidePresenter

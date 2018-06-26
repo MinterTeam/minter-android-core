@@ -69,7 +69,7 @@ public class WalletModule {
         mContext = context;
         mDebug = debug;
         mEnableExternalLog = enableExternalLog;
-        Hawk.init(context)
+        Hawk.init(mContext)
                 .setLogInterceptor(message -> Timber.tag("Hawk").d(message))
                 .build();
 
@@ -123,7 +123,7 @@ public class WalletModule {
 
     @Provides
     public ApiService.Builder provideApiService(AuthSession session, GsonBuilder gsonBuilder) {
-//        ApiService.Builder builder = new ApiService.Builder(BuildConfig.BASE_API_URL, gsonBuilder);
+//        ApiService.IntentBuilder builder = new ApiService.IntentBuilder(BuildConfig.BASE_API_URL, gsonBuilder);
         ApiService.Builder builder = new ApiService.Builder("", gsonBuilder);
 
         builder

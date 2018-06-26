@@ -34,6 +34,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -92,6 +93,48 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
         List<MinterAddress> toFetch = new ArrayList<>();
         final Map<MinterAddress, List<HistoryTransaction>> toFetchAddresses = new LinkedHashMap<>(items.result.size());
         for (HistoryTransaction tx : items.result) {
+            final MinterAddress add;
+            if (tx.isIncoming(addresses)) {
+                add = tx.data.from;
+            } else {
+                add = tx.data.to;
+            }
+
+            if (!toFetch.contains(add)) {
+                toFetch.add(add);
+            }
+
+            if (!toFetchAddresses.containsKey(add)) {
+                toFetchAddresses.put(add, new ArrayList<>());
+            }
+            toFetchAddresses.get(add).add(tx);
+        }
+
+        return rxCallMy(infoRepo.getAddressesWithUserInfo(toFetch))
+                .onErrorResumeNext(convertToMyErrorResult())
+                .map(listInfoResult -> {
+                    if (listInfoResult.data.isEmpty()) {
+                        return items;
+                    }
+
+                    for (AddressInfoResult info : listInfoResult.data) {
+                        for (HistoryTransaction t : toFetchAddresses.get(info.address)) {
+                            t.setUsername(info.user.username).setAvatar(info.user.getAvatar().getUrl());
+                        }
+                    }
+
+                    return items;
+                });
+    }
+
+    public static ObservableSource<List<HistoryTransaction>> mapAddressesInfo(List<MinterAddress> addresses, InfoRepository infoRepo, List<HistoryTransaction> items) {
+        if (items == null || items.isEmpty()) {
+            return Observable.just(Collections.emptyList());
+        }
+
+        List<MinterAddress> toFetch = new ArrayList<>();
+        final Map<MinterAddress, List<HistoryTransaction>> toFetchAddresses = new LinkedHashMap<>(items.size());
+        for (HistoryTransaction tx : items) {
             final MinterAddress add;
             if (tx.isIncoming(addresses)) {
                 add = tx.data.from;

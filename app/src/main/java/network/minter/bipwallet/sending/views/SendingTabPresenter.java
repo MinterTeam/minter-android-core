@@ -25,7 +25,9 @@
 
 package network.minter.bipwallet.sending.views;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -33,6 +35,7 @@ import com.arellomobile.mvp.InjectViewState;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,6 +46,7 @@ import network.minter.bipwallet.advanced.models.SecretData;
 import network.minter.bipwallet.advanced.models.UserAccount;
 import network.minter.bipwallet.advanced.repo.AccountStorage;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
+import network.minter.bipwallet.apis.explorer.CachedExplorerTransactionRepository;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.data.CacheManager;
 import network.minter.bipwallet.internal.data.CachedRepository;
@@ -53,11 +57,13 @@ import network.minter.bipwallet.sending.SendingTabModule;
 import network.minter.bipwallet.sending.dialogs.WalletTxStartDialog;
 import network.minter.bipwallet.sending.dialogs.WalletTxSuccessDialog;
 import network.minter.bipwallet.sending.dialogs.WalletTxWaitingDialog;
+import network.minter.bipwallet.sending.ui.QRCodeScannerActivity;
 import network.minter.blockchainapi.models.BCResult;
 import network.minter.blockchainapi.models.operational.Transaction;
 import network.minter.blockchainapi.models.operational.TransactionSign;
 import network.minter.blockchainapi.models.operational.TxSendCoin;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
+import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import timber.log.Timber;
@@ -73,9 +79,10 @@ import static network.minter.mintercore.MinterSDK.PREFIX_TX;
  */
 @InjectViewState
 public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.SendingView> {
-
+    private static final int REQUEST_CODE_QR_SCAN = 101;
     @Inject SecretStorage secretStorage;
     @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
+    @Inject CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> txRepo;
     @Inject BlockChainAccountRepository accountRepo;
     @Inject CacheManager cache;
     private AccountItem mFromAccount = null;
@@ -87,11 +94,33 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_CODE_QR_SCAN) {
+            if (data != null && data.hasExtra(QRCodeScannerActivity.RESULT_TEXT)) {
+                //Getting the passed result
+                String result = data.getStringExtra(QRCodeScannerActivity.RESULT_TEXT);
+                Timber.d("QR Code scan result: %s", result);
+                try {
+                    mTo = new MinterAddress(result).toString();
+                    getViewState().setRecipient(mTo);
+                } catch (Throwable ignore) {
+                }
+            }
+        }
+    }
+
+    @Override
     public void attachView(SendingTabModule.SendingView view) {
         super.attachView(view);
         getViewState().setOnClickAccountSelectedListener(this::onClickAccountSelector);
         getViewState().setOnTextChangedListener(this::onInputTextChanged);
         getViewState().setOnSubmit(this::onSubmit);
+        getViewState().setOnClickScanQR(this::onScanQR);
         accountStorage.update();
     }
 
@@ -108,6 +137,10 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
 
         getViewState().setSubmitEnabled(false);
         getViewState().setFormValidationListener(valid -> getViewState().setSubmitEnabled(valid));
+    }
+
+    private void onScanQR(View view) {
+        getViewState().startScanQRWithPermissions(REQUEST_CODE_QR_SCAN);
     }
 
     private void onSubmit(View view) {
@@ -188,8 +221,8 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
             return;
         }
 
-        cache.get(AccountStorage.class).update(true);
         accountStorage.update(true);
+        txRepo.update(true);
         getViewState().startDialog(ctx -> new WalletTxSuccessDialog.Builder(ctx, "Success!")
                 .setRecipientName(new MinterAddress(mTo).toShortString())
                 .setAvatar(null)

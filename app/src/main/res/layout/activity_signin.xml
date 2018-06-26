@@ -93,7 +93,7 @@
                 app:layout_goneMarginTop="0dp"
                 >
 
-                <android.support.design.widget.TextInputEditText
+                <network.minter.bipwallet.internal.views.text.PrefixEditText
                     android:tag="username"
                     android:id="@+id/inputUsername"
                     android:layout_width="match_parent"

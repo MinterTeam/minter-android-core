@@ -86,6 +86,10 @@ public class MinterExplorerApi {
         return mTransactionRepository;
     }
 
+    public ApiService.Builder getApiService() {
+        return mApiService;
+    }
+
     public ExplorerAddressRepository address() {
         if (mAddressRepository == null) {
             mAddressRepository = new ExplorerAddressRepository(mApiService);

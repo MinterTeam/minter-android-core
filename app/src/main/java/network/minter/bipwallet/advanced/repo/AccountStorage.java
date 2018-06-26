@@ -83,7 +83,7 @@ public class AccountStorage implements CachedEntity<UserAccount> {
             final Map<String, AccountItem> tmp = new HashMap<>();
             for (AccountItem item : in) {
                 if (!tmp.containsKey(item.coin)) {
-                    item.address = null;
+//                    item.address = null;
                     tmp.put(item.coin, item);
                 } else {
                     tmp.get(item.coin).balance = tmp.get(item.coin).balance.add(item.balance);
@@ -110,7 +110,7 @@ public class AccountStorage implements CachedEntity<UserAccount> {
             final Map<String, AccountItem> tmp = new HashMap<>();
             for (AccountItem item : items) {
                 if (!tmp.containsKey(item.coin)) {
-                    item.address = null;
+//                    item.address = null;
                     tmp.put(item.coin, item);
                 } else {
                     tmp.get(item.coin).balance = tmp.get(item.coin).balance.add(item.balance);

@@ -112,28 +112,47 @@
                 app:srcCompat="@drawable/ic_drop_down_grey"
                 />
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/recipient.layout"
+
+            <FrameLayout
+                android:id="@+id/recipient.layout.row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_edges_input"
                 android:layout_marginTop="@dimen/margin_edges"
                 android:layout_marginEnd="@dimen/margin_edges_input"
-                android:hint="@string/tx_send_recipient_hint"
-                app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/coin.layout"
                 >
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/recipient.input"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/recipient.layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    tools:text="\@PavelDurov"
+                    android:hint="@string/tx_send_recipient_hint"
+                    app:hintEnabled="true"
+                    >
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/recipient.input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text|textMultiLine"
+                        android:paddingEnd="32dp"
+                        tools:text="\@PavelDurov"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/action.read_qr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginBottom="8dp"
+                    app:srcCompat="@drawable/ic_qr"
                     />
-            </android.support.design.widget.TextInputLayout>
+            </FrameLayout>
+
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/amount.layout"
@@ -146,7 +165,7 @@
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recipient.layout"
+                app:layout_constraintTop_toBottomOf="@id/recipient.layout.row"
                 >
 
                 <android.support.design.widget.TextInputEditText
@@ -208,11 +227,11 @@
                 />
 
             <Switch
-                android:checked="true"
                 android:id="@+id/free.value"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/margin_edges_input"
+                android:checked="true"
                 android:fontFamily="@font/_ubuntu_medium"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/free.label"
