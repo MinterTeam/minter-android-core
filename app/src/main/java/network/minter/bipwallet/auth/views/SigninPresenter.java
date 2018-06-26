@@ -44,8 +44,8 @@ import network.minter.bipwallet.internal.di.annotations.ActivityScope;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.my.models.LoginData;
 import network.minter.my.models.MyAddressData;
-import network.minter.my.repo.AuthRepository;
 import network.minter.my.repo.MyAddressRepository;
+import network.minter.my.repo.MyAuthRepository;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
@@ -58,7 +58,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 @ActivityScope
 @InjectViewState
 public class SigninPresenter extends MvpBasePresenter<AuthModule.SigninView> {
-    @Inject AuthRepository authRepo;
+    @Inject MyAuthRepository authRepo;
     @Inject SecretStorage secretRepo;
     @Inject AuthSession session;
     @Inject MyAddressRepository addressRepo;

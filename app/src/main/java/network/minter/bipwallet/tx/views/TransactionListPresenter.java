@@ -44,7 +44,7 @@ import network.minter.bipwallet.tx.adapters.TransactionListAdapter;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.MinterSDK;
-import network.minter.my.repo.InfoRepository;
+import network.minter.my.repo.MyInfoRepository;
 
 /**
  * MinterWallet. 2018
@@ -56,7 +56,7 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
 
     @Inject ExplorerTransactionRepository transactionRepo;
     @Inject SecretStorage secretRepo;
-    @Inject InfoRepository infoRepo;
+    @Inject MyInfoRepository infoRepo;
 
     private TransactionListAdapter mAdapter;
     private TransactionDataSource.Factory mSourceFactory;

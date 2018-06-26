@@ -37,10 +37,10 @@ import network.minter.explorerapi.MinterExplorerApi;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.my.MyMinterApi;
-import network.minter.my.repo.AuthRepository;
-import network.minter.my.repo.InfoRepository;
 import network.minter.my.repo.MyAddressRepository;
-import network.minter.my.repo.ProfileRepository;
+import network.minter.my.repo.MyAuthRepository;
+import network.minter.my.repo.MyInfoRepository;
+import network.minter.my.repo.MyProfileRepository;
 
 /**
  * Dogsy. 2017
@@ -76,7 +76,7 @@ public class RepoModule {
 
     @Provides
     @WalletApp
-    public AuthRepository provideAuthRepository(MyMinterApi api) {
+    public MyAuthRepository provideAuthRepository(MyMinterApi api) {
         return api.auth();
     }
 
@@ -94,7 +94,7 @@ public class RepoModule {
 
     @Provides
     @WalletApp
-    public ProfileRepository provideProfileRepository(MyMinterApi api) {
+    public MyProfileRepository provideProfileRepository(MyMinterApi api) {
         return api.profile();
     }
 
@@ -114,7 +114,7 @@ public class RepoModule {
 
     @Provides
     @WalletApp
-    public InfoRepository provideInfoRepository(MyMinterApi api) {
+    public MyInfoRepository provideInfoRepository(MyMinterApi api) {
         return api.info();
     }
 }

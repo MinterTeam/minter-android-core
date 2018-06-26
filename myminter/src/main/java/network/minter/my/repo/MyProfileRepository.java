@@ -27,42 +27,55 @@ package network.minter.my.repo;
 
 import android.support.annotation.NonNull;
 
+import java.util.Map;
+
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
-import network.minter.my.api.MyAuthEndpoint;
-import network.minter.my.models.LoginData;
+import network.minter.mintercore.internal.helpers.CollectionsHelper;
+import network.minter.my.api.MyProfileEndpoint;
 import network.minter.my.models.MyResult;
 import network.minter.my.models.ProfileRequestResult;
-import network.minter.my.models.RegisterData;
 import network.minter.my.models.User;
-import network.minter.my.models.UsernameData;
 import retrofit2.Call;
 
+import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+
 /**
- * MinterWallet. Май 2018
+ * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class AuthRepository extends DataRepository<MyAuthEndpoint> {
-    public AuthRepository(@NonNull ApiService.Builder apiBuilder) {
+public class MyProfileRepository extends DataRepository<MyProfileEndpoint> {
+    public MyProfileRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
+    }
+
+    public Call<MyResult<User.Data>> getProfile() {
+        return getService().getProfile();
+    }
+
+    public Call<MyResult<ProfileRequestResult>> updateProfile(@NonNull User.Data data) {
+        checkNotNull(data);
+        return getService().updateProfile(data);
+    }
+
+    public Call<MyResult<ProfileRequestResult>> updateField(String field, String value) {
+        Map<String, String> data = CollectionsHelper.asMap(field, value);
+        return getService().updateProfile(data);
+    }
+
+    public Call<MyResult<User.Avatar>> updateAvatar(String b64) {
+        return getService().updateAvatarBase64(b64);
     }
 
     @NonNull
     @Override
-    protected Class<MyAuthEndpoint> getServiceClass() {
-        return MyAuthEndpoint.class;
+    protected Class<MyProfileEndpoint> getServiceClass() {
+        return MyProfileEndpoint.class;
     }
 
-    public Call<MyResult<User>> login(LoginData loginData) {
-        return getService().login(loginData);
-    }
-
-    public Call<MyResult<ProfileRequestResult>> register(RegisterData registerData) {
-        return getService().register(registerData);
-    }
-
-    public Call<MyResult<UsernameData>> checkUsernameAvailability(String username) {
-        return getService().checkUsernameAvailability(username);
+    @Override
+    protected boolean isAuthRequired() {
+        return true;
     }
 }

@@ -51,7 +51,7 @@ import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.my.models.AddressInfoResult;
-import network.minter.my.repo.InfoRepository;
+import network.minter.my.repo.MyInfoRepository;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.convertToExpErrorResult;
 import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
@@ -66,7 +66,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 public class TransactionDataSource extends PageKeyedDataSource<Integer, TransactionItem> {
 
     private ExplorerTransactionRepository mRepo;
-    private InfoRepository mInfoRepo;
+    private MyInfoRepository mInfoRepo;
     private List<MinterAddress> mAddressList;
     private CompositeDisposable mDisposables = new CompositeDisposable();
     private DateTime mLastDate;
@@ -78,14 +78,14 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
         Failed
     }
 
-    public TransactionDataSource(ExplorerTransactionRepository repo, InfoRepository infoRepo, List<MinterAddress> addresses, MutableLiveData<LoadState> loadState) {
+    public TransactionDataSource(ExplorerTransactionRepository repo, MyInfoRepository infoRepo, List<MinterAddress> addresses, MutableLiveData<LoadState> loadState) {
         mRepo = repo;
         mInfoRepo = infoRepo;
         mAddressList = addresses;
         mLoadState = loadState;
     }
 
-    public static ObservableSource<ExpResult<List<HistoryTransaction>>> mapAddressesInfo(List<MinterAddress> addresses, InfoRepository infoRepo, ExpResult<List<HistoryTransaction>> items) {
+    public static ObservableSource<ExpResult<List<HistoryTransaction>>> mapAddressesInfo(List<MinterAddress> addresses, MyInfoRepository infoRepo, ExpResult<List<HistoryTransaction>> items) {
         if (items.result == null || items.result.isEmpty()) {
             return Observable.just(items);
         }
@@ -127,7 +127,7 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
                 });
     }
 
-    public static ObservableSource<List<HistoryTransaction>> mapAddressesInfo(List<MinterAddress> addresses, InfoRepository infoRepo, List<HistoryTransaction> items) {
+    public static ObservableSource<List<HistoryTransaction>> mapAddressesInfo(List<MinterAddress> addresses, MyInfoRepository infoRepo, List<HistoryTransaction> items) {
         if (items == null || items.isEmpty()) {
             return Observable.just(Collections.emptyList());
         }
@@ -262,10 +262,10 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
     public static class Factory extends DataSource.Factory<Integer, TransactionItem> {
         private ExplorerTransactionRepository mRepo;
         private List<MinterAddress> mAddressList;
-        private InfoRepository mInfoRepo;
+        private MyInfoRepository mInfoRepo;
         private MutableLiveData<LoadState> mLoadState;
 
-        public Factory(ExplorerTransactionRepository repo, InfoRepository infoRepo, List<MinterAddress> addresses, MutableLiveData<LoadState> loadState) {
+        public Factory(ExplorerTransactionRepository repo, MyInfoRepository infoRepo, List<MinterAddress> addresses, MutableLiveData<LoadState> loadState) {
             mRepo = repo;
             mInfoRepo = infoRepo;
             mAddressList = addresses;

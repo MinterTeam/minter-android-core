@@ -39,7 +39,7 @@ import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.bipwallet.settings.SettingsTabModule;
 import network.minter.bipwallet.settings.ui.SettingsFieldType;
 import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
-import network.minter.my.repo.ProfileRepository;
+import network.minter.my.repo.MyProfileRepository;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 
@@ -52,7 +52,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 @InjectViewState
 public class SettingsUpdateFieldPresenter extends MvpBasePresenter<SettingsTabModule.SettingsUpdateFieldView> {
 
-    @Inject ProfileRepository profileRepo;
+    @Inject MyProfileRepository profileRepo;
     private CharSequence mLabel;
     private String mField;
     private String mValue;

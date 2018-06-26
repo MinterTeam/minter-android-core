@@ -36,10 +36,13 @@ import com.arellomobile.mvp.InjectViewState;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.advanced.models.SecretData;
@@ -52,6 +55,7 @@ import network.minter.bipwallet.internal.data.CacheManager;
 import network.minter.bipwallet.internal.data.CachedRepository;
 import network.minter.bipwallet.internal.dialogs.WalletConfirmDialog;
 import network.minter.bipwallet.internal.dialogs.WalletProgressDialog;
+import network.minter.bipwallet.internal.exceptions.MyResponseException;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.bipwallet.sending.SendingTabModule;
 import network.minter.bipwallet.sending.dialogs.WalletTxStartDialog;
@@ -64,12 +68,17 @@ import network.minter.blockchainapi.models.operational.TransactionSign;
 import network.minter.blockchainapi.models.operational.TxSendCoin;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.explorerapi.models.HistoryTransaction;
+import network.minter.mintercore.MinterSDK;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.my.models.MyResult;
+import network.minter.my.repo.MyInfoRepository;
 import timber.log.Timber;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.convertToBcErrorResult;
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallBc;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 import static network.minter.mintercore.MinterSDK.PREFIX_TX;
 
 /**
@@ -84,10 +93,13 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
     @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
     @Inject CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> txRepo;
     @Inject BlockChainAccountRepository accountRepo;
+    @Inject MyInfoRepository infoRepo;
     @Inject CacheManager cache;
     private AccountItem mFromAccount = null;
     private CharSequence mAmount = null;
-    private CharSequence mTo = null;
+    private CharSequence mToAddress = null;
+    private CharSequence mToName = null;
+    private String mAvatar = null;
 
     @Inject
     public SendingTabPresenter() {
@@ -106,8 +118,8 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
                 String result = data.getStringExtra(QRCodeScannerActivity.RESULT_TEXT);
                 Timber.d("QR Code scan result: %s", result);
                 try {
-                    mTo = new MinterAddress(result).toString();
-                    getViewState().setRecipient(mTo);
+                    mToAddress = new MinterAddress(result).toString();
+                    getViewState().setRecipient(mToAddress);
                 } catch (Throwable ignore) {
                 }
             }
@@ -144,12 +156,53 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
     }
 
     private void onSubmit(View view) {
+        if (mToName == null) {
+            getViewState().setRecipientError("Invalid recipient");
+            return;
+        }
+        if (mToAddress != null) {
+            startSendDialog();
+            return;
+        }
+
+        if (mToName.toString().substring(0, 2).equals(MinterSDK.PREFIX_ADDRESS)) {
+            mToAddress = mToName;
+            startSendDialog();
+            return;
+        }
+
         getViewState().startDialog(ctx -> {
-            final MinterAddress address = new MinterAddress(mTo);
+            rxCallMy(infoRepo.findAddressByInput(mToName.toString()))
+                    .delay(150, TimeUnit.MILLISECONDS)
+                    .onErrorResumeNext(convertToMyErrorResult())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(result -> {
+                        if (result.isSuccess()) {
+                            mAvatar = result.data.user.getAvatar().getUrl();
+                            mToAddress = result.data.address.toString();
+                            getViewState().setRecipientError(null);
+                            startSendDialog();
+                        } else {
+                            mToAddress = null;
+                            onErrorSearchUser(result);
+                            Timber.d(new MyResponseException(result), "Unable to find address");
+                        }
+                    }, Wallet.Rx.errorHandler());
+
+            return new WalletProgressDialog.Builder(ctx, "Searching address")
+                    .setText(String.format("Please, wait, we are searching address for user \"%s\"", mToName))
+                    .create();
+        });
+    }
+
+    private void startSendDialog() {
+        getViewState().startDialog(ctx -> {
             final WalletTxStartDialog dialog = new WalletTxStartDialog.Builder(ctx, "You're sending")
                     .setAmount(new BigDecimal(mAmount.toString()))
-                    .setAvatarUrl(null)
-                    .setRecipientName(address.toShortString())
+                    .setAvatarUrl(mAvatar)
+                    .setRecipientName(mToName)
+                    .setCoin(mFromAccount.coin)
                     .setPositiveAction("BIP!", this::onStartWaitingDialog)
                     .setNegativeAction("Cancel", null)
                     .create();
@@ -191,7 +244,7 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
 
                         final Transaction<TxSendCoin> tx = Transaction.newSendTransaction(cntRes.result.add(new BigInteger("1")))
                                 .setCoin(mFromAccount.coin)
-                                .setTo(mTo)
+                                .setTo(mToAddress)
                                 .setValue(mAmount)
                                 .build();
 
@@ -205,6 +258,14 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
 
             return dialog;
         });
+    }
+
+    private void onErrorSearchUser(MyResult<?> errorResult) {
+        Timber.e(errorResult.getError().message, "Unable to find address");
+        getViewState().startDialog(ctx -> new WalletConfirmDialog.Builder(ctx, errorResult.getError().message)
+                .setText(String.format("Unable to find user address for user \"%s\"", mToName))
+                .setPositiveAction("Close")
+                .create());
     }
 
     private void onErrorExecuteTransaction(BCResult<?> errorResult) {
@@ -224,8 +285,8 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
         accountStorage.update(true);
         txRepo.update(true);
         getViewState().startDialog(ctx -> new WalletTxSuccessDialog.Builder(ctx, "Success!")
-                .setRecipientName(new MinterAddress(mTo).toShortString())
-                .setAvatar(null)
+                .setRecipientName(mToName)
+                .setAvatar(mAvatar)
                 .setPositiveAction("View transaction", (d, v) -> {
                     getViewState().startExplorer(result.result.toHexString(PREFIX_TX));
                     d.dismiss();
@@ -239,7 +300,8 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
     private void onInputTextChanged(EditText editText, boolean valid) {
         switch (editText.getId()) {
             case R.id.recipient_input:
-                mTo = editText.getText();
+                mToName = editText.getText();
+                mToAddress = null;
                 break;
             case R.id.amount_input:
                 mAmount = editText.getText();

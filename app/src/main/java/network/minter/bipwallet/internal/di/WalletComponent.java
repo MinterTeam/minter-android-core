@@ -54,10 +54,10 @@ import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.internal.api.ApiService;
-import network.minter.my.repo.AuthRepository;
-import network.minter.my.repo.InfoRepository;
 import network.minter.my.repo.MyAddressRepository;
-import network.minter.my.repo.ProfileRepository;
+import network.minter.my.repo.MyAuthRepository;
+import network.minter.my.repo.MyInfoRepository;
+import network.minter.my.repo.MyProfileRepository;
 
 /**
  * MinterWallet. 2018
@@ -102,11 +102,11 @@ public interface WalletComponent {
     CachedRepository<UserAccount, AccountStorage> accountStorageCache();
     ExplorerTransactionRepository explorerTransactionsRepo();
     CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> explorerTransactionsRepoCache();
-    AuthRepository authRepo();
-    InfoRepository infoRepo();
+    MyAuthRepository authRepo();
+    MyInfoRepository infoRepo();
     MyAddressRepository addressMyRepo();
     ExplorerAddressRepository addressExplorerRepo();
 
-    ProfileRepository profileRepo();
+    MyProfileRepository profileRepo();
     BlockChainAccountRepository accountRepoBlockChain();
 }

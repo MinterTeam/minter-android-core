@@ -66,6 +66,7 @@ public class SendingTabModule {
         void startScanQR(int requestCode);
         void startScanQRWithPermissions(int requestCode);
         void setRecipient(CharSequence to);
+        void setRecipientError(CharSequence error);
     }
 
     public static class TxData {

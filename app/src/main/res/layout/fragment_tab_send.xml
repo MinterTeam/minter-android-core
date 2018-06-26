@@ -139,6 +139,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="text|textMultiLine"
                         android:paddingEnd="32dp"
+                        android:tag="recipient"
                         tools:text="\@PavelDurov"
                         />
                 </android.support.design.widget.TextInputLayout>
@@ -147,9 +148,9 @@
                     android:id="@+id/action.read_qr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="8dp"
+                    android:layout_gravity="end|top"
                     app:srcCompat="@drawable/ic_qr"
+                    android:layout_marginTop="4dp"
                     />
             </FrameLayout>
 
@@ -173,6 +174,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
+                    android:tag="amount"
                     tools:text="1.245"
                     />
             </android.support.design.widget.TextInputLayout>

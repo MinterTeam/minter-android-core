@@ -39,13 +39,16 @@ import network.minter.my.models.MyResult;
 import network.minter.my.models.User;
 import retrofit2.Call;
 
+import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
+import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+
 /**
  * MyMinter API SDK. May 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class InfoRepository extends DataRepository<MyInfoEndpoint> {
-    public InfoRepository(@NonNull ApiService.Builder apiBuilder) {
+public class MyInfoRepository extends DataRepository<MyInfoEndpoint> {
+    public MyInfoRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
@@ -80,6 +83,23 @@ public class InfoRepository extends DataRepository<MyInfoEndpoint> {
 
     public Call<MyResult<User.Data>> getUserInfoByUser(User.Data userData) {
         return getUserInfoByUsername(userData.username);
+    }
+
+    /**
+     * Find address by indistinct recipient value: username or email address
+     *
+     * @param input Can be username with prefix '@' or email address
+     * @return
+     */
+    public Call<MyResult<AddressInfoResult>> findAddressByInput(@NonNull String input) {
+        checkNotNull(input, "Input can't be null");
+        checkArgument(!input.isEmpty(), "Input can't be empty string");
+        checkArgument(input.length() >= 2, "Input length must have length more than 2 characters");
+        if (input.substring(0, 1).equals("@")) {
+            return getService().findAddressByUsername(input.substring(1));
+        } else {
+            return getService().findAddressByEmail(input);
+        }
     }
 
     @Override

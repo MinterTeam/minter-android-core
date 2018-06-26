@@ -35,6 +35,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,6 @@ import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
 import network.minter.bipwallet.sending.account.WalletAccountSelectorDialog;
 import network.minter.bipwallet.sending.views.SendingTabPresenter;
 import network.minter.explorerapi.MinterExplorerApi;
-import network.minter.mintercore.internal.helpers.StringHelper;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.OnShowRationale;
@@ -121,21 +121,24 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
         mInputGroup.addInput(recipientInput);
         mInputGroup.addInput(amountInput);
         mInputGroup.addValidator(amountInput, new RegexValidator("^(\\d{0,})(\\.|\\,)?(\\d{1,18})$", "Invalid number"));
-        /* ideal case
+        /* ideal case */
         mInputGroup.addValidator(recipientInput,
                 new RegexValidator(
-                        // address or username with @ at begin or mobile or email
-                        String.format("(((0|M|m)x)?([a-fA-F0-9]{40}))|(\\@[a-zA-Z0-9\\_\\-]+)|%s|%s", Patterns.PHONE, Patterns.EMAIL_ADDRESS),
+                        // address or username with @ at begin or email
+                        String.format("(((0|M|m)x)?([a-fA-F0-9]{40}))|(@[a-zA-Z0-9_]{5,32})|%s", Patterns.EMAIL_ADDRESS),
                         "Incorrect recipient format"
                 ));
-                */
+
+        /*
         mInputGroup.addValidator(recipientInput,
                 new RegexValidator(
                         // address only for now
                         StringHelper.HEX_ADDRESS_PATTERN, "Incorrect recipient format"
                 ));
+                */
 
-        recipientInput.clearFocus();
+        recipientLayout.clearFocus();
+        amountLayout.clearFocus();
 
         return view;
     }
@@ -167,12 +170,11 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
 
     @Override
     public void clearInputs() {
-        recipientLayout.setErrorEnabled(false);
-        amountLayout.setErrorEnabled(false);
-        recipientInput.setError(null);
         recipientInput.setText(null);
-        amountInput.setError(null);
         amountInput.setText(null);
+        recipientLayout.clearFocus();
+        amountLayout.clearFocus();
+        mInputGroup.clearErrors();
     }
 
     @Override
@@ -211,6 +213,11 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
     @Override
     public void setRecipient(CharSequence to) {
         recipientInput.setText(to);
+    }
+
+    @Override
+    public void setRecipientError(CharSequence error) {
+        mInputGroup.setError("recipient", error);
     }
 
     @Override

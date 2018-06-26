@@ -66,5 +66,23 @@ public interface MyInfoEndpoint {
     @GET("/api/v1/info/by/username/{username}")
     Call<MyResult<User.Data>> getUserInfoByUsername(@Path("username") String username);
 
+    /**
+     * Find address by username
+     *
+     * @param username
+     * @return
+     */
+    @GET("/api/v1/info/address/by/contact")
+    Call<MyResult<AddressInfoResult>> findAddressByUsername(@Query("username") String username);
+
+    /**
+     * Find address by email
+     *
+     * @param email
+     * @return
+     */
+    @GET("/api/v1/info/address/by/contact")
+    Call<MyResult<AddressInfoResult>> findAddressByEmail(@Query("email") String username);
+
 }
 

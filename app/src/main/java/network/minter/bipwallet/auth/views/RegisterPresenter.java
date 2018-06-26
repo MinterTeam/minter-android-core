@@ -48,7 +48,7 @@ import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.my.models.LoginData;
 import network.minter.my.models.ProfileRequestResult;
 import network.minter.my.models.RegisterData;
-import network.minter.my.repo.AuthRepository;
+import network.minter.my.repo.MyAuthRepository;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
@@ -61,7 +61,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 @ActivityScope
 @InjectViewState
 public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView> {
-    @Inject AuthRepository authRepo;
+    @Inject MyAuthRepository authRepo;
     @Inject SecretStorage secretRepo;
     @Inject AuthSession session;
 

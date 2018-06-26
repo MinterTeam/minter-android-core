@@ -36,7 +36,6 @@ import android.transition.AutoTransition;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -44,6 +43,7 @@ import network.minter.bipwallet.R;
 import network.minter.bipwallet.internal.BaseActivity;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.system.ActivityBuilder;
+import timber.log.Timber;
 
 /**
  * MinterWallet. 2018
@@ -73,7 +73,8 @@ public class QRPreviewActivity extends BaseActivity {
 
         setContentView(R.layout.activity_qr_preview);
         final ImageView iv = findViewById(R.id.iv);
-        Picasso.with(this).load(new File(getIntent().getStringExtra(EXTRA_FILE_PATH)))
+        Wallet.app().image()
+                .load(new File(getIntent().getStringExtra(EXTRA_FILE_PATH)))
                 .resize(Wallet.app().display().getWidth(), Wallet.app().display().getHeight())
                 .centerInside()
                 .into(iv, new Callback() {
@@ -83,8 +84,8 @@ public class QRPreviewActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError() {
-
+                    public void onError(Exception t) {
+                        Timber.w(t, "Unable to load image");
 //                        iv.setImageResource(R.drawable.ic_qr);
                         supportStartPostponedEnterTransition();
                     }

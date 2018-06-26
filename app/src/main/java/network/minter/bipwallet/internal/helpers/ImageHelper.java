@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.internal.helpers;
 
 import android.app.Activity;
@@ -57,10 +82,16 @@ import timber.log.Timber;
 public final class ImageHelper {
     private Context mContext;
     private DisplayHelper mDisplay;
+    private Picasso mPicasso;
 
     public ImageHelper(Context context, DisplayHelper displayHelper) {
         mContext = context;
         mDisplay = displayHelper;
+
+        mPicasso = new Picasso.Builder(context)
+                .listener((picasso, uri, exception) -> Timber.w(exception, "Unable to load image %s", uri.toString()))
+                .indicatorsEnabled(false)
+                .build();
     }
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -294,27 +325,31 @@ public final class ImageHelper {
     }
 
     public RequestCreator load(Uri uri) {
-        return Picasso.with(mContext).load(uri);
+        return mPicasso.load(uri);
+    }
+
+    public RequestCreator load(File file) {
+        return mPicasso.load(file);
     }
 
     public RequestCreator load(String url) {
-        return Picasso.with(mContext).load(url);
+        return mPicasso.load(url);
     }
 
     public RequestCreator loadFit(Uri uri) {
-        return Picasso.with(mContext).load(uri)
+        return mPicasso.load(uri)
                 .fit()
                 .centerInside();
     }
 
     public RequestCreator loadFit(String url) {
-        return Picasso.with(mContext).load(url)
+        return mPicasso.load(url)
                 .fit()
                 .centerInside();
     }
 
     public RequestCreator loadFit(@DrawableRes int drawableRes) {
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(drawableRes)
                 .fit()
                 .centerInside();
@@ -323,7 +358,7 @@ public final class ImageHelper {
     public RequestCreator loadResize(Uri imageUrl, @Dp float resizeDp) {
         final Vec2 widthHeight = mDisplay.getWidthAndHeightWithRatio(100.f, resizeDp, resizeDp);
 
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageUrl)
                 .resize(widthHeight.getWidth(), widthHeight.getHeight())
                 .onlyScaleDown()
@@ -333,7 +368,7 @@ public final class ImageHelper {
     public RequestCreator loadResize(@DrawableRes int imageId, @Dp float resizeDp) {
         final Vec2 widthHeight = mDisplay.getWidthAndHeightWithRatio(100.f, resizeDp, resizeDp);
 
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageId)
                 .resize(widthHeight.getWidth(), widthHeight.getHeight())
                 .onlyScaleDown()
@@ -341,7 +376,7 @@ public final class ImageHelper {
     }
 
     public RequestCreator loadResize(@DrawableRes int imageId, @Px int resizePx) {
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageId)
                 .resize(resizePx, resizePx)
                 .onlyScaleDown()
@@ -351,7 +386,7 @@ public final class ImageHelper {
     public RequestCreator loadResizeRes(Uri imageUrl, @DimenRes int resId) {
         float pxs = mDisplay.getDimen(resId);
         final Vec2 widthHeight = mDisplay.getWidthAndHeightWithRatio(100.f, pxs, pxs);
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageUrl)
                 .resize(widthHeight.getWidth(), widthHeight.getHeight())
                 .onlyScaleDown()
@@ -359,7 +394,7 @@ public final class ImageHelper {
     }
 
     public RequestCreator loadResize(Uri imageUrl, @Px int resizePx) {
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageUrl)
                 .resize(resizePx, resizePx)
                 .onlyScaleDown()
@@ -369,7 +404,7 @@ public final class ImageHelper {
     public RequestCreator loadResize(Uri imageUrl, @Dp float widthDp, @Dp float heightDp) {
         final Vec2 widthHeight = mDisplay.getWidthAndHeightWithRatio(100.f, widthDp, heightDp);
 
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageUrl)
                 .resize(widthHeight.getWidth(), widthHeight.getHeight())
                 .onlyScaleDown()
@@ -379,7 +414,7 @@ public final class ImageHelper {
     public RequestCreator loadResize(@DrawableRes int imageId, @Dp float widthDp, @Dp float heightDp) {
         final Vec2 widthHeight = mDisplay.getWidthAndHeightWithRatio(100.f, widthDp, heightDp);
 
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageId)
                 .resize(widthHeight.getWidth(), widthHeight.getHeight())
                 .onlyScaleDown()
@@ -387,7 +422,7 @@ public final class ImageHelper {
     }
 
     public RequestCreator loadResize(Uri imageUrl, @Px int widthPx, @Px int heightPx) {
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageUrl)
                 .resize(widthPx, heightPx)
                 .onlyScaleDown()
@@ -395,7 +430,7 @@ public final class ImageHelper {
     }
 
     public RequestCreator loadResize(@DrawableRes int imageId, @Px int widthPx, @Px int heightPx) {
-        return Picasso.with(mContext)
+        return mPicasso
                 .load(imageId)
                 .resize(widthPx, heightPx)
                 .onlyScaleDown()

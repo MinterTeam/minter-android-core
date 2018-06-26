@@ -43,10 +43,10 @@ import network.minter.mintercore.internal.api.converters.EncryptedStringSerializ
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressSerializer;
 import network.minter.mintercore.internal.api.converters.UriDeserializer;
-import network.minter.my.repo.AuthRepository;
-import network.minter.my.repo.InfoRepository;
 import network.minter.my.repo.MyAddressRepository;
-import network.minter.my.repo.ProfileRepository;
+import network.minter.my.repo.MyAuthRepository;
+import network.minter.my.repo.MyInfoRepository;
+import network.minter.my.repo.MyProfileRepository;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -58,10 +58,10 @@ public class MyMinterApi {
     private static final String BASE_API_URL = "https://my.beta.minter.network";
     private static MyMinterApi INSTANCE;
     private ApiService.Builder mApiService;
-    private AuthRepository mAuthRepository;
-    private InfoRepository mInfoRepository;
+    private MyAuthRepository mAuthRepository;
+    private MyInfoRepository mInfoRepository;
     private MyAddressRepository mAddressRepository;
-    private ProfileRepository mProfileRepository;
+    private MyProfileRepository mProfileRepository;
 
     private MyMinterApi() {
         mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
@@ -103,17 +103,17 @@ public class MyMinterApi {
         return out;
     }
 
-    public AuthRepository auth() {
+    public MyAuthRepository auth() {
         if (mAuthRepository == null) {
-            mAuthRepository = new AuthRepository(mApiService);
+            mAuthRepository = new MyAuthRepository(mApiService);
         }
 
         return mAuthRepository;
     }
 
-    public InfoRepository info() {
+    public MyInfoRepository info() {
         if (mInfoRepository == null) {
-            mInfoRepository = new InfoRepository(mApiService);
+            mInfoRepository = new MyInfoRepository(mApiService);
         }
 
         return mInfoRepository;
@@ -127,9 +127,9 @@ public class MyMinterApi {
         return mAddressRepository;
     }
 
-    public ProfileRepository profile() {
+    public MyProfileRepository profile() {
         if(mProfileRepository == null) {
-            mProfileRepository = new ProfileRepository(mApiService);
+            mProfileRepository = new MyProfileRepository(mApiService);
         }
 
         return mProfileRepository;

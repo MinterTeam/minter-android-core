@@ -64,7 +64,7 @@ import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.helpers.StringHelper;
-import network.minter.my.repo.InfoRepository;
+import network.minter.my.repo.MyInfoRepository;
 import timber.log.Timber;
 
 import static network.minter.bipwallet.internal.helpers.Plurals.bips;
@@ -84,7 +84,7 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
     @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
     @Inject BlockChainAccountRepository accountRepo;
     @Inject ExplorerAddressRepository addressRepo;
-    @Inject InfoRepository infoRepo;
+    @Inject MyInfoRepository infoRepo;
     private List<MinterAddress> myAddresses = new ArrayList<>();
     private MultiRowAdapter mAdapter;
     private SimpleRecyclerAdapter<HistoryTransaction, ItemViewHolder> mTransactionsAdapter;

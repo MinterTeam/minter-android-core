@@ -40,6 +40,7 @@ import network.minter.bipwallet.R;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.dialogs.WalletDialogBuilder;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
+import network.minter.mintercore.MinterSDK;
 
 import static network.minter.bipwallet.internal.common.Preconditions.checkNotNull;
 
@@ -69,7 +70,7 @@ public final class WalletTxStartDialog extends WalletDialog {
         setContentView(R.layout.wallet_tx_send_start_dialog);
         ButterKnife.bind(this);
         title.setText(mBuilder.getTitle());
-        amount.setText(mBuilder.mAmount.toString());
+        amount.setText(String.format("%s %s", mBuilder.mAmount.toString(), mBuilder.mCoin));
         if (mBuilder.mAvatarUrl != null) {
             avatar.setImageUrl(mBuilder.mAvatarUrl);
         }
@@ -96,11 +97,12 @@ public final class WalletTxStartDialog extends WalletDialog {
         private BigDecimal mAmount;
         private String mAvatarUrl;
         private CharSequence mRecipientName;
+        private String mCoin = MinterSDK.DEFAULT_COIN;
+
 
         public Builder(Context context, CharSequence title) {
             super(context, title);
         }
-
 
         public Builder setAmount(String decimalString) {
             return setAmount(new BigDecimal(decimalString).setScale(18, BigDecimal.ROUND_UNNECESSARY));
@@ -129,11 +131,19 @@ public final class WalletTxStartDialog extends WalletDialog {
             return super.setAction(BUTTON_POSITIVE, title, listener);
         }
 
-
         public WalletTxStartDialog create() {
             checkNotNull(mRecipientName, "Recipient name required");
             checkNotNull(mAmount, "Amount required");
             return new WalletTxStartDialog(mContext, this);
+        }
+
+        public Builder setCoin(String coin) {
+            if (coin == null) {
+                return this;
+            }
+
+            mCoin = coin.toUpperCase();
+            return this;
         }
     }
 

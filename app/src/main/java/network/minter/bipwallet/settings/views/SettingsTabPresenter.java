@@ -55,7 +55,7 @@ import network.minter.bipwallet.settings.ui.SettingsFieldType;
 import network.minter.bipwallet.settings.views.rows.ChangeAvatarRow;
 import network.minter.bipwallet.settings.views.rows.SettingsButtonRow;
 import network.minter.my.models.User;
-import network.minter.my.repo.ProfileRepository;
+import network.minter.my.repo.MyProfileRepository;
 import timber.log.Timber;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
@@ -71,7 +71,7 @@ public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.Set
     private final static int REQUEST_ATTACH_AVATAR = CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE;
     @Inject AuthSession session;
     @Inject SecretStorage secretStorage;
-    @Inject ProfileRepository profileRepo;
+    @Inject MyProfileRepository profileRepo;
     @Inject Context context;
 
     private MultiRowAdapter mMainAdapter, mAdditionalAdapter;

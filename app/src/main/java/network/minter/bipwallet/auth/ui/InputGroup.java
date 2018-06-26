@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.bipwallet.auth.ui;
 
 import android.support.design.widget.TextInputLayout;
@@ -146,7 +171,7 @@ public class InputGroup {
                 .forEach(item -> item.setOnEditorActionListener(listener));
     }
 
-    public void setError(String fieldName, String message) {
+    public void setError(String fieldName, CharSequence message) {
         if (!mInputNames.containsKey(fieldName)) {
             return;
         }
@@ -157,16 +182,16 @@ public class InputGroup {
             tl.setError(message);
             tl.setErrorEnabled(message != null && message.length() > 0);
         } else {
-            mInputNames.get(fieldName).setError((message == null || message.isEmpty()) ? null : message);
+            mInputNames.get(fieldName).setError((message == null || message.length() == 0) ? null : message);
         }
     }
 
-    public void setErrors(Map<String, List<String>> fieldsErrors) {
+    public <T extends CharSequence> void setErrors(Map<String, List<T>> fieldsErrors) {
         if(fieldsErrors == null || fieldsErrors.isEmpty()) {
             return;
         }
 
-        for(Map.Entry<String, List<String>> entry: fieldsErrors.entrySet()) {
+        for (Map.Entry<String, List<T>> entry : fieldsErrors.entrySet()) {
             if(entry.getValue().isEmpty()) {
                 continue;
             }
