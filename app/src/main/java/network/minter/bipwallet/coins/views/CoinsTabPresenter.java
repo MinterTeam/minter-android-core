@@ -62,6 +62,7 @@ import network.minter.bipwallet.tx.adapters.TransactionDataSource;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
+import network.minter.mintercore.MinterSDK;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.helpers.StringHelper;
 import network.minter.my.repo.MyInfoRepository;
@@ -120,8 +121,15 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
                 .setBinder((itemViewHolder, item, position) -> {
                     itemViewHolder.title.setText(item.coin.toUpperCase());
                     itemViewHolder.amount.setText(item.balance.toPlainString());
-                    itemViewHolder.avatar.setImageUrl(item.getAvatar());
+
+                    if (item.coin.toUpperCase().equals(MinterSDK.DEFAULT_COIN)) {
+                        itemViewHolder.avatar.setImageResource(R.drawable.ic_coin_bip);
+                    } else {
+                        itemViewHolder.avatar.setImageUrl(item.getAvatar());
+                    }
                     itemViewHolder.subname.setVisibility(View.GONE);
+
+
                 }).build();
     }
 
