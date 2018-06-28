@@ -68,10 +68,6 @@ public final class TxSendCoin extends Operation {
         return coin.replace("\0", "");
     }
 
-    byte[] fromRawRlp(int idx, Object[] raw) {
-        return (byte[]) raw[idx];
-    }
-
     @NonNull
     @Override
     protected byte[] encodeRLP() {

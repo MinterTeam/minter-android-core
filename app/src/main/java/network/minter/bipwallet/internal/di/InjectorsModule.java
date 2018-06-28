@@ -39,9 +39,12 @@ import network.minter.bipwallet.auth.ui.AuthFragment;
 import network.minter.bipwallet.auth.ui.RegisterActivity;
 import network.minter.bipwallet.auth.ui.SigninActivity;
 import network.minter.bipwallet.auth.ui.SplashFragment;
+import network.minter.bipwallet.exchange.ExchangeModule;
+import network.minter.bipwallet.exchange.ui.ConvertCoinActivity;
 import network.minter.bipwallet.internal.di.annotations.ActivityScope;
 import network.minter.bipwallet.internal.di.annotations.FragmentScope;
 import network.minter.bipwallet.sending.ui.DialogTxSendActivity;
+import network.minter.bipwallet.settings.ui.PasswordChangeMigrationActivity;
 import network.minter.bipwallet.tx.ui.TransactionListActivity;
 
 /**
@@ -96,4 +99,11 @@ public interface InjectorsModule {
     @ActivityScope
     DialogTxSendActivity dialogTxSendActivityInjector();
 
+    @ContributesAndroidInjector(modules = ExchangeModule.class)
+    @ActivityScope
+    ConvertCoinActivity convertCoinActivityInjector();
+
+    @ContributesAndroidInjector
+    @ActivityScope
+    PasswordChangeMigrationActivity passwordChangeMigrationActivityInjector();
 }

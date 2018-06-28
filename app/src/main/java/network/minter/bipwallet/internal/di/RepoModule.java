@@ -33,6 +33,7 @@ import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.storage.KVStorage;
 import network.minter.blockchainapi.MinterBlockChainApi;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
+import network.minter.blockchainapi.repo.BlockChainCoinRepository;
 import network.minter.explorerapi.MinterExplorerApi;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
@@ -41,6 +42,7 @@ import network.minter.my.repo.MyAddressRepository;
 import network.minter.my.repo.MyAuthRepository;
 import network.minter.my.repo.MyInfoRepository;
 import network.minter.my.repo.MyProfileRepository;
+import timber.log.Timber;
 
 /**
  * Dogsy. 2017
@@ -102,7 +104,10 @@ public class RepoModule {
     @WalletApp
     public MyMinterApi provideMyMinterApi(AuthSession session) {
         MyMinterApi.getInstance().getApiService().setAuthHeaderName("Authorization");
-        MyMinterApi.getInstance().getApiService().setTokenGetter(() -> "Bearer " + session.getAuthToken());
+        MyMinterApi.getInstance().getApiService().setTokenGetter(() -> {
+            Timber.d("Getting token for MyMinter: %s", "Bearer " + session.getAuthToken());
+            return "Bearer " + session.getAuthToken();
+        });
         return MyMinterApi.getInstance();
     }
 
@@ -110,6 +115,12 @@ public class RepoModule {
     @WalletApp
     public BlockChainAccountRepository provideBlockChainAccountRepo() {
         return MinterBlockChainApi.getInstance().account();
+    }
+
+    @Provides
+    @WalletApp
+    public BlockChainCoinRepository provideBlockChainCoinRepo() {
+        return MinterBlockChainApi.getInstance().coin();
     }
 
     @Provides

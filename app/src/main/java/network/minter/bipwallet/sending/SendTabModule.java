@@ -25,7 +25,6 @@
 
 package network.minter.bipwallet.sending;
 
-import android.content.Context;
 import android.view.View;
 
 import com.arellomobile.mvp.MvpView;
@@ -45,13 +44,9 @@ import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Module
-public class SendingTabModule {
+public class SendTabModule {
 
-    public interface DialogExecutor {
-        WalletDialog run(Context ctx);
-    }
-
-    public interface SendingView extends MvpView, ErrorViewWithRetry {
+    public interface SendView extends MvpView, ErrorViewWithRetry {
         void setOnClickAccountSelectedListener(View.OnClickListener listener);
         void setOnTextChangedListener(InputGroup.OnTextChangedListener listener);
         void setFormValidationListener(InputGroup.OnFormValidateListener listener);
@@ -60,7 +55,7 @@ public class SendingTabModule {
         void setOnSubmit(View.OnClickListener listener);
         void setSubmitEnabled(boolean enabled);
         void clearInputs();
-        void startDialog(DialogExecutor executor);
+        void startDialog(WalletDialog.DialogExecutor executor);
         void startExplorer(String txHash);
         void setOnClickScanQR(View.OnClickListener listener);
         void startScanQR(int requestCode);

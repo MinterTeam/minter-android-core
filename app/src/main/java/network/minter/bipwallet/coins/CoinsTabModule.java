@@ -52,6 +52,7 @@ public interface CoinsTabModule {
         void setOnAvatarClick(View.OnClickListener listener);
         void startTransactionList();
         void hideAvatar();
+        void startConvertCoins();
     }
 
     interface TransactionListView extends MvpView, ProgressView {

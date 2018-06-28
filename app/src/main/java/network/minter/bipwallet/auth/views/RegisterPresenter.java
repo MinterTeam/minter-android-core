@@ -62,7 +62,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 @InjectViewState
 public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView> {
     @Inject MyAuthRepository authRepo;
-    @Inject SecretStorage secretRepo;
+    @Inject SecretStorage secretStorage;
     @Inject AuthSession session;
 
     private RegisterData mRegisterData;
@@ -114,17 +114,18 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
             return;
         }
 
+        getViewState().hideKeyboard();
         getViewState().clearErrors();
         getViewState().showProgress();
 
         final SecretData secretData = SecretStorage.generateAddress();
-        secretRepo.setEncryptionKey(mRegisterData.rawPassword);
+        secretStorage.setEncryptionKey(mRegisterData.rawPassword);
         mRegisterData.language = Locale.getDefault().toString();
         try {
-            mRegisterData.mainAddress = secretData.toAddressData(true, true, secretRepo.getEncryptionKey());
+            mRegisterData.mainAddress = secretData.toAddressData(true, true, secretStorage.getEncryptionKey());
         } catch (Throwable t) {
             getViewState().onError(t);
-            secretRepo.destroy();
+            secretStorage.destroy();
             return;
         }
 
@@ -134,14 +135,14 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
                 .onErrorResumeNext(convertToMyErrorResult())
                 .subscribe(userResult -> {
                     if(!userResult.isSuccess()) {
-                        secretRepo.destroy();
+                        secretStorage.destroy();
                         getViewState().hideProgress();
                         getViewState().setResultError(userResult.error.message);
                         getViewState().setInputErrors(userResult.getError().getData());
                         return;
                     }
 
-                    secretRepo.add(secretData);
+                    secretStorage.add(secretData);
 
                     if(userResult.data.confirmations != null && !userResult.data.confirmations.isEmpty()) {
                         ProfileRequestResult.Confirmation confirmation = userResult.data.confirmations.get(0);

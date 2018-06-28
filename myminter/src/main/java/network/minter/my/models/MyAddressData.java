@@ -39,6 +39,8 @@ import javax.crypto.NoSuchPaddingException;
 import network.minter.mintercore.crypto.EncryptedString;
 import network.minter.mintercore.crypto.MinterAddress;
 
+import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+
 /**
  * MinterWallet. Май 2018
  *
@@ -55,29 +57,18 @@ public class MyAddressData {
     public MyAddressData() {
     }
 
-    public MyAddressData(MinterAddress address, boolean isMain, String seedPhrase, boolean isServerSecured, String encryptionKey) {
-        this.address = address;
+    public MyAddressData(final MinterAddress address, boolean isMain, final String seedPhrase, boolean isServerSecured, final String encryptionKey) {
+        this.address = checkNotNull(address, "Address required");
         this.isMain = isMain;
         this.isServerSecured = isServerSecured;
         try {
-            this.encrypted = new EncryptedString(seedPhrase, encryptionKey);
-        } catch (NoSuchPaddingException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalBlockSizeException e) {
-            throw new RuntimeException(e);
-        } catch (BadPaddingException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            this.encrypted = new EncryptedString(
+                    checkNotNull(seedPhrase, "Seed phrase required"),
+                    checkNotNull(encryptionKey, "Encryption key required")
+            );
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException | UnsupportedEncodingException e) {
+            throw new RuntimeException("Unable to encrypt data", e);
         }
-
-
     }
 
 }

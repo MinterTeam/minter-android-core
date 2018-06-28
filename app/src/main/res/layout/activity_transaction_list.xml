@@ -54,7 +54,7 @@
             app:layout_collapseMode="none"
             app:navigationIcon="@drawable/ic_arrow_back_white_compat"
             app:popupTheme="@style/WalletPrimaryToolbar"
-            app:title="All Transactions"
+            app:title="@string/title_transaction_list"
             app:titleTextColor="@android:color/white"
             />
     </android.support.design.widget.AppBarLayout>

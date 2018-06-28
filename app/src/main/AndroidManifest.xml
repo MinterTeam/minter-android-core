@@ -102,6 +102,8 @@
             android:name=".receiving.ui.QRPreviewActivity"
             android:theme="@style/Wallet"
             />
+        <activity android:name=".exchange.ui.ConvertCoinActivity"/>
+        <activity android:name=".settings.ui.PasswordChangeMigrationActivity"/>
     </application>
 
 </manifest>

@@ -51,7 +51,7 @@
             android:theme="@style/WalletPrimaryToolbar"
             app:enableAction="false"
             app:layout_collapseMode="none"
-            app:title="@string/tab_receiving_title"
+            app:title="@string/title_tab_receiving"
             app:titleTextColor="@android:color/white"
             />
     </android.support.design.widget.AppBarLayout>

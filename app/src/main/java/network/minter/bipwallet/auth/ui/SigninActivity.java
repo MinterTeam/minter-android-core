@@ -49,6 +49,7 @@ import network.minter.bipwallet.auth.AuthModule;
 import network.minter.bipwallet.auth.views.SigninPresenter;
 import network.minter.bipwallet.home.ui.HomeActivity;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
+import network.minter.bipwallet.internal.helpers.KeyboardHelper;
 import network.minter.bipwallet.internal.helpers.forms.validators.RegexValidator;
 import network.minter.bipwallet.internal.views.widgets.ToolbarProgress;
 
@@ -130,6 +131,11 @@ public class SigninActivity extends BaseMvpInjectActivity implements AuthModule.
     @Override
     public void setInputErrors(Map<String, List<String>> fieldsErrors) {
         mInputGroup.setErrors(fieldsErrors);
+    }
+
+    @Override
+    public void hideKeyboard() {
+        KeyboardHelper.hideKeyboard(this);
     }
 
     @Override

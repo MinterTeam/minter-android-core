@@ -53,7 +53,7 @@
             app:navigationIcon="@drawable/ic_arrow_back_white_compat"
             app:popupTheme="@style/WalletPrimaryToolbar"
             app:theme="@style/WalletPrimaryToolbar"
-            app:title="My Addresses"
+            app:title="@string/title_address_list"
             app:titleTextColor="@android:color/white"
             />
     </android.support.design.widget.AppBarLayout>

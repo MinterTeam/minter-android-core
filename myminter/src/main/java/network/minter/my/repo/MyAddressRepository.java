@@ -70,6 +70,10 @@ public class MyAddressRepository extends DataRepository<MyAddressEndpoint> {
         return getService().addAddress(data);
     }
 
+    public Call<MyResult<Object>> updateAddress(MyAddressData addressData) {
+        return getService().updateAddress(addressData.id, addressData);
+    }
+
     public Call<MyResult<Object>> setAddressMain(boolean isMain, MyAddressData data) {
         data.isMain = isMain;
         return getService().updateAddress(data.id, data);

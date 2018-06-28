@@ -111,6 +111,11 @@ public final class WalletConfirmDialog extends WalletDialog {
             return this;
         }
 
+        public Builder setText(String text, Object... args) {
+            mText = String.format(text, args);
+            return this;
+        }
+
         public Builder setText(Throwable t) {
             if (t instanceof HttpException) {
                 if (((HttpException) t).code() >= 500 && ((HttpException) t).code() < 1000) {

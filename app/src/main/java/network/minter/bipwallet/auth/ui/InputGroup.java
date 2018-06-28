@@ -25,8 +25,10 @@
 
 package network.minter.bipwallet.auth.ui;
 
+import android.annotation.SuppressLint;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -40,6 +42,8 @@ import java.util.Map;
 
 import network.minter.bipwallet.internal.helpers.forms.validators.BaseValidator;
 
+import static network.minter.bipwallet.internal.common.Preconditions.firstNonNull;
+
 /**
  * MinterWallet. 2018
  *
@@ -50,6 +54,7 @@ public class InputGroup {
     private List<OnTextChangedListener> mTextWatchers = new ArrayList<>();
     private Map<EditText, List<BaseValidator>> mInputValidators = new HashMap<>();
     private List<OnFormValidateListener> mValidFormListeners = new ArrayList<>();
+    @SuppressLint("UseSparseArrays")
     private Map<Integer, Boolean> mValidMap = new HashMap<>();
     private List<Integer> mRequiredInputs = new ArrayList<>();
     private OnTextChangedListener mInternalTextListener = new OnTextChangedListener() {
@@ -58,18 +63,16 @@ public class InputGroup {
             mValidMap.put(editText.getId(), valid);
 
             int countValid = 0;
+            // count required valid inputs
             for (Integer id : mRequiredInputs) {
                 if (mValidMap.containsKey(id) && mValidMap.get(id)) {
                     countValid++;
                 }
             }
 
-            // valid required elements and all elements are valid
+            // valid -> required elements and all elements are valid
             boolean outValid = countValid == mRequiredInputs.size() && Stream.of(mValidMap).filter(
                     Map.Entry::getValue).count() == mValidMap.size();
-
-//            final boolean outValid = mValidMap.size() == mRequiredInputs.size()
-//                    && Stream.of(mValidMap.entrySet()).filter(Map.Entry::getValue).count() == mRequiredInputs.size();
 
             for (OnFormValidateListener listener : mValidFormListeners) {
                 listener.onValid(outValid);
@@ -87,9 +90,23 @@ public class InputGroup {
         return addInput(inputLayout.getEditText());
     }
 
+    public InputGroup addInput(final TextInputLayout... input) {
+        Stream.of(input)
+                .forEach(this::addInput);
+
+        return this;
+    }
+
+    public InputGroup addInput(final EditText... input) {
+        Stream.of(input)
+                .forEach(this::addInput);
+
+        return this;
+    }
+
     public InputGroup addInput(final EditText input) {
         mInputs.add(input);
-        if(input.getTag() != null && input.getTag() instanceof String) {
+        if (input.getTag() != null && input.getTag() instanceof String) {
             mInputNames.put(((String) input.getTag()), input);
         }
 
@@ -143,6 +160,20 @@ public class InputGroup {
         return addValidator(inputLayout.getEditText(), validator);
     }
 
+    public InputGroup addFilter(TextInputLayout inputLayout, InputFilter filter) {
+        return addFilter(inputLayout.getEditText(), filter);
+    }
+
+    public InputGroup addFilter(EditText editText, InputFilter filter) {
+        final InputFilter[] oldFilters = (InputFilter[]) firstNonNull(editText.getFilters(), new InputFilter[0]);
+        final InputFilter[] newFilters = new InputFilter[oldFilters.length + 1];
+        System.arraycopy(oldFilters, 0, newFilters, 0, oldFilters.length);
+        newFilters[oldFilters.length] = filter;
+        editText.setFilters(newFilters);
+
+        return this;
+    }
+
     public InputGroup addValidator(EditText editText, BaseValidator validator) {
         if (!mInputValidators.containsKey(editText)) {
             mInputValidators.put(editText, new ArrayList<>());
@@ -155,7 +186,7 @@ public class InputGroup {
     }
 
     public void clearErrors() {
-        for(Map.Entry<String, EditText> entry: mInputNames.entrySet()) {
+        for (Map.Entry<String, EditText> entry : mInputNames.entrySet()) {
             if (entry.getValue().getParent() != null && entry.getValue().getParent().getParent() instanceof TextInputLayout) {
                 final TextInputLayout tl = ((TextInputLayout) entry.getValue().getParent().getParent());
                 tl.setError(null);
@@ -187,12 +218,12 @@ public class InputGroup {
     }
 
     public <T extends CharSequence> void setErrors(Map<String, List<T>> fieldsErrors) {
-        if(fieldsErrors == null || fieldsErrors.isEmpty()) {
+        if (fieldsErrors == null || fieldsErrors.isEmpty()) {
             return;
         }
 
         for (Map.Entry<String, List<T>> entry : fieldsErrors.entrySet()) {
-            if(entry.getValue().isEmpty()) {
+            if (entry.getValue().isEmpty()) {
                 continue;
             }
 

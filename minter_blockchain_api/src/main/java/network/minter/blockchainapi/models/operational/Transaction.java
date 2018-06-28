@@ -65,10 +65,10 @@ public class Transaction<OperationData extends Operation> {
     private Transaction() {
     }
 
-    public static <T extends Operation> Transaction<T> fromEncoded(String base64encoded, Class<T> type) {
-        checkArgument(base64encoded != null && base64encoded.length() > 0, "Base64 encoded transaction is empty");
+    public static <T extends Operation> Transaction<T> fromEncoded(String hexEncoded, Class<T> type) {
+        checkArgument(hexEncoded != null && hexEncoded.length() > 0, "Encoded transaction is empty");
         checkArgument(type != null, "Class of transaction type must be set");
-        final BytesData bd = new BytesData(base64encoded);
+        final BytesData bd = new BytesData(hexEncoded);
         final DecodeResult rlp = RLP.decode(bd.getData(), 0);
         final Object[] decoded = (Object[]) rlp.getDecoded();
 
@@ -76,9 +76,9 @@ public class Transaction<OperationData extends Operation> {
         transaction.decodeRLP(decoded);
 
         checkArgument(transaction.mType.getOpClass().equals(type),
-                      "Passed transaction class does not matches with incoming data transaction type. Given: %s, expected: %s",
-                      type.getName(),
-                      transaction.mType.getOpClass().getName()
+                "Passed transaction class does not matches with incoming data transaction type. Given: %s, expected: %s",
+                type.getName(),
+                transaction.mType.getOpClass().getName()
         );
 
         try {
@@ -91,6 +91,15 @@ public class Transaction<OperationData extends Operation> {
 
         return transaction;
     }
+
+    public static TxConvertCoin.Builder newConvertCoinTransaction(BigInteger nonce) {
+        Transaction<TxConvertCoin> tx = new Builder<TxConvertCoin>(nonce)
+                .setType(OperationType.ConvertCoin)
+                .build();
+
+        return new TxConvertCoin().new Builder(tx);
+    }
+
 
     public static TxSendCoin.Builder newSendTransaction(BigInteger nonce) {
         Transaction<TxSendCoin> tx = new Builder<TxSendCoin>(nonce)

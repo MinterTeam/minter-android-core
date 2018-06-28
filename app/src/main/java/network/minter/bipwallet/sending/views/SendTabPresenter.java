@@ -57,7 +57,7 @@ import network.minter.bipwallet.internal.dialogs.WalletConfirmDialog;
 import network.minter.bipwallet.internal.dialogs.WalletProgressDialog;
 import network.minter.bipwallet.internal.exceptions.MyResponseException;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.bipwallet.sending.SendingTabModule;
+import network.minter.bipwallet.sending.SendTabModule;
 import network.minter.bipwallet.sending.dialogs.WalletTxStartDialog;
 import network.minter.bipwallet.sending.dialogs.WalletTxSuccessDialog;
 import network.minter.bipwallet.sending.dialogs.WalletTxWaitingDialog;
@@ -87,7 +87,7 @@ import static network.minter.mintercore.MinterSDK.PREFIX_TX;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @InjectViewState
-public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.SendingView> {
+public class SendTabPresenter extends MvpBasePresenter<SendTabModule.SendView> {
     private static final int REQUEST_CODE_QR_SCAN = 101;
     @Inject SecretStorage secretStorage;
     @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
@@ -102,7 +102,7 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
     private String mAvatar = null;
 
     @Inject
-    public SendingTabPresenter() {
+    public SendTabPresenter() {
     }
 
     @Override
@@ -127,7 +127,7 @@ public class SendingTabPresenter extends MvpBasePresenter<SendingTabModule.Sendi
     }
 
     @Override
-    public void attachView(SendingTabModule.SendingView view) {
+    public void attachView(SendTabModule.SendView view) {
         super.attachView(view);
         getViewState().setOnClickAccountSelectedListener(this::onClickAccountSelector);
         getViewState().setOnTextChangedListener(this::onInputTextChanged);

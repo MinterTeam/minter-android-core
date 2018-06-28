@@ -23,38 +23,40 @@
  * THE SOFTWARE.
  */
 
-package network.minter.bipwallet.home;
+package network.minter.bipwallet.exchange;
+
+import android.view.View;
+
+import com.arellomobile.mvp.MvpView;
 
 import java.util.List;
 
-import dagger.Component;
-import network.minter.bipwallet.coins.ui.CoinsTabFragment;
-import network.minter.bipwallet.home.ui.HomeActivity;
-import network.minter.bipwallet.internal.di.WalletComponent;
-import network.minter.bipwallet.receiving.ui.ReceiveTabFragment;
-import network.minter.bipwallet.sending.ui.SendTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
+import dagger.Module;
+import network.minter.bipwallet.advanced.models.AccountItem;
+import network.minter.bipwallet.auth.ui.InputGroup;
+import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
+import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Component(dependencies = WalletComponent.class, modules = {
-        HomeModule.class
-})
-@HomeScope
-public interface HomeComponent {
+@Module
+public class ExchangeModule {
 
-    void inject(HomeActivity activity);
-    void inject(CoinsTabFragment fragment);
-    void inject(SendTabFragment fragment);
-    void inject(ReceiveTabFragment fragment);
-    void inject(SettingsTabFragment fragment);
-    void inject(SettingsUpdateFieldDialog fragment);
-
-    @HomeTabsClasses
-    List<Class<? extends HomeTabFragment>> tabsClasses();
-    HomeActivity homeActivity();
+    public interface ConvertCoinView extends MvpView, ErrorViewWithRetry {
+        void setOnClickMaximum(View.OnClickListener listener);
+        void setOnClickSubmit(View.OnClickListener listener);
+        void setOnClickSelectAccount(View.OnClickListener listener);
+        void setMaximumTitle(CharSequence title);
+        void setTextChangedListener(InputGroup.OnTextChangedListener listener);
+        void startAccountSelector(List<AccountItem> accounts, AccountSelectedAdapter.OnClickListener clickListener);
+        void setOutAccountName(CharSequence accountName);
+        void setError(String field, CharSequence message);
+        void clearErrors();
+        void setSubmitEnabled(boolean enabled);
+        void setMaximumEnabled(boolean enabled);
+        void setFormValidationListener(InputGroup.OnFormValidateListener listener);
+    }
 }

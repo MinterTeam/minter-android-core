@@ -48,6 +48,7 @@ import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.coins.CoinsTabModule;
 import network.minter.bipwallet.coins.views.CoinsTabPresenter;
+import network.minter.bipwallet.exchange.ui.ConvertCoinActivity;
 import network.minter.bipwallet.home.HomeModule;
 import network.minter.bipwallet.home.HomeTabFragment;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
@@ -131,6 +132,11 @@ public class CoinsTabFragment extends HomeTabFragment implements CoinsTabModule.
     @Override
     public void hideAvatar() {
         avatar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void startConvertCoins() {
+        getActivity().startActivity(new Intent(getActivity(), ConvertCoinActivity.class));
     }
 
     @ProvidePresenter

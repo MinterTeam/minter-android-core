@@ -162,6 +162,7 @@ dependencies {
     compileOnly 'com.edwardstock.android:barber-annotations:1.0.0'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.+'
     implementation 'com.redmadrobot:inputmask:3.4.4'
+    implementation 'com.pnikosis:materialish-progress:1.7'
 
     // anim
     implementation 'ru.bullyboo.animation:text_counter:1.0.2'

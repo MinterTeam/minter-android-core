@@ -72,6 +72,9 @@ public class HashUtil {
     }
 
     public static String sha256Hex(String input) {
+        if (input == null) {
+            return "";
+        }
         try {
             return StringHelper.bytesToHexString(sha256(input.getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {

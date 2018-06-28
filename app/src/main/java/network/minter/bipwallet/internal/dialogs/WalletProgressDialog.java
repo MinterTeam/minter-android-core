@@ -31,6 +31,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.widget.TextView;
 
+import com.pnikosis.materialishprogress.ProgressWheel;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
@@ -42,11 +44,32 @@ import network.minter.bipwallet.R;
  */
 public class WalletProgressDialog extends WalletDialog {
     @BindView(R.id.dialog_text) TextView text;
+    @BindView(R.id.progress) ProgressWheel progress;
     private Builder mBuilder;
+    private int mMaxProgress = 100;
 
     protected WalletProgressDialog(@NonNull Context context, Builder builder) {
         super(context);
         mBuilder = builder;
+    }
+
+    public void setMax(int max) {
+        mMaxProgress = max;
+    }
+
+    public void setIndeterminate(boolean indeterminate) {
+        if (indeterminate) {
+            progress.spin();
+        } else {
+            setProgress(0);
+        }
+    }
+
+    public void setProgress(int current) {
+        if (current == 0) {
+            current = 1;
+        }
+        progress.setProgress((float) current / (float) mMaxProgress);
     }
 
     @Override
@@ -54,7 +77,7 @@ public class WalletProgressDialog extends WalletDialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wallet_progress_dialog);
         ButterKnife.bind(this);
-
+        progress.spin();
         title.setText(mBuilder.mTitle);
         if (mBuilder.mText == null) {
             text.setText(R.string.please_wait);

@@ -25,10 +25,12 @@
 
 package network.minter.bipwallet.internal.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -70,6 +72,24 @@ public abstract class WalletDialog extends Dialog {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    public static <T extends WalletDialog> T switchDialogWithExecutor(Fragment fragment, T dialog, DialogExecutor executor) {
+        return switchDialogWithExecutor(fragment.getActivity(), dialog, executor);
+    }
+
+    public static <T extends WalletDialog> T switchDialogWithExecutor(Activity activity, T dialog, DialogExecutor executor) {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
+        dialog = (T) executor.run(activity);
+        dialog.show();
+        return dialog;
+    }
+
+    public interface DialogExecutor {
+        WalletDialog run(Context ctx);
     }
 
     public interface WithPositiveAction<T> {

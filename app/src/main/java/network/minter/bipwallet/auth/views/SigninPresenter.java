@@ -97,6 +97,7 @@ public class SigninPresenter extends MvpBasePresenter<AuthModule.SigninView> {
         if (!mValid) {
             return;
         }
+        getViewState().hideKeyboard();
 
         getViewState().setEnableSubmit(false);
 

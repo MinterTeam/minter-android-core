@@ -53,7 +53,7 @@
             android:theme="@style/WalletPrimaryToolbar"
             app:layout_collapseMode="none"
             app:navigationIcon="@drawable/ic_arrow_back_white_compat"
-            app:title="Generate Address"
+            app:title="@string/title_advanced_generate"
             app:titleTextColor="@android:color/white"
             />
     </android.support.design.widget.AppBarLayout>

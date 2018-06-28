@@ -23,38 +23,33 @@
  * THE SOFTWARE.
  */
 
-package network.minter.bipwallet.home;
+package network.minter.bipwallet.internal.helpers.forms.validators;
 
-import java.util.List;
-
-import dagger.Component;
-import network.minter.bipwallet.coins.ui.CoinsTabFragment;
-import network.minter.bipwallet.home.ui.HomeActivity;
-import network.minter.bipwallet.internal.di.WalletComponent;
-import network.minter.bipwallet.receiving.ui.ReceiveTabFragment;
-import network.minter.bipwallet.sending.ui.SendTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
+import java.util.regex.Pattern;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Component(dependencies = WalletComponent.class, modules = {
-        HomeModule.class
-})
-@HomeScope
-public interface HomeComponent {
+public class DecimalValidator extends RegexValidator {
+    private final static String PATTERN = "^(\\d*)([.,])?(\\d{1,18})$";
 
-    void inject(HomeActivity activity);
-    void inject(CoinsTabFragment fragment);
-    void inject(SendTabFragment fragment);
-    void inject(ReceiveTabFragment fragment);
-    void inject(SettingsTabFragment fragment);
-    void inject(SettingsUpdateFieldDialog fragment);
+    public DecimalValidator() {
+        super(PATTERN);
+    }
 
-    @HomeTabsClasses
-    List<Class<? extends HomeTabFragment>> tabsClasses();
-    HomeActivity homeActivity();
+    public DecimalValidator(boolean required) {
+        super(PATTERN, required);
+    }
+
+    public DecimalValidator(CharSequence errorMessage) {
+        super(PATTERN, errorMessage);
+    }
+
+    public DecimalValidator(CharSequence errorMessage, boolean required) {
+        super(Pattern.compile(PATTERN), errorMessage, required);
+    }
+
+
 }

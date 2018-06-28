@@ -44,7 +44,7 @@ import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
 import network.minter.bipwallet.internal.mvp.ProgressView;
 import network.minter.bipwallet.internal.system.BackPressedDelegate;
 import network.minter.bipwallet.receiving.ui.ReceiveTabFragment;
-import network.minter.bipwallet.sending.ui.SendingTabFragment;
+import network.minter.bipwallet.sending.ui.SendTabFragment;
 import network.minter.bipwallet.settings.ui.SettingsTabFragment;
 
 /**
@@ -57,14 +57,14 @@ public class HomeModule {
     public final static String EXTRA_TAB = "EXTRA_TAB";
     public final static String EXTRA_MENU_ID = "EXTRA_MENU_ID";
     public final static String TAB_COINS = CoinsTabFragment.class.getName();
-    public final static String TAB_SENDING = SendingTabFragment.class.getName();
+    public final static String TAB_SENDING = SendTabFragment.class.getName();
     public final static String TAB_RECEIVING = ReceiveTabFragment.class.getName();
     public final static String TAB_SETTINGS = SettingsTabFragment.class.getName();
     private static HomeComponent component = null;
     private final List<Class<? extends HomeTabFragment>> tabsClassesClient = new ArrayList<Class<? extends HomeTabFragment>>() {
         {
             add(CoinsTabFragment.class);
-            add(SendingTabFragment.class);
+            add(SendTabFragment.class);
             add(ReceiveTabFragment.class);
             add(SettingsTabFragment.class);
         }

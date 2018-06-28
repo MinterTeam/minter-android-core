@@ -184,7 +184,7 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
     }
 
     private void onClickConvertCoins(View view) {
-
+        getViewState().startConvertCoins();
     }
 
     private void onClickStartTransactionList(View view) {

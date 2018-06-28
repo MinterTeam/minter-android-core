@@ -23,38 +23,43 @@
  * THE SOFTWARE.
  */
 
-package network.minter.bipwallet.home;
+package network.minter.bipwallet.settings.views.migration;
 
-import java.util.List;
+import android.support.annotation.IntDef;
 
-import dagger.Component;
-import network.minter.bipwallet.coins.ui.CoinsTabFragment;
-import network.minter.bipwallet.home.ui.HomeActivity;
-import network.minter.bipwallet.internal.di.WalletComponent;
-import network.minter.bipwallet.receiving.ui.ReceiveTabFragment;
-import network.minter.bipwallet.sending.ui.SendTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsTabFragment;
-import network.minter.bipwallet.settings.ui.SettingsUpdateFieldDialog;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Component(dependencies = WalletComponent.class, modules = {
-        HomeModule.class
-})
-@HomeScope
-public interface HomeComponent {
+public final class MigrationException extends Exception {
+    public final static int STEP_1_UPDATE_PASSWORD = 0;
+    public final static int STEP_2_GET_REMOTE_ADDRESS_LIST = 1;
+    public final static int STEP_3_RE_ENCRYPT_REMOTE_DATA = 2;
+    public final static int STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE = 3;
 
-    void inject(HomeActivity activity);
-    void inject(CoinsTabFragment fragment);
-    void inject(SendTabFragment fragment);
-    void inject(ReceiveTabFragment fragment);
-    void inject(SettingsTabFragment fragment);
-    void inject(SettingsUpdateFieldDialog fragment);
+    private int mStep;
 
-    @HomeTabsClasses
-    List<Class<? extends HomeTabFragment>> tabsClasses();
-    HomeActivity homeActivity();
+    public MigrationException(@MigrationStep int step, Throwable other) {
+        super(other);
+        mStep = step;
+    }
+
+    @MigrationStep
+    public int getStep() {
+        return mStep;
+    }
+
+    @IntDef({
+            STEP_1_UPDATE_PASSWORD,
+            STEP_2_GET_REMOTE_ADDRESS_LIST,
+            STEP_3_RE_ENCRYPT_REMOTE_DATA,
+            STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface MigrationStep {
+    }
 }

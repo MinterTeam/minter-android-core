@@ -59,7 +59,7 @@
     <string name="tx_detail_coin">Coin</string>
     <string name="tx_detail_amount">Amount</string>
 
-    <string name="tab_sending_title">Send Coins</string>
+    <string name="title_tab_sending">Send Coins</string>
     <string name="tx_send_coin_hint">Coin</string>
     <string name="tx_send_recipient_hint">To (@username, email or Mx address)</string>
     <string name="tx_send_amount_hint">Amount</string>
@@ -85,8 +85,23 @@
     <string name="btn_view_tx">View transaction</string>
     <string name="btn_close">Close</string>
     <string name="btn_explorer">Explorer</string>
-    <string name="tab_receiving_title">Receive coins</string>
+    <string name="title_tab_receiving">Receive coins</string>
     <string name="btn_share_address">Share address</string>
     <string name="tab_receive_label_address">Your address</string>
+    <string name="title_convert_coins">Convert coins</string>
+    <string name="title_address_list">My Addresses</string>
+    <string name="title_address_item">Manage address</string>
+    <string name="title_advanced_generate">Generate Address</string>
+    <string name="title_advanced_main">Advanced Mode</string>
+    <string name="title_register">Create wallet</string>
+    <string name="title_signin">Sign In</string>
+    <string name="title_transaction_list">All Transactions</string>
+    <string name="title_tab_settings">Settings</string>
+    <string name="btn_exchange">Exchange</string>
+    <string name="title_change_password">Change Password</string>
+    <string name="hint_change_password_new">New password</string>
+    <string name="hint_change_password_new_repeat">New password again</string>
+    <string name="btn_change_password">Change password</string>
+    <string name="hint_change_password_old">Current password</string>
 
 </resources>

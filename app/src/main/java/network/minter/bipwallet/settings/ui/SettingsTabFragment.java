@@ -124,12 +124,13 @@ public class SettingsTabFragment extends HomeTabFragment implements SettingsTabM
     }
 
     @Override
-    public void startManageAddresses() {
+    public void startAddressList() {
         getActivity().startActivity(new Intent(getActivity(), AddressListActivity.class));
     }
 
     @Override
     public void startEditField(SettingsFieldType type, CharSequence label, String fieldName, String value) {
+
         fieldFragment = SettingsUpdateFieldDialog.newInstance(type, label, fieldName, value);
         fieldFragment.setOnSaveListener(presenter::onUpdateProfile);
         fieldFragment.show(getChildFragmentManager(), SettingsUpdateFieldDialog.class.getName());
@@ -151,6 +152,11 @@ public class SettingsTabFragment extends HomeTabFragment implements SettingsTabM
                 .setCropShape(CropImageView.CropShape.OVAL)
                 .setActivityMenuIconColor(getResources().getColor(R.color.textColorPrimary))
                 .start(getActivity());
+    }
+
+    @Override
+    public void startPasswordChange() {
+        startActivity(new Intent(getActivity(), PasswordChangeMigrationActivity.class));
     }
 
     @Override
@@ -180,6 +186,7 @@ public class SettingsTabFragment extends HomeTabFragment implements SettingsTabM
 
     @Override
     public void startLogin() {
+        Wallet.app().cache().clear();
         Intent intent = new Intent(getActivity(), AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 

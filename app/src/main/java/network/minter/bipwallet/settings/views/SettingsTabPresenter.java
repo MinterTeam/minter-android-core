@@ -39,11 +39,9 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Queue;
 
 import javax.inject.Inject;
 
-import network.minter.bipwallet.advanced.models.SecretData;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.home.HomeScope;
 import network.minter.bipwallet.internal.auth.AuthSession;
@@ -156,31 +154,22 @@ public class SettingsTabPresenter extends MvpBasePresenter<SettingsTabModule.Set
             mMainAdapter.addRow(mChangeAvatarRow);
 
             mMainSettingsRows.put("username", new SettingsButtonRow("Username", () -> session.getUser().getData().username, this::onClickChangeUsername));
-//        mMainSettingsRows.put("phone", new SettingsButtonRow("Mobile", () -> session.getUser().getData().phone, "Add", this::onClickChangePhone));
             mMainSettingsRows.put("email", new SettingsButtonRow("Email", () -> session.getUser().getData().email, "Add", this::onClickChangeEmail));
             mMainSettingsRows.put("password", new SettingsButtonRow("Password", "Change", this::onClickChangePassword).setInactive(true));
             Stream.of(mMainSettingsRows.values()).forEach(item -> mMainAdapter.addRow(item));
-        }
 
-        if (session.getRole() == AuthSession.AuthType.Advanced) {
-            mMainSettingsRows.put("language", new SettingsButtonRow("Language", session.getUser().getData().getLanguageDisplay(), this::onClickChangePassword).setInactive(true));
-            Stream.of(mMainSettingsRows.values()).forEach(item -> mMainAdapter.addRow(item));
-            mMainAdapter.addRow(new SettingsButtonRow("My Addresses", "Manage", this::onClickAddresses).setInactive(true));
-        } else {
-            mAdditionalSettingsRows.put("language", new SettingsButtonRow("Language", session.getUser().getData().getLanguageDisplay(), this::onClickChangePassword).setInactive(true));
-            Stream.of(mAdditionalSettingsRows.values()).forEach(item -> mAdditionalAdapter.addRow(item));
             mAdditionalAdapter.addRow(new SettingsButtonRow("My Addresses", "Manage", this::onClickAddresses).setInactive(true));
+        } else {
+            mMainAdapter.addRow(new SettingsButtonRow("My Addresses", "Manage", this::onClickAddresses).setInactive(true));
         }
-
     }
 
     private void onClickAddresses(View view, View sharedView, String value) {
-        getViewState().startManageAddresses();
+        getViewState().startAddressList();
     }
 
     private void onClickChangePassword(View view, View sharedView, String value) {
-        Queue<SecretData> secrets = secretStorage.createMigrationQueue();
-//        getViewState().startChangePassword();
+        getViewState().startPasswordChange();
     }
 
     private void onClickChangeEmail(View view, View sharedView, String value) {

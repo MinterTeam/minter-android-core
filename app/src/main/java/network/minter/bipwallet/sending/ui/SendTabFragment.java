@@ -62,10 +62,10 @@ import network.minter.bipwallet.home.HomeTabFragment;
 import network.minter.bipwallet.internal.dialogs.WalletConfirmDialog;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.helpers.forms.validators.RegexValidator;
-import network.minter.bipwallet.sending.SendingTabModule;
+import network.minter.bipwallet.sending.SendTabModule;
 import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
 import network.minter.bipwallet.sending.account.WalletAccountSelectorDialog;
-import network.minter.bipwallet.sending.views.SendingTabPresenter;
+import network.minter.bipwallet.sending.views.SendTabPresenter;
 import network.minter.explorerapi.MinterExplorerApi;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
@@ -79,9 +79,9 @@ import permissions.dispatcher.RuntimePermissions;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @RuntimePermissions
-public class SendingTabFragment extends HomeTabFragment implements SendingTabModule.SendingView {
-    @Inject Provider<SendingTabPresenter> presenterProvider;
-    @InjectPresenter SendingTabPresenter presenter;
+public class SendTabFragment extends HomeTabFragment implements SendTabModule.SendView {
+    @Inject Provider<SendTabPresenter> presenterProvider;
+    @InjectPresenter SendTabPresenter presenter;
     @BindView(R.id.coin_input) TextInputEditText coinInput;
     @BindView(R.id.recipient_layout) TextInputLayout recipientLayout;
     @BindView(R.id.recipient_input) TextInputEditText recipientInput;
@@ -178,14 +178,8 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
     }
 
     @Override
-    public void startDialog(SendingTabModule.DialogExecutor executor) {
-        if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
-            mCurrentDialog.dismiss();
-            mCurrentDialog = null;
-        }
-
-        mCurrentDialog = executor.run(getActivity());
-        mCurrentDialog.show();
+    public void startDialog(WalletDialog.DialogExecutor executor) {
+        mCurrentDialog = WalletDialog.switchDialogWithExecutor(this, mCurrentDialog, executor);
     }
 
     @Override
@@ -207,7 +201,7 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
 
     @Override
     public void startScanQRWithPermissions(int requestCode) {
-        SendingTabFragmentPermissionsDispatcher.startScanQRWithPermissionCheck(this, requestCode);
+        SendTabFragmentPermissionsDispatcher.startScanQRWithPermissionCheck(this, requestCode);
     }
 
     @Override
@@ -242,7 +236,7 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        SendingTabFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        SendTabFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @OnShowRationale(Manifest.permission.CAMERA)
@@ -280,7 +274,7 @@ public class SendingTabFragment extends HomeTabFragment implements SendingTabMod
     }
 
     @ProvidePresenter
-    SendingTabPresenter providePresenter() {
+    SendTabPresenter providePresenter() {
         return presenterProvider.get();
     }
 }

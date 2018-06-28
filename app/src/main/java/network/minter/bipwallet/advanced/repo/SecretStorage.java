@@ -170,12 +170,24 @@ public class SecretStorage {
         return address;
     }
 
-
     public SecretData getSecret(MinterAddress address) {
         return mStorage.<Map<String, SecretData>>get(KEY_SECRETS).get(address.toString());
     }
 
-    public Queue<SecretData> createMigrationQueue() {
+    public void removeMigrationQueue() {
+        mStorage.delete(KEY_SECRETS_MIGRATION);
+    }
+
+    public void updateMigrationQueue(Queue<SecretData> secretData) {
+        mStorage.delete(KEY_SECRETS_MIGRATION);
+        mStorage.putQueue(KEY_SECRETS_MIGRATION, secretData);
+    }
+
+    public Queue<SecretData> getOrCreateMigrationQueue() {
+        if (mStorage.contains(KEY_SECRETS_MIGRATION)) {
+            return mStorage.getQueue(KEY_SECRETS_MIGRATION);
+        }
+
         Queue<SecretData> secretQueue = new LinkedList<>(getSecrets().values());
         mStorage.putQueue(KEY_SECRETS_MIGRATION, secretQueue);
 

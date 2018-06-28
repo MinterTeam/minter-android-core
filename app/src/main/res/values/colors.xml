@@ -26,6 +26,8 @@
 
 <resources>
     <color name="colorPrimary">#502EC2</color>
+    <color name="colorPrimaryHalf">#60502EC2</color>
+
     <color name="colorPrimaryFocused">#19502EC2</color>
     <color name="colorPrimaryPressed">#33502EC2</color>
     <color name="colorPrimaryDark">#492AB2</color>
@@ -46,6 +48,7 @@
     <color name="greyBackground">#F0F0F0</color>
     <color name="bg_alert_dialog">#B2FFFFFF</color>
     <color name="btn_disabled">#929292</color>
+    <color name="btn_disabled_transparent">#80929292</color>
     <color name="colorInactive">#929292</color>
 
 </resources>

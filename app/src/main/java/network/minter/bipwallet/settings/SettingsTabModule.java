@@ -34,6 +34,7 @@ import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 import network.minter.bipwallet.auth.ui.InputGroup;
+import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.settings.ui.SettingsFieldType;
 
 /**
@@ -43,14 +44,13 @@ import network.minter.bipwallet.settings.ui.SettingsFieldType;
  */
 public interface SettingsTabModule {
 
-    interface SettingsTabView extends MvpView {
-        void startLogin();
-        void startEditField(SettingsFieldType type, CharSequence label, String fieldNamed, String value);
-        void setMainAdapter(RecyclerView.Adapter<?> mainAdapter);
-        void setAdditionalAdapter(RecyclerView.Adapter<?> additionalAdapter);
-        void startManageAddresses();
-        void startChangePassword();
-        void startAvatarChooser();
+    interface PasswordChangeMigrationView extends MvpView {
+        void setTextChangedListener(InputGroup.OnTextChangedListener listener);
+        void setFormValidateListener(InputGroup.OnFormValidateListener listener);
+        void setOnClickSubmit(View.OnClickListener listener);
+        void startDialog(WalletDialog.DialogExecutor executor);
+        void setEnableSubmit(boolean enable);
+        void finish();
     }
 
     @StateStrategyType(OneExecutionStateStrategy.class)
@@ -63,5 +63,16 @@ public interface SettingsTabModule {
         void setEnableSubmit(boolean valid);
         void dismiss();
         void callOnSaveListener();
+    }
+
+    interface SettingsTabView extends MvpView {
+        void startLogin();
+        void startEditField(SettingsFieldType type, CharSequence label, String fieldNamed, String value);
+        void setMainAdapter(RecyclerView.Adapter<?> mainAdapter);
+        void setAdditionalAdapter(RecyclerView.Adapter<?> additionalAdapter);
+        void startAddressList();
+        void startChangePassword();
+        void startAvatarChooser();
+        void startPasswordChange();
     }
 }

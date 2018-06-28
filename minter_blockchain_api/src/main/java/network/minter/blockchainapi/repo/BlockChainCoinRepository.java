@@ -27,6 +27,8 @@ package network.minter.blockchainapi.repo;
 
 import android.support.annotation.NonNull;
 
+import java.math.BigInteger;
+
 import network.minter.blockchainapi.api.BlockChainCoinEndpoint;
 import network.minter.blockchainapi.models.BCResult;
 import network.minter.blockchainapi.models.Coin;
@@ -63,16 +65,16 @@ public class BlockChainCoinRepository extends DataRepository<BlockChainCoinEndpo
      * @param amount   Amount of exchange
      * @return
      */
-    public Call<BCResult<Double>> estimateCoinExchangeReturn(@NonNull String fromCoin, @NonNull String toCoin,
-                                                             double amount) {
-        if (amount <= 0) {
+    public Call<BCResult<Double>> getCoinCurrencyConversion(@NonNull String fromCoin, @NonNull String toCoin, BigInteger amount) {
+
+        if (amount.compareTo(new BigInteger("1")) < 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         }
 
         return getService().estimateCoinExchangeReturn(asMap(
                 "from_coin", checkNotNull(fromCoin, "Source coin required"),
                 "to_coin", checkNotNull(toCoin, "Target coin required"),
-                "amount", String.valueOf(amount)
+                "amount", amount.toString()
         ));
     }
 

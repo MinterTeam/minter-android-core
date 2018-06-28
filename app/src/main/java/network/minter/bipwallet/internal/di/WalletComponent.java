@@ -50,6 +50,7 @@ import network.minter.bipwallet.internal.helpers.ImageHelper;
 import network.minter.bipwallet.internal.helpers.NetworkHelper;
 import network.minter.bipwallet.internal.storage.KVStorage;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
+import network.minter.blockchainapi.repo.BlockChainCoinRepository;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
@@ -109,4 +110,5 @@ public interface WalletComponent {
 
     MyProfileRepository profileRepo();
     BlockChainAccountRepository accountRepoBlockChain();
+    BlockChainCoinRepository coinRepoBlockChain();
 }

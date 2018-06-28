@@ -51,6 +51,7 @@ import network.minter.bipwallet.auth.AuthModule;
 import network.minter.bipwallet.auth.views.RegisterPresenter;
 import network.minter.bipwallet.home.ui.HomeActivity;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
+import network.minter.bipwallet.internal.helpers.KeyboardHelper;
 import network.minter.bipwallet.internal.helpers.forms.validators.CompareValidator;
 import network.minter.bipwallet.internal.helpers.forms.validators.EmailValidator;
 import network.minter.bipwallet.internal.helpers.forms.validators.LengthValidator;
@@ -142,6 +143,11 @@ public class RegisterActivity extends BaseMvpInjectActivity implements AuthModul
         startActivity(new Intent(Intent.ACTION_VIEW, endpoint));
 //        startActivityClearTop(this, AuthActivity.class);
         finish();
+    }
+
+    @Override
+    public void hideKeyboard() {
+        KeyboardHelper.hideKeyboard(this);
     }
 
     @Override
