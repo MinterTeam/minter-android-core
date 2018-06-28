@@ -56,6 +56,8 @@ android {
         }
     }
 
+
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -64,16 +66,15 @@ android {
     flavorDimensions "env"
 
     productFlavors {
-//        // can't use name starts with 'test'
-//        devnet {
-//            dimension "env"
-//            buildConfigField "String", "BASE_API_URL", '"https://my.beta.minter.network"'
-//        }
-//
-//        mainnet {
-//            dimension "env"
-//            buildConfigField "String", "BASE_API_URL", '"https://my.minter.network"'
-//        }
+        // can't use name starts with 'test'
+        netMain {
+            dimension "env"
+            buildConfigField "String", "BASE_API_URL", '"https://my.minter.network"'
+        }
+        netTest {
+            dimension "env"
+            buildConfigField "String", "BASE_API_URL", '"https://my.beta.minter.network"'
+        }
     }
 }
 

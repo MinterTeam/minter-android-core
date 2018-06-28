@@ -47,6 +47,21 @@ android {
         }
     }
 
+    flavorDimensions "env"
+    productFlavors {
+        // can't use name starts with 'test'
+        netMain {
+            dimension "env"
+            buildConfigField "String", "BASE_API_URL", '"https://explorer.minter.network"'
+            buildConfigField "String", "BASE_FRONT_URL", '"https://explorer.minter.network"'
+        }
+        netTest {
+            dimension "env"
+            buildConfigField "String", "BASE_API_URL", '"https://testnet.explorer.minter.network"'
+            buildConfigField "String", "BASE_FRONT_URL", '"https://explorer.beta.minter.network"'
+        }
+    }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8

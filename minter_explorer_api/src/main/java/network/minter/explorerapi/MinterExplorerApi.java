@@ -31,7 +31,6 @@ import java.math.BigInteger;
 
 import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
-import network.minter.mintercore.BuildConfig;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
@@ -46,25 +45,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterExplorerApi {
-    public static final String FRONT_URL = "https://explorer.beta.minter.network";
-    private final static String BASE_API_URL = "https://testnet.explorer.minter.network";
+    public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
+    private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
     private static MinterExplorerApi INSTANCE;
     private ApiService.Builder mApiService;
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
-
-    public static void initialize(boolean debug) {
-        if(INSTANCE != null) {
-            return;
-        }
-
-        INSTANCE = new MinterExplorerApi();
-        INSTANCE.mApiService.setDebug(debug);
-
-        if(debug) {
-            INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
-        }
-    }
 
     private MinterExplorerApi() {
         mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
@@ -74,12 +60,25 @@ public class MinterExplorerApi {
         mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssX");
     }
 
+    public static void initialize(boolean debug) {
+        if (INSTANCE != null) {
+            return;
+        }
+
+        INSTANCE = new MinterExplorerApi();
+        INSTANCE.mApiService.setDebug(debug);
+
+        if (debug) {
+            INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
+        }
+    }
+
     public static MinterExplorerApi getInstance() {
         return INSTANCE;
     }
 
     public ExplorerTransactionRepository transactions() {
-        if(mTransactionRepository == null) {
+        if (mTransactionRepository == null) {
             mTransactionRepository = new ExplorerTransactionRepository(mApiService);
         }
 

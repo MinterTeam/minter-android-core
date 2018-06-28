@@ -34,7 +34,6 @@ import java.math.BigInteger;
 import network.minter.blockchainapi.repo.BlockChainAccountRepository;
 import network.minter.blockchainapi.repo.BlockChainCoinRepository;
 import network.minter.blockchainapi.repo.BlockChainTransactionRepository;
-import network.minter.mintercore.BuildConfig;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
@@ -49,7 +48,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterBlockChainApi {
-    private final static String BASE_NODE_URL = "http://minter-node-1.testnet.minter.network:8841";
+    private final static String BASE_NODE_URL = BuildConfig.BASE_NORE_URL;
     private static MinterBlockChainApi INSTANCE;
     private ApiService.Builder mApiService;
     private BlockChainAccountRepository mAccountRepository;
@@ -75,15 +74,6 @@ public class MinterBlockChainApi {
         INSTANCE = new MinterBlockChainApi();
         INSTANCE.mApiService.setDebug(debug);
         if (debug) {
-//            Timber.plant(new Timber.DebugTree() {
-//                @Override
-//                protected void log(int priority, String tag, String message, Throwable t) {
-//                    super.log(priority, "MinterCore-" + tag, message, t);
-//                }
-//
-//
-//            });
-
             INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
         }
     }

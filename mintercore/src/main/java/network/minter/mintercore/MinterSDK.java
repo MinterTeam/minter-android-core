@@ -38,8 +38,7 @@ import network.minter.mintercore.crypto.NativeSecp256k1;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterSDK {
-    public final static String DEFAULT_COIN = "MNT";
-
+    public final static String DEFAULT_COIN = BuildConfig.DEFAULT_COIN_NAME;
     public final static String PREFIX_ADDRESS = "Mx";
     public final static String PREFIX_TX = "Mt";
     public final static String PREFIX_CHECK = "Mc";
@@ -66,10 +65,9 @@ public class MinterSDK {
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
-
     public static MinterSDK getInstance() {
         if (INSTANCE == null) {
-            throw new IllegalStateException("Have you forget to call MinterSDK.initialize(Context ctx)?");
+            throw new IllegalStateException("Have you forget to call MinterSDK.initialize()?");
         }
         return INSTANCE;
     }

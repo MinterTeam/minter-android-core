@@ -72,6 +72,21 @@ android {
         }
     }
 
+    flavorDimensions "env"
+
+    productFlavors {
+        // can't use name starts with 'test'
+        netMain {
+            dimension "env"
+            //@TODO
+            buildConfigField "String", "BASE_NODE_URL", '"http://minter-node-1.testnet.minter.network:8841"'
+        }
+        netTest {
+            dimension "env"
+            buildConfigField "String", "BASE_NORE_URL", '"http://minter-node-1.testnet.minter.network:8841"'
+        }
+    }
+
 }
 
 dependencies {
