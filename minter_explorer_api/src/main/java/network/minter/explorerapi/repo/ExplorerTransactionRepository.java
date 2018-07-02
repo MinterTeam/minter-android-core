@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import network.minter.explorerapi.api.ExplorerTransactionEndpoint;
+import network.minter.explorerapi.api.converters.ExplorerHistoryTransactionDeserializer;
 import network.minter.explorerapi.models.ExpResult;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.mintercore.crypto.MinterAddress;
@@ -68,6 +69,12 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         }
 
         return getService().getTransactions(out, page);
+    }
+
+    @Override
+    protected void configureService(ApiService.Builder apiBuilder) {
+        super.configureService(apiBuilder);
+        apiBuilder.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());
     }
 
     @NonNull

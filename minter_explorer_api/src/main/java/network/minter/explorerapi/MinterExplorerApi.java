@@ -33,10 +33,14 @@ import network.minter.explorerapi.repo.ExplorerAddressRepository;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.mintercore.crypto.MinterHash;
+import network.minter.mintercore.crypto.MinterPublicKey;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.api.converters.BigIntegerDeserializer;
 import network.minter.mintercore.internal.api.converters.BytesDataDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
+import network.minter.mintercore.internal.api.converters.MinterHashDeserializer;
+import network.minter.mintercore.internal.api.converters.MinterPublicKeyDeserializer;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -100,7 +104,10 @@ public class MinterExplorerApi {
 
     public GsonBuilder getGsonBuilder() {
         GsonBuilder out = new GsonBuilder();
+        out.setDateFormat("yyyy-MM-dd HH:mm:ssX");
         out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
+        out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyDeserializer());
+        out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
         out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
         out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
 

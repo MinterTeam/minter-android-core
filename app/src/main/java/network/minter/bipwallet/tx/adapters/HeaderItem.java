@@ -39,12 +39,12 @@ public class HeaderItem implements TransactionItem {
 
     @Override
     public int getViewType() {
-        return HEADER;
+        return ITEM_HEADER;
     }
 
     @Override
     public boolean isSameOf(TransactionItem item) {
-        return item.getViewType() == HEADER && ((HeaderItem) item).mHeader.equals(mHeader);
+        return item.getViewType() == ITEM_HEADER && ((HeaderItem) item).mHeader.equals(mHeader);
     }
 
     public String getHeader() {

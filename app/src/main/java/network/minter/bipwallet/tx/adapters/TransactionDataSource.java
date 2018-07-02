@@ -94,13 +94,17 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
         final Map<MinterAddress, List<HistoryTransaction>> toFetchAddresses = new LinkedHashMap<>(items.result.size());
         for (HistoryTransaction tx : items.result) {
             final MinterAddress add;
-            if (tx.isIncoming(addresses)) {
-                add = tx.data.from;
-            } else {
-                add = tx.data.to;
+            if (tx.type != HistoryTransaction.Type.Send) {
+                continue;
             }
 
-            if (!toFetch.contains(add)) {
+            if (tx.isIncoming(addresses)) {
+                add = tx.<HistoryTransaction.TxSendCoinResult>getData().from;
+            } else {
+                add = tx.<HistoryTransaction.TxSendCoinResult>getData().to;
+            }
+
+            if (add != null && !toFetch.contains(add)) {
                 toFetch.add(add);
             }
 
@@ -136,13 +140,17 @@ public class TransactionDataSource extends PageKeyedDataSource<Integer, Transact
         final Map<MinterAddress, List<HistoryTransaction>> toFetchAddresses = new LinkedHashMap<>(items.size());
         for (HistoryTransaction tx : items) {
             final MinterAddress add;
-            if (tx.isIncoming(addresses)) {
-                add = tx.data.from;
-            } else {
-                add = tx.data.to;
+            if (tx.type != HistoryTransaction.Type.Send) {
+                continue;
             }
 
-            if (!toFetch.contains(add)) {
+            if (tx.isIncoming(addresses)) {
+                add = tx.<HistoryTransaction.TxSendCoinResult>getData().from;
+            } else {
+                add = tx.<HistoryTransaction.TxSendCoinResult>getData().to;
+            }
+
+            if (add != null && !toFetch.contains(add)) {
                 toFetch.add(add);
             }
 

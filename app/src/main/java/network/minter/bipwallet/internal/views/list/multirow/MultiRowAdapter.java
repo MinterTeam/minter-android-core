@@ -186,7 +186,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
     @NonNull
     @Override
     public RowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final String tag = String.format("TxViewHolder instancing: %s", parent.getContext().getResources().getResourceEntryName(viewType));
+        final String tag = String.format("TxSendCoinViewHolder instancing: %s", parent.getContext().getResources().getResourceEntryName(viewType));
 //        TimeProfiler.start(tag);
 
         if (layoutInflater == null) {
@@ -203,18 +203,9 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
         Throwable cause = null;
         try {
             viewHolder = findViewHolder(viewType, v);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             cause = e;
-            Timber.e(e, "Error finding TxViewHolder");
-        } catch (IllegalAccessException e) {
-            cause = e;
-            Timber.e(e, "Error finding TxViewHolder");
-        } catch (InvocationTargetException e) {
-            cause = e;
-            Timber.e(e, "Error finding TxViewHolder");
-        } catch (InstantiationException e) {
-            cause = e;
-            Timber.e(e, "Error finding TxViewHolder");
+            Timber.e(e, "Error finding view holder");
         }
 
         if (viewHolder == null) {
@@ -227,12 +218,8 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
     @SuppressWarnings("unchecked")
     @Override
     public void onBindViewHolder(@NonNull RowViewHolder holder, int position) {
-//        String tag = "Binding " + holder.getClass().getName();
-//        tag = tag.intern();
-//        TimeProfiler.start(tag);
         MultiRowContract.Row item = getItemByPosition(position);
         item.onBindViewHolder(holder);
-//        TimeProfiler.end(tag);
     }
 
     @SuppressWarnings("unchecked")
@@ -354,7 +341,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
 
 
     /**
-     * Кэшированный список классов TxViewHolder'ов чтоб итеративно каждый раз не искать
+     * Кэшированный список классов TxSendCoinViewHolder'ов чтоб итеративно каждый раз не искать
      */
     @SuppressWarnings("unchecked")
     protected void makeHoldersCache() {
@@ -367,10 +354,10 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
             checkNotNull(item);
             if (item instanceof SortableRow) {
                 checkNotNull(item.getViewHolderClass(),
-                        "Row " + (((SortableRow) item).getRow().getClass()) + " does not have valid TxViewHolder class");
+                        "Row " + (((SortableRow) item).getRow().getClass()) + " does not have valid TxSendCoinViewHolder class");
             } else {
                 checkNotNull(item.getViewHolderClass(),
-                        "Row " + item.getClass() + " does not have valid TxViewHolder class");
+                        "Row " + item.getClass() + " does not have valid TxSendCoinViewHolder class");
             }
 
             rowsViewIdClassCache.put(item.getItemView(), item);
@@ -400,7 +387,7 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
         }
         holderClass = holderViewIdClassCache.get(viewId);
         if (holderClass == null) {
-            throw new RuntimeException("Can't findStream TxViewHolder for view " + String.valueOf(viewId));
+            throw new RuntimeException("Can't findStream TxSendCoinViewHolder for view " + String.valueOf(viewId));
         }
         if (isInnerClass(holderClass)) {
             throw new RuntimeException("Class should be static!");

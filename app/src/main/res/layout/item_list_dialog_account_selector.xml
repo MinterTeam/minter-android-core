@@ -37,7 +37,7 @@
     >
 
     <network.minter.bipwallet.internal.views.widgets.BipCircleImageView
-        android:id="@+id/item.avatar"
+        android:id="@+id/item_avatar"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginStart="@dimen/margin_min"
@@ -54,7 +54,7 @@
         />
 
     <TextView
-        android:id="@+id/item.title"
+        android:id="@+id/item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_min"
@@ -63,7 +63,7 @@
         android:textSize="@dimen/text_size_default"
         app:layout_constraintBottom_toTopOf="@id/item.subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item.avatar"
+        app:layout_constraintStart_toEndOf="@id/item_avatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="BIP (120,912.98)"
@@ -79,8 +79,8 @@
         android:textSize="@dimen/text_size_12"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item.avatar"
-        app:layout_constraintTop_toBottomOf="@id/item.title"
+        app:layout_constraintStart_toEndOf="@id/item_avatar"
+        app:layout_constraintTop_toBottomOf="@id/item_title"
         tools:text="Mx4ec2ac...2e866b"
 
         />

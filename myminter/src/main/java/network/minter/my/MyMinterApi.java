@@ -31,7 +31,6 @@ import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
 
-import network.minter.mintercore.BuildConfig;
 import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.EncryptedString;
 import network.minter.mintercore.crypto.MinterAddress;
@@ -55,7 +54,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MyMinterApi {
-    private static final String BASE_API_URL = "https://my.beta.minter.network";
+    private static final String BASE_API_URL = BuildConfig.BASE_API_URL;
     private static MyMinterApi INSTANCE;
     private ApiService.Builder mApiService;
     private MyAuthRepository mAuthRepository;
@@ -71,10 +70,6 @@ public class MyMinterApi {
         mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssX");
     }
 
-    public ApiService.Builder getApiService() {
-        return mApiService;
-    }
-
     public static void initialize(boolean debug) {
         if (INSTANCE != null) {
             return;
@@ -87,6 +82,10 @@ public class MyMinterApi {
 
     public static MyMinterApi getInstance() {
         return INSTANCE;
+    }
+
+    public ApiService.Builder getApiService() {
+        return mApiService;
     }
 
     public GsonBuilder getGsonBuilder() {
@@ -128,7 +127,7 @@ public class MyMinterApi {
     }
 
     public MyProfileRepository profile() {
-        if(mProfileRepository == null) {
+        if (mProfileRepository == null) {
             mProfileRepository = new MyProfileRepository(mApiService);
         }
 

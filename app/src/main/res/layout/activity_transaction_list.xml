@@ -73,7 +73,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_list_transaction_expandable"
+            tools:listitem="@layout/item_list_tx_send_coin_expandable"
             />
     </android.support.v4.widget.SwipeRefreshLayout>
 

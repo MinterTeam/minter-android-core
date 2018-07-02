@@ -23,45 +23,31 @@
  * THE SOFTWARE.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package network.minter.mintercore.crypto;
 
-buildscript {
+import network.minter.mintercore.MinterSDK;
 
-    ext.kotlin_version = '1.2.50'
+/**
+ * MinterWallet. 2018
+ *
+ * @author Eduard Maximovich <edward.vstock@gmail.com>
+ */
+public class MinterPublicKey extends PublicKey {
 
-    repositories {
-        google()
-        jcenter()
+    public MinterPublicKey(byte[] data) {
+        super(data);
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-beta02'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+    public MinterPublicKey(CharSequence hexData) {
+        super(hexData);
     }
-}
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven { url "https://dl.bintray.com/ethereum/maven/" }
-        maven { url 'https://clojars.org/repo/' }
-        maven { url 'https://jitpack.io' }
-        maven { url "https://maven.edwardstock.com/artifactory/libs-release-local" }
-        maven { url "https://repo1.maven.org/maven2/com/google/zxing/" }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
-
+    public MinterPublicKey(BytesData data) {
+        super(data);
     }
-}
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
-
-ext {
-    minterMinSdk = 19
-    minterMaxSdk = 27
-    minterLibSupport = "27.1.1"
-    minterBuildTools = "28.0.0" //"27.0.3"
+    @Override
+    public String toString() {
+        return toHexString(MinterSDK.PREFIX_PUBLIC_KEY, false);
+    }
 }

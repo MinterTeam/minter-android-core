@@ -43,7 +43,6 @@ import network.minter.bipwallet.tx.adapters.TransactionItem;
 import network.minter.bipwallet.tx.adapters.TransactionListAdapter;
 import network.minter.explorerapi.models.HistoryTransaction;
 import network.minter.explorerapi.repo.ExplorerTransactionRepository;
-import network.minter.mintercore.MinterSDK;
 import network.minter.my.repo.MyInfoRepository;
 
 /**
@@ -111,6 +110,7 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
 
     private void refresh() {
         mListDisposable = listBuilder.buildObservable()
+                .doOnSubscribe(this::unsubscribeOnDestroy)
                 .subscribe(res -> {
                     getViewState().hideRefreshProgress();
                     mAdapter.submitList(res);
@@ -118,7 +118,6 @@ public class TransactionListPresenter extends MvpBasePresenter<CoinsTabModule.Tr
     }
 
     private void onExplorerClick(View view, HistoryTransaction historyTransaction) {
-        // @TODO prefix for hash: MinterSDK.PREFIX_TX
-        getViewState().startExplorer(historyTransaction.hash.toHexString(MinterSDK.PREFIX_ADDRESS));
+        getViewState().startExplorer(historyTransaction.hash.toString());
     }
 }

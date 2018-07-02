@@ -42,13 +42,19 @@ public enum OperationType {
     @SerializedName("2")
     ConvertCoin((byte)0x02, TxConvertCoin.class),
     @SerializedName("3")
-    CreateCoin((byte)0x03, null),
+    CreateCoin((byte) 0x03, TxCreateCoin.class),
     @SerializedName("4")
-    DeclareCandidacy((byte)0x04, null),
+    DeclareCandidacy((byte) 0x04, TxDeclareCandidacy.class),
     @SerializedName("5")
-    Delegate((byte)0x05, null),
+    Delegate((byte) 0x05, TxDelegate.class),
     @SerializedName("6")
-    Unbound((byte) 0x06, null);
+    Unbound((byte) 0x06, TxUnbound.class),
+    @SerializedName("7")
+    RedeemCheck((byte) 0x07, TxRedeemCheck.class),
+    @SerializedName("8")
+    SetCandidateOnline((byte) 0x08, TxSetCandidateOnline.class),
+    @SerializedName("9")
+    SetCandidateOffline((byte) 0x09, TxSetCandidateOffline.class);
 
     BigInteger mValue;
     Class<? extends Operation> mOpClass;
@@ -85,5 +91,9 @@ public enum OperationType {
 
     public BigInteger getValue() {
         return mValue;
+    }
+
+    public int getValueInt() {
+        return mValue.intValue();
     }
 }

@@ -98,22 +98,30 @@ public class CoinsTabPresenter extends MvpBasePresenter<CoinsTabModule.CoinsTabV
         mTransactionsAdapter = new SimpleRecyclerAdapter.Builder<HistoryTransaction, ItemViewHolder>()
                 .setCreator(R.layout.item_list_with_image, ItemViewHolder.class)
                 .setBinder((itemViewHolder, item, position) -> {
-                    if (item.isIncoming(myAddresses)) {
-                        itemViewHolder.amount.setText(String.format("+ %s", item.data.amount.toPlainString()));
-                        itemViewHolder.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorGreen));
-                    } else {
-                        itemViewHolder.amount.setText(String.format("- %s", item.data.amount.toPlainString()));
-                        itemViewHolder.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorPrimary));
-                    }
+                    if (item.type == HistoryTransaction.Type.Send) {
+                        HistoryTransaction.TxSendCoinResult sendResult = item.getData();
+                        if (item.isIncoming(myAddresses)) {
+                            itemViewHolder.amount.setText(String.format("+ %s", sendResult.amount.toPlainString()));
+                            itemViewHolder.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorGreen));
+                        } else {
+                            itemViewHolder.amount.setText(String.format("- %s", sendResult.amount.toPlainString()));
+                            itemViewHolder.amount.setTextColor(Wallet.app().res().getColor(R.color.textColorPrimary));
+                        }
 
-                    if (item.username != null) {
-                        itemViewHolder.title.setText(String.format("@%s", item.username));
-                    } else {
-                        itemViewHolder.title.setText(item.data.to.toShortString());
-                    }
+                        if (item.username != null) {
+                            itemViewHolder.title.setText(String.format("@%s", item.username));
+                        } else {
+                            itemViewHolder.title.setText(sendResult.to.toShortString());
+                        }
 
-                    itemViewHolder.avatar.setImageUrl(item.getAvatar());
-                    itemViewHolder.subname.setText(item.data.coin.toUpperCase());
+                        itemViewHolder.avatar.setImageUrl(item.getAvatar());
+                        itemViewHolder.subname.setText(sendResult.coin.toUpperCase());
+                    } else {
+                        itemViewHolder.avatar.setImageUrl(item.getAvatar());
+                        itemViewHolder.title.setText(item.hash.toShortString());
+                        itemViewHolder.amount.setText(item.type.name());
+
+                    }
                 }).build();
 
         mCoinsAdapter = new SimpleRecyclerAdapter.Builder<AccountItem, ItemViewHolder>()

@@ -53,11 +53,13 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
         }
 
         debug {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
         }
     }
 
@@ -65,13 +67,19 @@ android {
     productFlavors {
         netMain {
             dimension "env"
-            buildConfigField "String", "DEFAULT_COIN_NAME", "BIP"
+            buildConfigField "String", "DEFAULT_COIN_NAME", '"BIP"'
         }
 
         netTest {
             dimension "env"
-            buildConfigField "String", "DEFAULT_COIN_NAME", "MNT"
+            buildConfigField "String", "DEFAULT_COIN_NAME", '"MNT"'
         }
+    }
+
+    lintOptions {
+        disable 'CheckResult', 'DefaultLocale'
+        abortOnError false
+        ignoreWarnings true
     }
 
     compileOptions {

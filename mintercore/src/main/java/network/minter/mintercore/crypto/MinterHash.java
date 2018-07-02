@@ -37,24 +37,24 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
-public class MinterAddress extends PublicKey {
-    public MinterAddress(byte[] data) {
+public class MinterHash extends PublicKey {
+    public MinterHash(byte[] data) {
         super(
-                checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")
+                checkArgument(data.length == 20, data, "Minter hash must contains exact 20 bytes")
         );
     }
 
-    public MinterAddress(CharSequence hexData) {
+    public MinterHash(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && (hexData.length() == 40 || (hexData.length() == 42 && hexData.subSequence(0, 2).equals(MinterSDK.PREFIX_ADDRESS))),
+                        hexData != null && (hexData.length() == 40 || (hexData.length() == 42 && hexData.subSequence(0, 2).equals(MinterSDK.PREFIX_TX))),
                         hexData,
-                        "Minter public key in hex format must contains 40 or 42 characters, where first 2 chars is a prefix like: Mx or 0x"
+                        "Minter hash in hex format must contains 40 or 42 characters, where first 2 chars is a prefix \"Mt\""
                 )
         );
     }
 
-    public MinterAddress(MinterAddress data) {
+    public MinterHash(MinterHash data) {
         super(data.getData());
     }
 
@@ -63,7 +63,7 @@ public class MinterAddress extends PublicKey {
      *
      * @param data Raw public key extracted from private key
      */
-    public MinterAddress(PublicKey data) {
+    public MinterHash(PublicKey data) {
         // don't change source public key
         super(
                 new BytesData(data.dropFirst())
@@ -72,13 +72,13 @@ public class MinterAddress extends PublicKey {
         );
     }
 
-    MinterAddress() {
+    MinterHash() {
     }
 
     @Override
-    public MinterAddress clone() {
+    public MinterHash clone() {
         super.clone();
-        MinterAddress out = new MinterAddress();
+        MinterHash out = new MinterHash();
         out.mValid = mValid;
         out.mData = new byte[mData.length];
         System.arraycopy(mData, 0, out.mData, 0, mData.length);
@@ -87,16 +87,14 @@ public class MinterAddress extends PublicKey {
     }
 
     /**
-     * Convert public key to minter address short public key and converts to hex string with prefix
-     *
-     * @return last 20 bytes with minter prefix of sha3-hashed original public key
+     * Convert bytes to minter short hash and converts to hex string with prefix
      */
     public String toString() {
-        return toHexString(MinterSDK.PREFIX_ADDRESS, false);
+        return toHexString(MinterSDK.PREFIX_TX, false);
     }
 
     /**
-     * @return Mxfe6001...61eE99 short address
+     * @return Mtfe6001...61eE99 short address
      */
     public String toShortString() {
         final String in = toString();

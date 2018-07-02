@@ -25,6 +25,8 @@
 
 package network.minter.bipwallet.tx.adapters;
 
+import android.annotation.SuppressLint;
+
 import network.minter.explorerapi.models.HistoryTransaction;
 
 /**
@@ -33,7 +35,6 @@ import network.minter.explorerapi.models.HistoryTransaction;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class TxItem implements TransactionItem {
-
     private final HistoryTransaction mTx;
     private String mAvatar;
     private String mUsername;
@@ -64,9 +65,10 @@ public class TxItem implements TransactionItem {
         return this;
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public int getViewType() {
-        return TX;
+        return mTx.type != null ? mTx.type.ordinal() + 1 : 0xFF;
     }
 
     public HistoryTransaction getTx() {
@@ -75,6 +77,6 @@ public class TxItem implements TransactionItem {
 
     @Override
     public boolean isSameOf(TransactionItem item) {
-        return item.getViewType() == TX && ((TxItem) item).getTx().hash.equals(mTx.hash);
+        return item.getViewType() == TX_SEND && ((TxItem) item).getTx().hash.equals(mTx.hash);
     }
 }

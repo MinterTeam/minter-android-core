@@ -33,7 +33,7 @@
     android:minHeight="64dp"
     >
     <network.minter.bipwallet.internal.views.widgets.BipCircleImageView
-        android:id="@+id/item.avatar"
+        android:id="@+id/item_avatar"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginStart="@dimen/margin_min"
@@ -50,7 +50,7 @@
         />
 
     <TextView
-        android:id="@+id/item.title"
+        android:id="@+id/item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_min"
@@ -58,33 +58,33 @@
         android:textSize="@dimen/text_size_default"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/item.amount"
-        app:layout_constraintStart_toEndOf="@id/item.avatar"
+        app:layout_constraintEnd_toStartOf="@id/item_amount"
+        app:layout_constraintStart_toEndOf="@id/item_avatar"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Mxfe6001...61eE99"
         />
 
     <TextView
-        android:id="@+id/item.amount"
+        android:id="@+id/item_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_min"
         android:fontFamily="@font/_ubuntu_medium"
         android:textColor="@color/textColorGreen"
         android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@id/item.subamount"
+        app:layout_constraintBottom_toTopOf="@id/item_subamount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="viewEnd"
         app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toEndOf="@id/item.title"
+        app:layout_constraintStart_toEndOf="@id/item_title"
         app:layout_constraintVertical_bias=".5"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="+50.102030405060708090"
         />
 
     <TextView
-        android:id="@+id/item.subamount"
+        android:id="@+id/item_subamount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -94,7 +94,7 @@
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item.amount"
+        app:layout_constraintTop_toBottomOf="@id/item_amount"
         tools:text="STBX"
         />
 

@@ -71,7 +71,7 @@ public interface MultiRowContract {
 
         /**
          * Вызывается когда адаптер биндит вьюху,
-         * соответственно в этом методе заполняем TxViewHolder
+         * соответственно в этом методе заполняем TxSendCoinViewHolder
          *
          * @param viewHolder Row view holder
          * @see MultiRowAdapter#makeHoldersCache()
@@ -87,7 +87,7 @@ public interface MultiRowContract {
         void onUnbindViewHolder(@NonNull T viewHolder);
 
         /**
-         * Класс TxViewHolder'а который отражает вьюху
+         * Класс TxSendCoinViewHolder'а который отражает вьюху
          *
          * @return Class
          * @see MultiRowAdapter.RowViewHolder

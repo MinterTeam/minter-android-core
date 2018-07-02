@@ -25,6 +25,8 @@
 
 package network.minter.explorerapi.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -32,8 +34,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import network.minter.mintercore.crypto.BytesData;
 import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.mintercore.crypto.MinterHash;
+import network.minter.mintercore.crypto.MinterPublicKey;
 
 /**
  * MinterCore. 2018
@@ -41,23 +44,68 @@ import network.minter.mintercore.crypto.MinterAddress;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class HistoryTransaction implements Serializable {
-    public BytesData hash;
-    public BigInteger nonce;
-    public long block;
-    public Date timestamp;
-    public double fee;
-    public String type;
-    public TxResult data;
 
+    public MinterHash hash;
+    public BigInteger nonce;
+    public BigInteger block;
+    public Date timestamp;
+    public BigDecimal fee;
+    public Type type;
+    public Object data;
+    public Status status;
+    public String payload;
     public transient String username;
     public transient String avatarUrl;
 
-    public boolean isIncoming(List<MinterAddress> addressList) {
-        return addressList.contains(data.to);
+    public enum Status {
+        @SerializedName("success")
+        Success,
+        @SerializedName("error")
+        Error,
     }
 
-    public boolean isIncoming(MinterAddress address) {
-        return data.to.equals(address);
+    public enum Type {
+        @SerializedName("send")
+        Send(TxSendCoinResult.class),
+        @SerializedName("convert")
+        ConvertCoin(TxConvertCoinResult.class),
+        @SerializedName("createCoin")
+        CreateCoin(TxCreateResult.class),
+        @SerializedName("declareCandidacy")
+        DeclareCandidacy(TxDeclareCandidacyResult.class),
+        @SerializedName("delegate")
+        Delegate(TxDelegateResult.class),
+        @SerializedName("unbound")
+        Unbound(TxUnboundResult.class),
+        @SerializedName("redeemCheckData")
+        RedeemCheck(TxRedeemCheckResult.class),
+        @SerializedName("setCandidateOnData")
+        SetCandidateOnline(TxSetCandidateOnlineOfflineResult.class),
+        @SerializedName("setCandidateOffData")
+        SetCandidateOffline(TxSetCandidateOnlineOfflineResult.class);
+
+        Class<? extends TxResult> mCls;
+
+        Type(Class<? extends TxResult> cls) {
+            mCls = cls;
+        }
+
+        public Class<? extends TxResult> getCls() {
+            return mCls;
+        }
+    }
+
+    public boolean isIncoming(List<MinterAddress> addressList) {
+        if (type != Type.Send) {
+            return false;
+        }
+
+        return addressList.contains(this.<TxSendCoinResult>getData().to);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends TxResult> T getData() {
+        return (T) data;
     }
 
     public String getAvatar() {
@@ -79,8 +127,8 @@ public class HistoryTransaction implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HistoryTransaction that = (HistoryTransaction) o;
-        return block == that.block &&
-                Double.compare(that.fee, fee) == 0 &&
+        return block.equals(that.block) &&
+                Objects.equals(fee, that.fee) &&
                 Objects.equals(hash, that.hash) &&
                 Objects.equals(nonce, that.nonce) &&
                 Objects.equals(timestamp, that.timestamp) &&
@@ -93,10 +141,67 @@ public class HistoryTransaction implements Serializable {
         return Objects.hash(hash, nonce, block, timestamp, fee, type, data);
     }
 
-    public static class TxResult implements Serializable {
+    public interface TxResult extends Serializable {
+
+    }
+
+    public static class TxSendCoinResult implements TxResult {
         public MinterAddress from;
         public MinterAddress to;
         public String coin;
         public BigDecimal amount;
+    }
+
+    public static class TxCreateResult implements TxResult {
+        public MinterAddress from;
+        public String name;
+        public String symbol;
+        @SerializedName("initial_amount")
+        public BigDecimal initialAmount;
+        @SerializedName("initial_reserve")
+        public BigDecimal initialReserve;
+        @SerializedName("constant_reserve_ratio")
+        public BigDecimal constantReserveRatio;
+    }
+
+    public static class TxConvertCoinResult implements TxResult {
+        public MinterAddress from;
+        @SerializedName("from_coin_symbol")
+        public String fromCoin;
+        @SerializedName("to_coin_symbol")
+        public String toCoin;
+        @SerializedName("value")
+        public BigDecimal amount;
+    }
+
+    public static class TxDeclareCandidacyResult implements TxResult {
+        public MinterAddress from;
+        public MinterAddress address;
+        @SerializedName("pub_key")
+        public MinterPublicKey pubKey;
+        public BigDecimal commission;
+        public String coin;
+        public BigDecimal stake;
+    }
+
+    public static class TxSetCandidateOnlineOfflineResult implements TxResult {
+        public MinterAddress from;
+        @SerializedName("pub_key")
+        public MinterPublicKey pubKey;
+    }
+
+    public static class TxUnboundResult implements TxResult {
+        public MinterAddress from;
+
+    }
+
+    public static class TxDelegateResult implements TxResult {
+        public MinterAddress from;
+
+    }
+
+    public static class TxRedeemCheckResult implements TxResult {
+        public MinterAddress from;
+
     }
 }

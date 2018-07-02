@@ -37,15 +37,37 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public interface TransactionItem {
-    int HEADER = 0;
-    int TX = 1;
+    int ITEM_PROGRESS = -1;
+    int ITEM_HEADER = 0;
+    int TX_SEND = 1;
+    int TX_CONVERT_COIN = 2;
+    int TX_CREATE_COIN = 3;
+    int TX_DECLARE_CANDIDACY = 4;
+    int TX_DELEGATE = 5;
+    int TX_UNBOUND = 6;
+    int TX_REDEEM_CHECK = 7;
+    int TX_SET_CANDIDATE_ONLINE = 8;
+    int TX_SET_CANDIDATE_OFFLINE = 9;
+
 
     @ListType
     int getViewType();
     boolean isSameOf(TransactionItem item);
 
     @Retention(SOURCE)
-    @IntDef({HEADER, TX})
+    @IntDef({
+            ITEM_PROGRESS,
+            ITEM_HEADER,
+            TX_SEND,
+            TX_CONVERT_COIN,
+            TX_CREATE_COIN,
+            TX_DECLARE_CANDIDACY,
+            TX_DELEGATE,
+            TX_UNBOUND,
+            TX_REDEEM_CHECK,
+            TX_SET_CANDIDATE_ONLINE,
+            TX_SET_CANDIDATE_OFFLINE
+    })
     @interface ListType {
     }
 }

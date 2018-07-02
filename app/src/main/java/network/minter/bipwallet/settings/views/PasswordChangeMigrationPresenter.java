@@ -66,9 +66,9 @@ import network.minter.my.repo.MyProfileRepository;
 import timber.log.Timber;
 
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
-import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_1_UPDATE_PASSWORD;
-import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_2_GET_REMOTE_ADDRESS_LIST;
-import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_3_RE_ENCRYPT_REMOTE_DATA;
+import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_1_GET_REMOTE_ADDRESS_LIST;
+import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_2_RE_ENCRYPT_REMOTE_DATA;
+import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_3_UPDATE_PASSWORD;
 import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE;
 
 /**
@@ -92,9 +92,9 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
 
     @Inject
     public PasswordChangeMigrationPresenter() {
-        mRetryHandlers.put(STEP_1_UPDATE_PASSWORD, PublishSubject.create());
-        mRetryHandlers.put(STEP_2_GET_REMOTE_ADDRESS_LIST, PublishSubject.create());
-        mRetryHandlers.put(STEP_3_RE_ENCRYPT_REMOTE_DATA, PublishSubject.create());
+        mRetryHandlers.put(STEP_3_UPDATE_PASSWORD, PublishSubject.create());
+        mRetryHandlers.put(STEP_1_GET_REMOTE_ADDRESS_LIST, PublishSubject.create());
+        mRetryHandlers.put(STEP_2_RE_ENCRYPT_REMOTE_DATA, PublishSubject.create());
         mRetryHandlers.put(STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE, PublishSubject.create());
     }
 
@@ -137,14 +137,14 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
             log(1, "Updating password");
             rxCallMy(profileRepo.updateField("password", HashUtil.sha256HexDouble(mNewPassword)))
                     .subscribeOn(Schedulers.io())
-                    .retryWhen(migrationStepFailed(STEP_1_UPDATE_PASSWORD))
+                    .retryWhen(migrationStepFailed(STEP_3_UPDATE_PASSWORD))
                     // getting my minter addresses with id's
                     .switchMap(res -> {
                         log(2, "Get remote address list");
                         secretStorage.setEncryptionKey(mNewPassword);
                         return rxCallMy(addressRepo.getAddresses());
                     })
-                    .retryWhen(migrationStepFailed(STEP_2_GET_REMOTE_ADDRESS_LIST))
+                    .retryWhen(migrationStepFailed(STEP_1_GET_REMOTE_ADDRESS_LIST))
                     // comparing local and remote addresses and get id to update on server
                     .switchMap(res -> Observable.create((ObservableOnSubscribe<List<Observable<MyResult<Object>>>>) emitter -> {
                         log(3, "Encrypt data");
@@ -188,7 +188,7 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
                         emitter.onNext(reEncryptedAddresses);
                         emitter.onComplete();
                     }))
-                    .retryWhen(migrationStepFailed(STEP_3_RE_ENCRYPT_REMOTE_DATA))
+                    .retryWhen(migrationStepFailed(STEP_2_RE_ENCRYPT_REMOTE_DATA))
                     // concat list updates and updated it
                     .switchMap(Observable::concat)
                     .retryWhen(migrationStepFailed(STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE))
@@ -257,7 +257,7 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
                     // revert old password
                     showErrorDialog(throwable, errorRetry);
                 }, t -> {
-                    showErrorDialog(t, mRetryHandlers.get(STEP_1_UPDATE_PASSWORD));
+                    showErrorDialog(t, mRetryHandlers.get(STEP_3_UPDATE_PASSWORD));
                 });
     }
 
@@ -266,13 +266,13 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
         if (throwable instanceof MigrationException) {
             MigrationException ex = ((MigrationException) throwable);
             switch (ex.getStep()) {
-                case STEP_1_UPDATE_PASSWORD:
+                case STEP_3_UPDATE_PASSWORD:
                     message = String.format("Unable to update password. %s", throwable.getMessage());
                     break;
-                case STEP_2_GET_REMOTE_ADDRESS_LIST:
+                case STEP_1_GET_REMOTE_ADDRESS_LIST:
                     message = String.format("Unable to resolve MyMinter addresses. %s", throwable.getMessage());
                     break;
-                case STEP_3_RE_ENCRYPT_REMOTE_DATA:
+                case STEP_2_RE_ENCRYPT_REMOTE_DATA:
                     message = String.format("Unable to encrypt data with new password. %s", throwable.getMessage());
                     break;
                 case STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE:

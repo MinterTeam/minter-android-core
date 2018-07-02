@@ -36,7 +36,7 @@
     >
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/layout.info"
+        android:id="@+id/layout_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="64dp"
@@ -46,7 +46,7 @@
         >
 
         <network.minter.bipwallet.internal.views.widgets.BipCircleImageView
-            android:id="@+id/item.avatar"
+            android:id="@+id/item_avatar"
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:layout_marginStart="@dimen/margin_min"
@@ -63,7 +63,7 @@
             />
 
         <TextView
-            android:id="@+id/item.title"
+            android:id="@+id/item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_min"
@@ -71,14 +71,14 @@
             android:textSize="@dimen/text_size_default"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/item.amount"
-            app:layout_constraintStart_toEndOf="@id/item.avatar"
+            app:layout_constraintEnd_toStartOf="@id/item_amount"
+            app:layout_constraintStart_toEndOf="@id/item_avatar"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Mxfe6001...61eE99"
+            tools:text="Mt7fe5...46cd82"
             />
 
         <TextView
-            android:id="@+id/item.amount"
+            android:id="@+id/item_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_min"
@@ -86,18 +86,18 @@
             android:textAlignment="viewEnd"
             android:textColor="@color/textColorGreen"
             android:textSize="@dimen/text_size_default"
-            app:layout_constraintBottom_toTopOf="@id/item.subamount"
+            app:layout_constraintBottom_toTopOf="@id/item_subamount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@id/item.title"
+            app:layout_constraintStart_toEndOf="@id/item_title"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5"
             app:layout_constraintVertical_chainStyle="packed"
-            tools:text="+50.102030405060708090"
+            tools:text="- 20"
             />
 
         <TextView
-            android:id="@+id/item.subamount"
+            android:id="@+id/item_subamount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -107,8 +107,8 @@
             android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item.amount"
-            tools:text="STBX"
+            app:layout_constraintTop_toBottomOf="@id/item_amount"
+            tools:text="BIP"
             />
     </android.support.constraint.ConstraintLayout>
 
@@ -117,11 +117,11 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@drawable/shape_bottom_separator"
-        app:layout_constraintTop_toBottomOf="@id/layout.info"
+        app:layout_constraintTop_toBottomOf="@id/layout_info"
         />
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/layout.details"
+        android:id="@+id/layout_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/greyBackground"
@@ -135,148 +135,77 @@
         tools:visibility="visible"
         >
 
+
         <TextView
-            android:id="@+id/detail.from.label"
+            android:id="@+id/detail_pub_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/tx_detail_from"
+            android:text="Public Key"
             android:textSize="@dimen/text_size_12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+
             />
 
         <TextView
-            android:id="@+id/detail.from.value"
+            android:id="@+id/detail_pub_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/_ubuntu_medium"
             android:textSize="@dimen/text_size_12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.from.label"
-            tools:text="Mx86d167ffe6c81dd83a20e3731ed66dddaac42488"
+            app:layout_constraintTop_toBottomOf="@id/detail_pub_label"
+            tools:text="Mpbb7970b2db1948277726372887018e4aceb744cd20c525b5b78aeee4b43aeb1a"
             />
 
         <TextView
-            android:id="@+id/detail.to.label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_edges_half"
-            android:text="@string/tx_detail_to"
-            android:textSize="@dimen/text_size_12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.from.value"
-            />
-
-        <TextView
-            android:id="@+id/detail.to.value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.to.label"
-            tools:text="Mx86d167ffe6c81dd83a20e3731ed66dddaac42488"
-            />
-
-        <TextView
-            android:id="@+id/detail.date.label"
+            android:id="@+id/detail_date_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_edges_half"
             android:text="@string/tx_detail_date"
             android:textSize="@dimen/text_size_12"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.to.value"
+            app:layout_constraintTop_toBottomOf="@id/detail_pub_value"
             app:layout_constraintWidth_percent=".5"
             />
 
         <TextView
-            android:id="@+id/detail.date.value"
+            android:id="@+id/detail_date_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/_ubuntu_medium"
             android:textSize="@dimen/text_size_12"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.date.label"
+            app:layout_constraintTop_toBottomOf="@id/detail_date_label"
             app:layout_constraintWidth_percent=".5"
             tools:text="March 16, 2018"
             />
 
         <TextView
-            android:id="@+id/detail.time.label"
+            android:id="@+id/detail_time_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_edges_half"
             android:text="@string/tx_detail_time"
             android:textSize="@dimen/text_size_12"
-            app:layout_constraintStart_toEndOf="@id/detail.date.label"
-            app:layout_constraintTop_toBottomOf="@id/detail.to.value"
+            app:layout_constraintStart_toEndOf="@id/detail_date_label"
+            app:layout_constraintTop_toBottomOf="@id/detail_pub_value"
             app:layout_constraintWidth_percent=".5"
             />
 
         <TextView
-            android:id="@+id/detail.time.value"
+            android:id="@+id/detail_time_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/_ubuntu_medium"
             android:textSize="@dimen/text_size_12"
-            app:layout_constraintStart_toEndOf="@id/detail.date.value"
-            app:layout_constraintTop_toBottomOf="@id/detail.date.label"
+            app:layout_constraintStart_toEndOf="@id/detail_date_value"
+            app:layout_constraintTop_toBottomOf="@id/detail_date_label"
             app:layout_constraintWidth_percent=".5"
             tools:text="March 16, 2018"
-            />
-
-
-        <TextView
-            android:id="@+id/detail.coin.label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_edges_half"
-            android:text="@string/tx_detail_coin"
-            android:textSize="@dimen/text_size_12"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.date.value"
-            app:layout_constraintWidth_percent=".5"
-            />
-
-        <TextView
-            android:id="@+id/detail.coin.value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.coin.label"
-            app:layout_constraintWidth_percent=".5"
-            tools:text="BIP"
-            />
-
-        <TextView
-            android:id="@+id/detail.amount.label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_edges_half"
-            android:text="@string/tx_detail_amount"
-            android:textSize="@dimen/text_size_12"
-            app:layout_constraintStart_toEndOf="@id/detail.coin.label"
-            app:layout_constraintTop_toBottomOf="@id/detail.time.value"
-            app:layout_constraintWidth_percent=".5"
-            />
-
-        <TextView
-            android:id="@+id/detail.amount.value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
-            app:layout_constraintStart_toEndOf="@id/detail.coin.value"
-            app:layout_constraintTop_toBottomOf="@id/detail.amount.label"
-            app:layout_constraintWidth_percent=".5"
-            tools:text="10000000.010203040506070809"
             />
 
         <Button
@@ -288,7 +217,7 @@
             android:text="@string/btn_explorer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail.amount.value"
+            app:layout_constraintTop_toBottomOf="@id/detail_time_value"
             />
 
         <Space
