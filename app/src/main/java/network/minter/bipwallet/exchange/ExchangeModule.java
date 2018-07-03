@@ -34,6 +34,7 @@ import java.util.List;
 import dagger.Module;
 import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.auth.ui.InputGroup;
+import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
 import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
 
@@ -58,5 +59,10 @@ public class ExchangeModule {
         void setSubmitEnabled(boolean enabled);
         void setMaximumEnabled(boolean enabled);
         void setFormValidationListener(InputGroup.OnFormValidateListener listener);
+        void setAmountSpending(String amount);
+        void setAmountGetting(String amount);
+        void startDialog(WalletDialog.DialogExecutor executor);
+        void startExplorer(String s);
+        void finish();
     }
 }

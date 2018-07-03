@@ -30,6 +30,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import io.reactivex.Observable;
@@ -55,7 +56,7 @@ public class ReactiveAdapter {
 
     // MyMinter
     public static <T> Observable<T> rxCallMy(Call<T> call) {
-        return Observable.create(emitter -> call.enqueue(new Callback<T>() {
+        return Observable.create(emitter -> call.clone().enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call1, @NonNull Response<T> response) {
                 if (response.body() == null) {
@@ -129,7 +130,7 @@ public class ReactiveAdapter {
     // Blockhain
 
     public static <T> Observable<T> rxCallBc(Call<T> call) {
-        return Observable.create(emitter -> call.enqueue(new Callback<T>() {
+        return Observable.create(emitter -> call.clone().enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call1, @NonNull Response<T> response) {
                 if (response.body() == null) {
@@ -151,6 +152,16 @@ public class ReactiveAdapter {
     public static <T> Function<? super Throwable, ? extends ObservableSource<? extends BCResult<T>>> convertToBcErrorResult() {
         return (Function<Throwable, ObservableSource<? extends BCResult<T>>>) throwable
                 -> {
+            if (throwable instanceof IOException && throwable.getCause() instanceof EOFException) {
+                // blockchain api sometimes instead of 404 gives empty response, just handle it as 404
+                final BCResult<T> errResult = new BCResult<>();
+                errResult.code = BCResult.ResultCode.EmptyResponse;
+                errResult.message = "Not found";
+                errResult.result = null;
+                errResult.statusCode = 404;
+                return Observable.just(errResult);
+            }
+
             if (!(throwable instanceof HttpException)) {
                 return Observable.error(throwable);
             }
@@ -205,7 +216,7 @@ public class ReactiveAdapter {
     // Explorer
 
     public static <T> Observable<T> rxCallExp(Call<T> call) {
-        return Observable.create(emitter -> call.enqueue(new Callback<T>() {
+        return Observable.create(emitter -> call.clone().enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call1, @NonNull Response<T> response) {
                 if (response.body() == null) {

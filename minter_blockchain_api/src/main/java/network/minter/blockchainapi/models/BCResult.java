@@ -42,6 +42,7 @@ public class BCResult<Result> {
 
     public enum ResultCode {
         Unknown(-1),
+        EmptyResponse(1000),
         @SerializedName("0") Success(0),
         @SerializedName("1") DecodeError(1),
         @SerializedName("107") InsufficientFundsB(107),

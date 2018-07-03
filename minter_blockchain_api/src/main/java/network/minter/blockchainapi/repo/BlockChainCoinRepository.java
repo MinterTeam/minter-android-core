@@ -27,11 +27,13 @@ package network.minter.blockchainapi.repo;
 
 import android.support.annotation.NonNull;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import network.minter.blockchainapi.api.BlockChainCoinEndpoint;
 import network.minter.blockchainapi.models.BCResult;
 import network.minter.blockchainapi.models.Coin;
+import network.minter.blockchainapi.models.operational.Transaction;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
 import retrofit2.Call;
@@ -62,19 +64,24 @@ public class BlockChainCoinRepository extends DataRepository<BlockChainCoinEndpo
     /**
      * @param fromCoin Source coin
      * @param toCoin   Target coin
-     * @param amount   Amount of exchange
+     * @param amount   Amount of exchange (human readable amount like: 1 BIP equals 1.0 in float equivalent)
      * @return
      */
-    public Call<BCResult<Double>> getCoinCurrencyConversion(@NonNull String fromCoin, @NonNull String toCoin, BigInteger amount) {
+    public Call<BCResult<BigInteger>> getCoinCurrencyConversion(@NonNull String fromCoin, @NonNull String toCoin, BigDecimal amount) {
+        return getCoinCurrencyConversion(fromCoin, toCoin, amount.multiply(Transaction.VALUE_MUL_DEC).toBigInteger());
+    }
 
-        if (amount.compareTo(new BigInteger("1")) < 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero");
-        }
-
+    /**
+     * @param fromCoin Source coin
+     * @param toCoin   Target coin
+     * @param amount   Amount of exchange (big integer amount like: 1 BIP equals 1000000000000000000 (18 zeroes) in big integer equivalent)
+     * @return
+     */
+    public Call<BCResult<BigInteger>> getCoinCurrencyConversion(@NonNull String fromCoin, @NonNull String toCoin, BigInteger amount) {
         return getService().estimateCoinExchangeReturn(asMap(
-                "from_coin", checkNotNull(fromCoin, "Source coin required"),
-                "to_coin", checkNotNull(toCoin, "Target coin required"),
-                "amount", amount.toString()
+                "from_coin", checkNotNull(fromCoin, "Source coin required").toUpperCase(),
+                "to_coin", checkNotNull(toCoin, "Target coin required").toUpperCase(),
+                "value", amount.toString()
         ));
     }
 

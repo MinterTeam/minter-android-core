@@ -25,6 +25,7 @@
 
 package network.minter.blockchainapi.api;
 
+import java.math.BigInteger;
 import java.util.Map;
 
 import network.minter.blockchainapi.models.BCResult;
@@ -45,6 +46,6 @@ public interface BlockChainCoinEndpoint {
     Call<BCResult<Coin>> getCoinInformation(@Query("symbol") String coin);
 
     @GET("/api/estimateCoinExchangeReturn")
-    Call<BCResult<Double>> estimateCoinExchangeReturn(@QueryMap Map<String, String> data);
+    Call<BCResult<BigInteger>> estimateCoinExchangeReturn(@QueryMap Map<String, String> data);
 
 }

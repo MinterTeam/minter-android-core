@@ -141,7 +141,7 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
 
             default:
                 view = mInflater.inflate(R.layout.item_list_tx_unhandled_expandable, parent, false);
-                out = new TxSetCandidateOnlineOfflineViewHolder(view);
+                out = new TxUnhandledViewHolder(view);
                 break;
         }
 

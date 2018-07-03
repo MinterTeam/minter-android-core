@@ -25,6 +25,8 @@
 
 package network.minter.bipwallet.exchange.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
@@ -47,10 +49,12 @@ import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.exchange.ExchangeModule;
 import network.minter.bipwallet.exchange.views.ConvertCoinPresenter;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
+import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.helpers.forms.validators.DecimalValidator;
 import network.minter.bipwallet.internal.helpers.forms.validators.RegexValidator;
 import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
 import network.minter.bipwallet.sending.account.WalletAccountSelectorDialog;
+import network.minter.explorerapi.MinterExplorerApi;
 import timber.log.Timber;
 
 /**
@@ -133,6 +137,28 @@ public class ConvertCoinActivity extends BaseMvpInjectActivity implements Exchan
     @Override
     public void setFormValidationListener(InputGroup.OnFormValidateListener listener) {
         mInputGroup.addFormValidateListener(listener);
+    }
+
+    private WalletDialog mCurrentDialog;
+
+    @Override
+    public void setAmountSpending(String amount) {
+        outAmount.setText(amount);
+    }
+
+    @Override
+    public void setAmountGetting(String amount) {
+        inAmount.setText(amount);
+    }
+
+    @Override
+    public void startDialog(WalletDialog.DialogExecutor executor) {
+        mCurrentDialog = WalletDialog.switchDialogWithExecutor(this, mCurrentDialog, executor);
+    }
+
+    @Override
+    public void startExplorer(String txHash) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MinterExplorerApi.FRONT_URL + "/transactions/" + txHash)));
     }
 
     @ProvidePresenter

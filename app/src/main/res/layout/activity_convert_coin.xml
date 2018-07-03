@@ -78,7 +78,7 @@
 
             <!--INCOMING DATA-->
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/layout.income.coin"
+                android:id="@+id/layout_income_coin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_edges_input"
@@ -86,14 +86,14 @@
                 android:layout_marginEnd="@dimen/margin_edges_input"
                 android:hint="You Get"
                 app:hintEnabled="true"
-                app:layout_constraintEnd_toStartOf="@id/layout.income.amount"
+                app:layout_constraintEnd_toStartOf="@id/layout_income_amount"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/top_space"
                 app:layout_constraintWidth_percent=".32"
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input.incoming.coin"
+                    android:id="@+id/input_incoming_coin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -106,7 +106,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/layout.income.amount"
+                android:id="@+id/layout_income_amount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_edges"
@@ -114,12 +114,12 @@
                 android:hint="@string/tx_send_amount_hint"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout.income.coin"
+                app:layout_constraintStart_toEndOf="@id/layout_income_coin"
                 app:layout_constraintTop_toBottomOf="@id/top_space"
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input.incoming.amount"
+                    android:id="@+id/input_incoming_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
@@ -130,7 +130,7 @@
 
             <!--OUTGOING DATA-->
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/layout.outgoing.coin"
+                android:id="@+id/layout_outgoing_coin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_edges_input"
@@ -138,14 +138,14 @@
                 android:layout_marginEnd="@dimen/margin_edges_input"
                 android:hint="You Spend"
                 app:hintEnabled="true"
-                app:layout_constraintEnd_toStartOf="@id/layout.outgoing.amount"
+                app:layout_constraintEnd_toStartOf="@id/layout_outgoing_amount"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout.income.coin"
+                app:layout_constraintTop_toBottomOf="@id/layout_income_coin"
                 app:layout_constraintWidth_percent=".32"
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input.outgoing.coin"
+                    android:id="@+id/input_outgoing_coin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -166,14 +166,14 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="end"
-                app:layout_constraintBottom_toBottomOf="@id/layout.outgoing.coin"
-                app:layout_constraintEnd_toEndOf="@id/layout.outgoing.coin"
-                app:layout_constraintTop_toTopOf="@id/layout.outgoing.coin"
+                app:layout_constraintBottom_toBottomOf="@id/layout_outgoing_coin"
+                app:layout_constraintEnd_toEndOf="@id/layout_outgoing_coin"
+                app:layout_constraintTop_toTopOf="@id/layout_outgoing_coin"
                 app:srcCompat="@drawable/ic_drop_down_grey"
                 />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/layout.outgoing.amount"
+                android:id="@+id/layout_outgoing_amount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 
@@ -181,12 +181,12 @@
                 android:hint="@string/tx_send_amount_hint"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout.outgoing.coin"
-                app:layout_constraintTop_toTopOf="@id/layout.outgoing.coin"
+                app:layout_constraintStart_toEndOf="@id/layout_outgoing_coin"
+                app:layout_constraintTop_toTopOf="@id/layout_outgoing_coin"
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input.outgoing.amount"
+                    android:id="@+id/input_outgoing_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
@@ -195,7 +195,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/action.maximum"
+                android:id="@+id/action_maximum"
                 style="@style/Wallet.Button.White.BlueBorder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -205,7 +205,7 @@
                 android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout.outgoing.coin"
+                app:layout_constraintTop_toBottomOf="@id/layout_outgoing_coin"
                 tools:text="Use max. $num"
                 />
 
@@ -215,11 +215,11 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/margin_edges"
                 android:background="@color/greySeparator"
-                app:layout_constraintTop_toBottomOf="@id/action.maximum"
+                app:layout_constraintTop_toBottomOf="@id/action_maximum"
                 />
 
             <Button
-                android:id="@+id/action.exchange"
+                android:id="@+id/action_exchange"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_edges"
