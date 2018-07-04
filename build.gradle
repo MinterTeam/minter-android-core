@@ -23,45 +23,153 @@
  * THE SOFTWARE.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
 
-buildscript {
+group = 'network.minter.android'
+version = '1.0.0'
 
-    ext.kotlin_version = '1.2.50'
+android {
+    compileSdkVersion minterMaxSdk
 
-    repositories {
-        google()
-        jcenter()
+    defaultConfig {
+        minSdkVersion minterMinSdk
+        targetSdkVersion minterMaxSdk
+        versionCode 1
+        versionName version
+
+        testInstrumentationRunner "network.minter.mintercore.MinterTestRunner"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++14"
+            }
+        }
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-beta02'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
+        }
     }
-}
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven { url "https://dl.bintray.com/ethereum/maven/" }
-        maven { url 'https://clojars.org/repo/' }
-        maven { url 'https://jitpack.io' }
-        maven { url "https://maven.edwardstock.com/artifactory/libs-release-local" }
-        maven { url "https://repo1.maven.org/maven2/com/google/zxing/" }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+    flavorDimensions "env"
+    productFlavors {
+        netMain {
+            dimension "env"
+            buildConfigField "String", "DEFAULT_COIN_NAME", '"BIP"'
+        }
 
+        netTest {
+            dimension "env"
+            buildConfigField "String", "DEFAULT_COIN_NAME", '"MNT"'
+        }
     }
-}
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    lintOptions {
+        disable 'CheckResult', 'DefaultLocale'
+        abortOnError false
+        ignoreWarnings true
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/spring.tooling'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+    sourceSets {
+        main {
+            jni.srcDirs = [
+                    'src/main/cpp/secp256k1/src/java',
+                    'src/main/cpp/bip39/src/java'
+                    ]
+            jniLibs.srcDirs = ['libs']
+            java.srcDirs = [
+                    'src/main/java',
+                    'src/main/cpp/bip39/src/java'
+            ]
+
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
+        }
+    }
+
 }
 
 ext {
-    minterMinSdk = 19
-    minterMaxSdk = 27
-    minterLibSupport = "27.1.1"
-    minterBuildTools = "28.0.0" //"27.0.3"
+    scastleVersion = '1.58.0.0'
 }
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // google
+    implementation "com.android.support:appcompat-v7:${minterLibSupport}"
+
+    // network
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    //for SHA3 @TODO remove
+    implementation 'com.implimentz:unsafe:0.0.6'
+    implementation "io.netty:netty-all:4.0.30.Final"
+    implementation ("com.madgag.spongycastle:core:${scastleVersion}") {
+        transitive = true
+    } // for SHA3 and SECP256K1
+    implementation ("com.madgag.spongycastle:prov:${scastleVersion}") {
+        transitive = true
+    } // for SHA3 and SECP256K1
+    implementation "com.cedarsoftware:java-util:1.8.0"
+
+    // stuff
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'org.parceler:parceler-api:1.1.10'
+    annotationProcessor 'org.parceler:parceler:1.1.10'
+
+    // testing
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation "com.android.support:support-annotations:${minterLibSupport}"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    androidTestImplementation 'com.google.code.gson:gson:2.8.2'
+    androidTestImplementation 'com.android.support:multidex:1.0.3'
+}
+
+apply from: '../publisher.gradle'
