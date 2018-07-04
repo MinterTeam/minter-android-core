@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2018 by MinterTeam
+ * @link https://github.com/MinterTeam
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package network.minter.mintercore.internal.api;
 
 import android.support.annotation.Nullable;
@@ -45,14 +70,13 @@ public final class ApiService {
         void onError(int httpCode, Response response);
     }
 
-    public static class Builder {
+    public static class Builder implements Cloneable {
         private String mDateFormat = "yyyy-MM-dd";
         private boolean mDateAsLong = true;
         private ArrayList<ServiceTypeAdapter> mCustomAdapters = new ArrayList<>();
         private ArrayList<TypeAdapterFactory> mFactories = new ArrayList<>();
         private boolean mAuthRequired = false;
         private OnErrorListener mErrorListener;
-
         private HashMap<String, String> mHeaders = new HashMap<>();
         private String mBaseUrl;
         private EmptyAuthHeaderTokenListener mEmptyAuthHeaderTokenListener;
@@ -63,6 +87,15 @@ public final class ApiService {
         private String mAuthHeaderName = "Authorization";
         private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
         private GsonBuilder mGsonBuilder;
+
+        @Override
+        public Builder clone() {
+            try {
+                return (Builder) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         public Builder(String baseUrl, GsonBuilder gsonBuilder) {
             mBaseUrl = baseUrl;

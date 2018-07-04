@@ -42,7 +42,7 @@ import network.minter.blockchainapi.MinterBlockChainApi;
 import network.minter.blockchainapi.api.BlockChainTransactionEndpoint;
 import network.minter.blockchainapi.models.BCResult;
 import network.minter.blockchainapi.models.HistoryTransaction;
-import network.minter.blockchainapi.models.operational.TxSendCoin;
+import network.minter.mintercore.MinterSDK;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
@@ -94,15 +94,8 @@ public class BlockChainTransactionRepository extends DataRepository<BlockChainTr
 
             final Gson gson = MinterBlockChainApi.getInstance().getGsonBuilder().create();
 
-            HistoryTransaction out = gson.fromJson(json, HistoryTransaction.class);
-            switch (out.type) {
-                case SendCoin:
-                    out.data = gson.fromJson(json.getAsJsonObject().get("data").getAsJsonObject(), TxSendCoin.class);
-                    break;
-
-                default:
-                    out.data = null;
-            }
+            final HistoryTransaction out = gson.fromJson(json, HistoryTransaction.class);
+            out.data = gson.fromJson(json.getAsJsonObject().get("data").getAsJsonObject(), out.type.getOpClass());
 
             return out;
         }
@@ -145,7 +138,7 @@ public class BlockChainTransactionRepository extends DataRepository<BlockChainTr
 
         private String normalizeAddress(String in) {
             final String prefix = in.substring(0, 2);
-            if (prefix.equals("Mx") || prefix.equals("mx") || prefix.equals("0x")) {
+            if (prefix.equals(MinterSDK.PREFIX_ADDRESS) || prefix.equals(MinterSDK.PREFIX_ADDRESS.toLowerCase()) || prefix.equals("0x")) {
                 return in.substring(2);
             }
 

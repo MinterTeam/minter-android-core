@@ -34,6 +34,7 @@ import network.minter.mintercore.internal.data.DataRepository;
 import network.minter.mintercore.internal.helpers.CollectionsHelper;
 import network.minter.my.api.MyProfileEndpoint;
 import network.minter.my.models.MyResult;
+import network.minter.my.models.PasswordChangeRequest;
 import network.minter.my.models.ProfileRequestResult;
 import network.minter.my.models.User;
 import retrofit2.Call;
@@ -41,11 +42,11 @@ import retrofit2.Call;
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
 
 /**
- * MinterWallet. 2018
+ * MyMinter. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class MyProfileRepository extends DataRepository<MyProfileEndpoint> {
+public class MyProfileRepository extends DataRepository<MyProfileEndpoint> implements DataRepository.Configurator {
     public MyProfileRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
@@ -56,16 +57,25 @@ public class MyProfileRepository extends DataRepository<MyProfileEndpoint> {
 
     public Call<MyResult<ProfileRequestResult>> updateProfile(@NonNull User.Data data) {
         checkNotNull(data);
-        return getService().updateProfile(data);
+        return getInstantService(this).updateProfile(data);
     }
 
     public Call<MyResult<ProfileRequestResult>> updateField(String field, String value) {
         Map<String, String> data = CollectionsHelper.asMap(field, value);
-        return getService().updateProfile(data);
+        return getInstantService(this).updateProfile(data);
     }
 
     public Call<MyResult<User.Avatar>> updateAvatar(String b64) {
-        return getService().updateAvatarBase64(b64);
+        return getInstantService(this).updateAvatarBase64(b64);
+    }
+
+    public Call<MyResult<Object>> changePassword(PasswordChangeRequest data) {
+        return getInstantService(this).changePassword(data);
+    }
+
+    @Override
+    public void configure(ApiService.Builder api) {
+        api.authRequired();
     }
 
     @NonNull

@@ -26,6 +26,7 @@
 package network.minter.my;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.google.gson.GsonBuilder;
 
@@ -48,6 +49,9 @@ import network.minter.my.repo.MyInfoRepository;
 import network.minter.my.repo.MyProfileRepository;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
+import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+
 /**
  * MinterWallet. 2018
  *
@@ -65,7 +69,7 @@ public class MyMinterApi {
     private MyMinterApi() {
         mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
         mApiService.addHeader("Content-Type", "application/json");
-        mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid");
+        mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (my-minter)");
         mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
         mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssX");
     }
@@ -78,6 +82,12 @@ public class MyMinterApi {
         INSTANCE = new MyMinterApi();
         INSTANCE.mApiService.setDebug(debug);
         INSTANCE.mApiService.setDebugRequestLevel(debug ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
+    }
+
+    public static String getCoinAvatarUrl(final @NonNull String coinName) {
+        checkNotNull(coinName, "Coin name can't be null");
+        checkArgument(coinName.length() >= 3 && coinName.length() <= 10, "Coin length must be from 3 to 10 chars");
+        return BASE_API_URL + "/api/v1/avatar/by/coin/" + coinName.toUpperCase();
     }
 
     public static MyMinterApi getInstance() {

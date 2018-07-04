@@ -23,38 +23,53 @@
  * THE SOFTWARE.
  */
 
-package network.minter.mintercore.internal.api.converters;
+package network.minter.my.models;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.lang.reflect.Type;
+import network.minter.mintercore.crypto.EncryptedString;
+import network.minter.mintercore.crypto.HashUtil;
 
-import network.minter.mintercore.crypto.MinterHash;
+import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
 
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class MinterHashDeserializer implements JsonDeserializer<MinterHash> {
-    @Override
-    public MinterHash deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+public class PasswordChangeRequest {
 
-        if (json.isJsonNull()) {
-            return null;
-        }
+    public String newPassword;
+    public List<EncryptedData> addressesEncryptedData;
 
-        String val = json.getAsString();
-
-        if (!val.matches(MinterHash.TX_HASH_PATTERN)) {
-            return null;
-        }
-
-        return new MinterHash(val);
-
+    public void setRawPassword(String password) {
+        checkNotNull(password);
+        newPassword = HashUtil.sha256HexDouble(password);
     }
+
+    public void addEncrypted(MyAddressData data) {
+        if (addressesEncryptedData == null) {
+            addressesEncryptedData = new ArrayList<>();
+        }
+
+        final EncryptedData d = new EncryptedData();
+        d.id = data.id;
+        d.encrypted = data.encrypted;
+        addressesEncryptedData.add(d);
+    }
+
+    public void addEncrypted(List<MyAddressData> items) {
+        for (MyAddressData d : items) {
+            addEncrypted(d);
+        }
+    }
+
+
+    public static final class EncryptedData {
+        public String id;
+        public EncryptedString encrypted;
+    }
+
+
 }

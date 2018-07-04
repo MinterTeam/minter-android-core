@@ -35,11 +35,7 @@ import network.minter.mintercore.MinterSDK;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class StringHelper {
-
     // 20 byte address with or without prefix
-    public static final String HEX_ADDRESS_PATTERN = "^(" + MinterSDK.PREFIX_ADDRESS + ")?([a-fA-F0-9]{40})$";
-    public static final String HEX_TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_TX + ")?([a-fA-F0-9]{40})$";
-    public static final String HEX_PUB_KEY_PATTERN = "^(" + MinterSDK.PREFIX_PUBLIC_KEY + ")?([a-fA-F0-9]{64})$";
     public static final String HEX_NUM_PATTERN = "^(0x)?([a-fA-F0-9]{2,})$";
     private final static char[] hexArray = "0123456789ABCDEF".toLowerCase().toCharArray();
 
@@ -106,9 +102,13 @@ public class StringHelper {
 
         String in = s
                 .replace(MinterSDK.PREFIX_ADDRESS, "")
+                .replace(MinterSDK.PREFIX_ADDRESS.toLowerCase(), "")
                 .replace(MinterSDK.PREFIX_CHECK, "")
+                .replace(MinterSDK.PREFIX_CHECK.toLowerCase(), "")
                 .replace(MinterSDK.PREFIX_PUBLIC_KEY, "")
+                .replace(MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase(), "")
                 .replace(MinterSDK.PREFIX_TX, "")
+                .replace(MinterSDK.PREFIX_TX.toLowerCase(), "")
                 .replace("0x", "");
 
         int len = in.length();
@@ -129,8 +129,8 @@ public class StringHelper {
     }
 
     public static String bytesToString(byte[] data, int readLength) {
-        if(data.length < readLength) {
-            throw new ArrayIndexOutOfBoundsException("Read length less than array size: "+String.valueOf(readLength)+" of " + String.valueOf(data.length));
+        if (data.length < readLength) {
+            throw new ArrayIndexOutOfBoundsException("Read length less than array size: " + String.valueOf(readLength) + " of " + String.valueOf(data.length));
         }
         final char[] out = new char[readLength];
         for (int i = 0; i < readLength; i++) {

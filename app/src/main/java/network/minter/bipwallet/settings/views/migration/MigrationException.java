@@ -38,8 +38,7 @@ import java.lang.annotation.RetentionPolicy;
 public final class MigrationException extends Exception {
     public final static int STEP_1_GET_REMOTE_ADDRESS_LIST = 0;
     public final static int STEP_2_RE_ENCRYPT_REMOTE_DATA = 1;
-    public final static int STEP_3_UPDATE_PASSWORD = 2;
-    public final static int STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE = 3;
+    public final static int STEP_3_UPDATE_ENCRYPTED_DATA_REMOTE = 3;
 
     private int mStep;
 
@@ -54,10 +53,9 @@ public final class MigrationException extends Exception {
     }
 
     @IntDef({
-            STEP_3_UPDATE_PASSWORD,
             STEP_1_GET_REMOTE_ADDRESS_LIST,
             STEP_2_RE_ENCRYPT_REMOTE_DATA,
-            STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE
+            STEP_3_UPDATE_ENCRYPTED_DATA_REMOTE
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface MigrationStep {

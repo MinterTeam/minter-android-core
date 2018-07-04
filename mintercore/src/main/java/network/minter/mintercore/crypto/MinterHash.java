@@ -38,6 +38,8 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
  */
 @Parcel
 public class MinterHash extends PublicKey {
+    public static final String TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_TX + "|" + MinterSDK.PREFIX_TX.toLowerCase() + ")?([a-fA-F0-9]{40})$";
+
     public MinterHash(byte[] data) {
         super(
                 checkArgument(data.length == 20, data, "Minter hash must contains exact 20 bytes")
@@ -47,7 +49,7 @@ public class MinterHash extends PublicKey {
     public MinterHash(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && (hexData.length() == 40 || (hexData.length() == 42 && hexData.subSequence(0, 2).equals(MinterSDK.PREFIX_TX))),
+                        hexData != null && hexData.toString().matches(TX_HASH_PATTERN),
                         hexData,
                         "Minter hash in hex format must contains 40 or 42 characters, where first 2 chars is a prefix \"Mt\""
                 )

@@ -133,7 +133,7 @@ public class SendTabFragment extends HomeTabFragment implements SendTabModule.Se
         mInputGroup.addValidator(recipientInput,
                 new RegexValidator(
                         // address only for now
-                        StringHelper.HEX_ADDRESS_PATTERN, "Incorrect recipient format"
+                        StringHelper.ADDRESS_PATTERN, "Incorrect recipient format"
                 ));
                 */
 

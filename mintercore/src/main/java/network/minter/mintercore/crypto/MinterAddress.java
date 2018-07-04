@@ -38,6 +38,8 @@ import static network.minter.mintercore.internal.common.Preconditions.checkArgum
  */
 @Parcel
 public class MinterAddress extends PublicKey {
+    public static final String ADDRESS_PATTERN = "^(" + MinterSDK.PREFIX_ADDRESS + "|" + MinterSDK.PREFIX_ADDRESS.toLowerCase() + ")?([a-fA-F0-9]{40})$";
+
     public MinterAddress(byte[] data) {
         super(
                 checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")
@@ -47,9 +49,9 @@ public class MinterAddress extends PublicKey {
     public MinterAddress(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && (hexData.length() == 40 || (hexData.length() == 42 && hexData.subSequence(0, 2).equals(MinterSDK.PREFIX_ADDRESS))),
+                        hexData != null && hexData.toString().matches(ADDRESS_PATTERN),
                         hexData,
-                        "Minter public key in hex format must contains 40 or 42 characters, where first 2 chars is a prefix like: Mx or 0x"
+                        "Minter public key in hex format must contains 40 or 42 characters, where first 2 chars is a prefix: Mx"
                 )
         );
     }

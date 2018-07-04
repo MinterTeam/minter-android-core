@@ -84,13 +84,13 @@ public class HistoryTransaction implements Serializable {
         @SerializedName("setCandidateOffData")
         SetCandidateOffline(TxSetCandidateOnlineOfflineResult.class);
 
-        Class<? extends TxResult> mCls;
+        Class<?> mCls;
 
-        Type(Class<? extends TxResult> cls) {
+        Type(Class<?> cls) {
             mCls = cls;
         }
 
-        public Class<? extends TxResult> getCls() {
+        public Class<?> getCls() {
             return mCls;
         }
     }
@@ -104,7 +104,7 @@ public class HistoryTransaction implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends TxResult> T getData() {
+    public <T> T getData() {
         return (T) data;
     }
 
@@ -141,18 +141,33 @@ public class HistoryTransaction implements Serializable {
         return Objects.hash(hash, nonce, block, timestamp, fee, type, data);
     }
 
-    public interface TxResult extends Serializable {
-
-    }
-
-    public static class TxSendCoinResult implements TxResult {
+    public static class TxSendCoinResult {
         public MinterAddress from;
         public MinterAddress to;
         public String coin;
         public BigDecimal amount;
+
+        public MinterAddress getFrom() {
+            return from;
+        }
+
+        public MinterAddress getTo() {
+            return to;
+        }
+
+        public String getCoin() {
+            if (coin == null) {
+                return null;
+            }
+            return coin.toUpperCase();
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
     }
 
-    public static class TxCreateResult implements TxResult {
+    public static class TxCreateResult {
         public MinterAddress from;
         public String name;
         public String symbol;
@@ -162,9 +177,37 @@ public class HistoryTransaction implements Serializable {
         public BigDecimal initialReserve;
         @SerializedName("constant_reserve_ratio")
         public BigDecimal constantReserveRatio;
+
+        public MinterAddress getFrom() {
+            return from;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getSymbol() {
+            if (symbol == null) {
+                return null;
+            }
+
+            return symbol.toUpperCase();
+        }
+
+        public BigDecimal getInitialAmount() {
+            return initialAmount;
+        }
+
+        public BigDecimal getInitialReserve() {
+            return initialReserve;
+        }
+
+        public BigDecimal getConstantReserveRatio() {
+            return constantReserveRatio;
+        }
     }
 
-    public static class TxConvertCoinResult implements TxResult {
+    public static class TxConvertCoinResult {
         public MinterAddress from;
         @SerializedName("from_coin_symbol")
         public String fromCoin;
@@ -172,9 +215,31 @@ public class HistoryTransaction implements Serializable {
         public String toCoin;
         @SerializedName("value")
         public BigDecimal amount;
+
+        public MinterAddress getFrom() {
+            return from;
+        }
+
+        public String getFromCoin() {
+            if (fromCoin == null) {
+                return null;
+            }
+            return fromCoin.toUpperCase();
+        }
+
+        public String getToCoin() {
+            if (toCoin == null) {
+                return null;
+            }
+            return toCoin.toUpperCase();
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
     }
 
-    public static class TxDeclareCandidacyResult implements TxResult {
+    public static class TxDeclareCandidacyResult {
         public MinterAddress from;
         public MinterAddress address;
         @SerializedName("pub_key")
@@ -182,25 +247,52 @@ public class HistoryTransaction implements Serializable {
         public BigDecimal commission;
         public String coin;
         public BigDecimal stake;
+
+        public MinterAddress getFrom() {
+            return from;
+        }
+
+        public MinterAddress getAddress() {
+            return address;
+        }
+
+        public MinterPublicKey getPubKey() {
+            return pubKey;
+        }
+
+        public BigDecimal getCommission() {
+            return commission;
+        }
+
+        public String getCoin() {
+            if (coin == null) {
+                return null;
+            }
+            return coin.toUpperCase();
+        }
+
+        public BigDecimal getStake() {
+            return stake;
+        }
     }
 
-    public static class TxSetCandidateOnlineOfflineResult implements TxResult {
+    public static class TxSetCandidateOnlineOfflineResult {
         public MinterAddress from;
         @SerializedName("pub_key")
         public MinterPublicKey pubKey;
     }
 
-    public static class TxUnboundResult implements TxResult {
+    public static class TxUnboundResult {
         public MinterAddress from;
 
     }
 
-    public static class TxDelegateResult implements TxResult {
+    public static class TxDelegateResult {
         public MinterAddress from;
 
     }
 
-    public static class TxRedeemCheckResult implements TxResult {
+    public static class TxRedeemCheckResult {
         public MinterAddress from;
 
     }

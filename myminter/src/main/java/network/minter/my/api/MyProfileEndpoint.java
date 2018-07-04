@@ -28,6 +28,7 @@ package network.minter.my.api;
 import java.util.Map;
 
 import network.minter.my.models.MyResult;
+import network.minter.my.models.PasswordChangeRequest;
 import network.minter.my.models.ProfileRequestResult;
 import network.minter.my.models.User;
 import okhttp3.MultipartBody;
@@ -110,4 +111,13 @@ public interface MyProfileEndpoint {
     @FormUrlEncoded
     @POST("/api/v1/profile/confirm/{id}")
     Call<MyResult<Void>> confirmProfile(@Path("id") String id, @Field("code") String code);
+
+    /**
+     * Change password and replace encrypted data with new password re-encrypted
+     *
+     * @param data
+     * @return
+     */
+    @POST("/api/v1/profile/password")
+    Call<MyResult<Object>> changePassword(@Body PasswordChangeRequest data);
 }

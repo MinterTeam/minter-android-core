@@ -27,19 +27,25 @@ package network.minter.mintercore.crypto;
 
 import network.minter.mintercore.MinterSDK;
 
+import static network.minter.mintercore.internal.common.Preconditions.checkArgument;
+
 /**
  * MinterWallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterPublicKey extends PublicKey {
+    public static final String PUB_KEY_PATTERN = "^(" + MinterSDK.PREFIX_PUBLIC_KEY + "|" + MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase() + ")?([a-fA-F0-9]{64})$";
 
     public MinterPublicKey(byte[] data) {
         super(data);
     }
 
     public MinterPublicKey(CharSequence hexData) {
-        super(hexData);
+        super(checkArgument(
+                hexData != null && hexData.toString().matches(PUB_KEY_PATTERN),
+                hexData,
+                "Invalid public key format"));
     }
 
     public MinterPublicKey(BytesData data) {

@@ -33,7 +33,6 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 
 import network.minter.mintercore.crypto.MinterPublicKey;
-import network.minter.mintercore.internal.helpers.StringHelper;
 
 /**
  * MinterWallet. 2018
@@ -51,7 +50,7 @@ public class MinterPublicKeyDeserializer implements JsonDeserializer<MinterPubli
 
         String val = json.getAsString();
 
-        if (!val.matches(StringHelper.HEX_PUB_KEY_PATTERN)) {
+        if (!val.matches(MinterPublicKey.PUB_KEY_PATTERN)) {
             return null;
         }
 

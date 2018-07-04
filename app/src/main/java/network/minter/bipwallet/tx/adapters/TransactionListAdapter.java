@@ -282,8 +282,8 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
 
             fromValue.setText(data.from.toString());
             toValue.setText(data.to.toString());
-            subamount.setText(data.coin.toUpperCase());
-            coinValue.setText(data.coin.toUpperCase());
+            subamount.setText(data.getCoin());
+            coinValue.setText(data.getCoin());
             amountValue.setText(am);
         }
     }
@@ -327,9 +327,9 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
             final HistoryTransaction.TxConvertCoinResult data = item.getTx().getData();
             title.setText(item.getTx().hash.toShortString());
             amount.setText(String.format("- %s", firstNonNull(data.amount, new BigDecimal(0)).toPlainString()));
-            subamount.setText(String.format("%s -> %s", firstNonNull(data.fromCoin, "<unknown>"), firstNonNull(data.toCoin, "<unknown>")));
-            coinFrom.setText(firstNonNull(data.fromCoin, "<unknown>"));
-            coinTo.setText(firstNonNull(data.toCoin, "<unknown>"));
+            subamount.setText(String.format("%s -> %s", firstNonNull(data.getFromCoin(), "<unknown>"), firstNonNull(data.getToCoin(), "<unknown>")));
+            coinFrom.setText(firstNonNull(data.getFromCoin(), "<unknown>"));
+            coinTo.setText(firstNonNull(data.getToCoin(), "<unknown>"));
             convertAmount.setText(firstNonNull(data.amount, new BigDecimal(0)).toPlainString());
         }
     }
@@ -351,9 +351,9 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
             super.bind(item);
             final HistoryTransaction.TxCreateResult data = item.getTx().getData();
             title.setText(item.getTx().hash.toShortString());
-            amount.setText(String.format("Create coin: %s", firstNonNull(data.symbol, "<unknown>")));
+            amount.setText(String.format("Create coin: %s", firstNonNull(data.getSymbol(), "<unknown>")));
             coinName.setText(firstNonNull(data.name, "<unknown>"));
-            coinSymbol.setText(firstNonNull(data.symbol, "<unknown>"));
+            coinSymbol.setText(firstNonNull(data.getSymbol(), "<unknown>"));
             initialAmount.setText(firstNonNull(data.initialAmount, new BigDecimal(0)).toPlainString());
             initialReserve.setText(firstNonNull(data.initialReserve, new BigDecimal(0)).toPlainString());
             crr.setText(firstNonNull(data.constantReserveRatio, new BigDecimal(0)).toPlainString());
@@ -433,7 +433,7 @@ public class TransactionListAdapter extends PagedListAdapter<TransactionItem, Re
             }
 
             commission.setText(String.format("%s%%", firstNonNull(data.commission, new BigDecimal(0)).toPlainString()));
-            coin.setText(data.coin);
+            coin.setText(data.getCoin());
             stake.setText(firstNonNull(data.stake, new BigDecimal(0)).divide(Transaction.VALUE_MUL_DEC).toPlainString());
 
         }

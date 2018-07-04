@@ -36,8 +36,6 @@ import com.arellomobile.mvp.InjectViewState;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -60,7 +58,7 @@ import network.minter.bipwallet.settings.views.migration.MigrationException;
 import network.minter.mintercore.crypto.EncryptedString;
 import network.minter.mintercore.crypto.HashUtil;
 import network.minter.my.models.MyAddressData;
-import network.minter.my.models.MyResult;
+import network.minter.my.models.PasswordChangeRequest;
 import network.minter.my.repo.MyAddressRepository;
 import network.minter.my.repo.MyProfileRepository;
 import timber.log.Timber;
@@ -68,8 +66,7 @@ import timber.log.Timber;
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_1_GET_REMOTE_ADDRESS_LIST;
 import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_2_RE_ENCRYPT_REMOTE_DATA;
-import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_3_UPDATE_PASSWORD;
-import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE;
+import static network.minter.bipwallet.settings.views.migration.MigrationException.STEP_3_UPDATE_ENCRYPTED_DATA_REMOTE;
 
 /**
  * MinterWallet. 2018
@@ -83,19 +80,16 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
     @Inject MyAddressRepository addressRepo;
     @Inject SecretStorage secretStorage;
 
-    private String mOldPassword;
     private String mNewPassword;
     private WeakReference<WalletProgressDialog> mProgressDialog;
     private int mProgress = 0;
-    private SparseArray<PublishSubject<Object>> mRetryHandlers = new SparseArray<>(4);
-    private Queue<SecretData> mMigrationQueue;
+    private SparseArray<PublishSubject<Object>> mRetryHandlers = new SparseArray<>(3);
 
     @Inject
     public PasswordChangeMigrationPresenter() {
-        mRetryHandlers.put(STEP_3_UPDATE_PASSWORD, PublishSubject.create());
         mRetryHandlers.put(STEP_1_GET_REMOTE_ADDRESS_LIST, PublishSubject.create());
         mRetryHandlers.put(STEP_2_RE_ENCRYPT_REMOTE_DATA, PublishSubject.create());
-        mRetryHandlers.put(STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE, PublishSubject.create());
+        mRetryHandlers.put(STEP_3_UPDATE_ENCRYPTED_DATA_REMOTE, PublishSubject.create());
     }
 
     @Override
@@ -106,7 +100,6 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        mMigrationQueue = secretStorage.getOrCreateMigrationQueue();
         getViewState().setFormValidateListener(this::onFormValidate);
         getViewState().setTextChangedListener(this::onTextChanged);
         getViewState().setOnClickSubmit(this::onSubmit);
@@ -134,26 +127,26 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
 
             mProgressDialog = new WeakReference<>(dialog);
 
-            log(1, "Updating password");
-            rxCallMy(profileRepo.updateField("password", HashUtil.sha256HexDouble(mNewPassword)))
+            rxCallMy(addressRepo.getAddresses())
                     .subscribeOn(Schedulers.io())
-                    .retryWhen(migrationStepFailed(STEP_3_UPDATE_PASSWORD))
-                    // getting my minter addresses with id's
-                    .switchMap(res -> {
-                        log(2, "Get remote address list");
-                        secretStorage.setEncryptionKey(mNewPassword);
-                        return rxCallMy(addressRepo.getAddresses());
-                    })
                     .retryWhen(migrationStepFailed(STEP_1_GET_REMOTE_ADDRESS_LIST))
                     // comparing local and remote addresses and get id to update on server
-                    .switchMap(res -> Observable.create((ObservableOnSubscribe<List<Observable<MyResult<Object>>>>) emitter -> {
-                        log(3, "Encrypt data");
+                    .switchMap(res -> Observable.create((ObservableOnSubscribe<PasswordChangeRequest>) emitter -> {
+                        final PasswordChangeRequest request = new PasswordChangeRequest();
+                        // creating local encryption key to encrypted privates
+                        final String encryptionKey = HashUtil.sha256Hex(mNewPassword);
+                        // setting raw password, it will be hashed to double sha256 inside PasswordChangeRequest
+                        request.setRawPassword(mNewPassword);
+
                         setProgress(0);
                         mProgress = 1;
+                        // reset progress in dialog
                         resetProgressNonIndeterminate(res.data.size() * 2);
 
+                        // sources
                         final List<MyAddressData> addresses = new ArrayList<>(res.data);
-                        final List<Observable<MyResult<Object>>> reEncryptedAddresses = new ArrayList<>(addresses.size());
+                        // targets
+                        final List<MyAddressData> reEncryptedData = new ArrayList<>(res.data.size());
                         for (SecretData dataLocal : secretStorage.getSecrets().values()) {
                             if (dataLocal == null) {
                                 emitter.onError(new RuntimeException("Unable to get secret from local storage"));
@@ -172,32 +165,30 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
                                 return;
                             }
 
-//                            if(true) {
-//                                emitter.onError(new RuntimeException("Test fail"));
-//                                return;
-//                            }
-//61220abfa10d67fb976b983b7292bb69d72275a78ae1ac99056caf04caa4e463 0bea2b1f68fecde452eb363247841f5a846f7a7f7fe89cf712fe9792526e7928
-                            dataRemote.encrypted = new EncryptedString(dataLocal.getSeedPhrase(), secretStorage.getEncryptionKey());
-                            reEncryptedAddresses.add(rxCallMy(addressRepo.updateAddress(dataRemote)).delay(1, TimeUnit.SECONDS));
+                            // re-encrypting data with new encryption key from new password
+                            dataRemote.encrypted = new EncryptedString(dataLocal.getSeedPhrase(), encryptionKey);
+                            reEncryptedData.add(dataRemote);
 
-                            Thread.sleep(1000);
                             setProgress(mProgress);
                             mProgress++;
                         }
 
-                        emitter.onNext(reEncryptedAddresses);
+                        request.addEncrypted(reEncryptedData);
+                        emitter.onNext(request);
                         emitter.onComplete();
                     }))
                     .retryWhen(migrationStepFailed(STEP_2_RE_ENCRYPT_REMOTE_DATA))
-                    // concat list updates and updated it
-                    .switchMap(Observable::concat)
-                    .retryWhen(migrationStepFailed(STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE))
+                    // step 3 sending data to server
+                    .switchMap(request -> rxCallMy(profileRepo.changePassword(request)))
+                    .retryWhen(migrationStepFailed(STEP_3_UPDATE_ENCRYPTED_DATA_REMOTE))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(res -> {
-                        log(4, "Send data");
+                        log(3, "Send data");
+                        secretStorage.setEncryptionKey(mNewPassword);
                         mProgress++;
                         setProgress(mProgress);
-                    }, Timber::e, this::onMigrationSuccess);
+                        onMigrationSuccess();
+                    });
 
 
             return mProgressDialog.get();
@@ -250,15 +241,7 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
 
     private void onError(Throwable throwable, final PublishSubject<Object> errorRetry) {
         Timber.w(throwable);
-        log(1, "Updating password (OLD)");
-        secretStorage.setEncryptionKey(mOldPassword);
-        safeSubscribeIoToUi(rxCallMy(profileRepo.updateField("password", HashUtil.sha256HexDouble(mOldPassword))))
-                .subscribe(res -> {
-                    // revert old password
-                    showErrorDialog(throwable, errorRetry);
-                }, t -> {
-                    showErrorDialog(t, mRetryHandlers.get(STEP_3_UPDATE_PASSWORD));
-                });
+        showErrorDialog(throwable, errorRetry);
     }
 
     private void showErrorDialog(Throwable throwable, PublishSubject<Object> errorRetry) {
@@ -266,16 +249,13 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
         if (throwable instanceof MigrationException) {
             MigrationException ex = ((MigrationException) throwable);
             switch (ex.getStep()) {
-                case STEP_3_UPDATE_PASSWORD:
-                    message = String.format("Unable to update password. %s", throwable.getMessage());
-                    break;
                 case STEP_1_GET_REMOTE_ADDRESS_LIST:
                     message = String.format("Unable to resolve MyMinter addresses. %s", throwable.getMessage());
                     break;
                 case STEP_2_RE_ENCRYPT_REMOTE_DATA:
                     message = String.format("Unable to encrypt data with new password. %s", throwable.getMessage());
                     break;
-                case STEP_4_UPDATE_ENCRYPTED_DATA_REMOTE:
+                case STEP_3_UPDATE_ENCRYPTED_DATA_REMOTE:
                     message = String.format("Unable to upload newly encrypted data. %s", throwable.getMessage());
                     break;
             }
@@ -304,9 +284,6 @@ public class PasswordChangeMigrationPresenter extends MvpBasePresenter<SettingsT
 
     private void onTextChanged(EditText editText, boolean valid) {
         switch (editText.getId()) {
-            case R.id.input_password_old:
-                mOldPassword = editText.getText().toString();
-                break;
             case R.id.input_password_new_repeat:
                 mNewPassword = editText.getText().toString();
                 break;
