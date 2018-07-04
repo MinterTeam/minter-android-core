@@ -22,11 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0-beta02'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://dl.bintray.com/ethereum/maven/" }
+        maven { url 'https://clojars.org/repo/' }
+        maven { url 'https://jitpack.io' }
+        maven { url "https://maven.edwardstock.com/artifactory/libs-release-local" }
+        maven { url "https://repo1.maven.org/maven2/com/google/zxing/" }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+    }
+}
+
+ext {
+    minterMinSdk = 19
+    minterMaxSdk = 27
+    minterBuildTools = "28.0.0"
+    minterLibSupport = "27.1.1"
+    pomDescription = "Android Minter Core SDK"
+}
 
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
 
 group = 'network.minter.android'
 version = '1.0.0'
@@ -118,7 +148,6 @@ android {
                     'src/main/java',
                     'src/main/cpp/bip39/src/java'
             ]
-
         }
     }
 
@@ -172,4 +201,5 @@ dependencies {
     androidTestImplementation 'com.android.support:multidex:1.0.3'
 }
 
-apply from: '../publisher.gradle'
+
+apply from: 'publisher.gradle'
