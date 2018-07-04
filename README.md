@@ -1,4 +1,4 @@
-Bip Wallet
+Minter Android Core SDK
 ==========
 
 .. tbd
