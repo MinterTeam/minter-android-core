@@ -1,3 +1,4 @@
+-dontobfuscate
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
 -dontnote retrofit2.Platform
 # Platform used when running on Java 8 VMs. Will not be used at runtime.
@@ -20,9 +21,11 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
--keep class network.minter.mintercore.crypto.** { *; }
--keep class network.minter.mintercore.bip39.HDKey { *; }
--keep class network.minter.mintercore.bip39.BTCNetwork { *; }
--keep class network.minter.mintercore.bip39.MnemonicResult { *; }
--keep class network.minter.mintercore.bip39.NativeBip39 { *; }
--keep class network.minter.mintercore.bip39.NativeHDKeyEncoder { *; }
+-keep public class network.minter.mintercore.** { *; }
+
+# Parceler library
+-keep interface org.parceler.Parcel
+-keep @org.parceler.Parcel class * { *; }
+-keep class **$$Parcelable { *; }
+
+

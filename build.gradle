@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -42,7 +42,7 @@ allprojects {
         maven { url 'https://jitpack.io' }
         maven { url "https://maven.edwardstock.com/artifactory/libs-release-local" }
         maven { url "https://repo1.maven.org/maven2/com/google/zxing/" }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 
@@ -142,7 +142,7 @@ android {
             jni.srcDirs = [
                     'src/main/cpp/secp256k1/src/java',
                     'src/main/cpp/bip39/src/java'
-                    ]
+            ]
             jniLibs.srcDirs = ['libs']
             java.srcDirs = [
                     'src/main/java',
@@ -178,10 +178,10 @@ dependencies {
     //for SHA3 @TODO remove
     implementation 'com.implimentz:unsafe:0.0.6'
     implementation "io.netty:netty-all:4.0.30.Final"
-    implementation ("com.madgag.spongycastle:core:${scastleVersion}") {
+    implementation("com.madgag.spongycastle:core:${scastleVersion}") {
         transitive = true
     } // for SHA3 and SECP256K1
-    implementation ("com.madgag.spongycastle:prov:${scastleVersion}") {
+    implementation("com.madgag.spongycastle:prov:${scastleVersion}") {
         transitive = true
     } // for SHA3 and SECP256K1
     implementation "com.cedarsoftware:java-util:1.8.0"
@@ -202,4 +202,4 @@ dependencies {
 }
 
 
-apply from: 'publisher.gradle'
+apply from: 'scripts/minter_publish.gradle'
