@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 import network.minter.mintercore.internal.common.CallbackProvider;
 import network.minter.mintercore.internal.exceptions.NetworkException;
-import okhttp3.CacheControl;
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -87,15 +87,7 @@ public final class ApiService {
         private String mAuthHeaderName = "Authorization";
         private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
         private GsonBuilder mGsonBuilder;
-
-        @Override
-        public Builder clone() {
-            try {
-                return (Builder) super.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        private Cache mHttpCache = null;
 
         public Builder(String baseUrl, GsonBuilder gsonBuilder) {
             mBaseUrl = baseUrl;
@@ -105,6 +97,15 @@ public final class ApiService {
         public Builder(String baseUrl) {
             mBaseUrl = baseUrl;
             mGsonBuilder = new GsonBuilder();
+        }
+
+        @Override
+        public Builder clone() {
+            try {
+                return (Builder) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public Builder setOnErrorListener(OnErrorListener errorListener) {
@@ -158,13 +159,13 @@ public final class ApiService {
         }
 
         public Builder setDateFormat(String dateFormat) {
-            this.mDateFormat = dateFormat;
-            this.mDateAsLong = false;
+            mDateFormat = dateFormat;
+            mDateAsLong = false;
             return this;
         }
 
         public Builder setDateAsLong(boolean b) {
-            this.mDateAsLong = b;
+            mDateAsLong = b;
             return this;
         }
 
@@ -175,6 +176,11 @@ public final class ApiService {
 
         public Builder authRequired() {
             mAuthRequired = true;
+            return this;
+        }
+
+        public Builder setCache(Cache httpCache) {
+            mHttpCache = httpCache;
             return this;
         }
 
@@ -214,8 +220,8 @@ public final class ApiService {
 
             if (mDateAsLong) {
                 mGsonBuilder = mGsonBuilder.registerTypeAdapter(Date.class,
-                                                                (JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(
-                                                                        json.getAsJsonPrimitive().getAsLong() * 1000));
+                        (JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(
+                                json.getAsJsonPrimitive().getAsLong() * 1000));
             }
 
             return mGsonBuilder.create();
@@ -248,17 +254,10 @@ public final class ApiService {
                         mEmptyAuthHeaderTokenListener.doOnEmptyAuthHeader();
                     }
                     throw new NetworkException(401, "Authorization required",
-                                               "HTTP auth header is empty or null");
+                            "HTTP auth header is empty or null");
                 }
 
                 request.addHeader(mAuthHeaderName, getToken());
-                request.cacheControl(new CacheControl.Builder()
-                                             .noCache()
-                                             .noStore()
-                                             .maxAge(0, TimeUnit.SECONDS)
-                                             .build()
-                );
-
                 Request built = request.build();
 
                 Response response = chain.proceed(built);
@@ -271,6 +270,10 @@ public final class ApiService {
 
         private OkHttpClient buildHttpClient() {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+            if (mHttpCache != null) {
+                httpClient.cache(mHttpCache);
+            }
 
             if (mDebug) {
                 HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
