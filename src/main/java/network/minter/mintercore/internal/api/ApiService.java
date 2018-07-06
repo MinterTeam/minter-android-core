@@ -42,9 +42,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import network.minter.mintercore.internal.common.Acceptor;
 import network.minter.mintercore.internal.common.CallbackProvider;
 import network.minter.mintercore.internal.exceptions.NetworkException;
 import okhttp3.Cache;
@@ -55,6 +57,7 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 /**
  * MinterCore. 2018
@@ -88,6 +91,8 @@ public final class ApiService {
         private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
         private GsonBuilder mGsonBuilder;
         private Cache mHttpCache = null;
+        private Acceptor<OkHttpClient.Builder> mHttpClientConfig;
+        private List<Interceptor> mInterceptors;
 
         public Builder(String baseUrl, GsonBuilder gsonBuilder) {
             mBaseUrl = baseUrl;
@@ -97,6 +102,20 @@ public final class ApiService {
         public Builder(String baseUrl) {
             mBaseUrl = baseUrl;
             mGsonBuilder = new GsonBuilder();
+        }
+
+        public Builder setHttpClientConfig(Acceptor<OkHttpClient.Builder> acceptor) {
+            mHttpClientConfig = acceptor;
+            return this;
+        }
+
+        public Builder addHttpInterceptor(Interceptor interceptor) {
+            if (mInterceptors == null) {
+                mInterceptors = new ArrayList<>(2);
+            }
+
+            mInterceptors.add(interceptor);
+            return this;
         }
 
         @Override
@@ -285,18 +304,27 @@ public final class ApiService {
             httpClient.connectTimeout(mConnectTimeout, TimeUnit.SECONDS);
             httpClient.readTimeout(mReadTimeout, TimeUnit.SECONDS);
 
-            if (mDebug) {
-//                httpClient.addInterceptor(chain -> {
-//                    Stream.of(chain.request().headers().toMultimap().entrySet())
-//                            .forEach(item -> {
-//                                Stream.of(item.getValueBigInteger()).forEach(sub -> {
-//                                    Timber.tag("OkHttp").d("%s: %s", item.getKey(), sub);
-//                                });
-//                            });
-//                    return chain.proceed(chain.request());
-//                });
+            if (mDebug && mDebugLevel == HttpLoggingInterceptor.Level.BODY) {
+                // request headers does not logging
+                httpClient.addInterceptor(chain -> {
+                    for (Map.Entry<String, List<String>> item : chain.request().headers().toMultimap().entrySet()) {
+                        for (String sub : item.getValue()) {
+                            Timber.tag("OkHttp").d("%s: %s", item.getKey(), sub);
+                        }
+                    }
+                    return chain.proceed(chain.request());
+                });
             }
 
+            if (mHttpClientConfig != null) {
+                mHttpClientConfig.accept(httpClient);
+            }
+
+            if (mInterceptors != null) {
+                for (Interceptor i : mInterceptors) {
+                    httpClient.addInterceptor(i);
+                }
+            }
 
             return httpClient.build();
         }
