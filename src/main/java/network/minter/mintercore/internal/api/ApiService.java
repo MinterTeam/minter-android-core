@@ -60,7 +60,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 /**
- * MinterCore. 2018
+ * minter-android-core. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */

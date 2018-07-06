@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -35,7 +35,7 @@ import network.minter.mintercore.internal.common.LazyMem;
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
 
 /**
- * MinterCore. 2017
+ * minter-android-core. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
@@ -77,6 +77,8 @@ public abstract class DataRepository<Service> {
         final ApiService.Builder b = mApi.clone();
         if (cfg != null) {
             cfg.configure(b);
+        } else if (this instanceof Configurator) {
+            return getInstantService(((Configurator) this));
         }
 
         return b.build().create(getServiceClass());
