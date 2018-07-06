@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -75,6 +75,14 @@ public class MinterAddress extends PublicKey {
     }
 
     MinterAddress() {
+    }
+
+    public static boolean testString(CharSequence input) {
+        if (input == null || input.length() == 0) {
+            return false;
+        }
+
+        return input.toString().matches(ADDRESS_PATTERN);
     }
 
     @Override
