@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -43,6 +43,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static network.minter.mintercore.bip39.NativeHDKeyEncoder.MAIN_NET;
 
 /**
  * MinterWallet. 2018
@@ -125,9 +126,76 @@ public class NativeBip39MnemonicTest {
     }
 
     @Test
+    public void testBip39SeedToNikita() {
+        final String mnemonic = "globe arrange forget twice potato nurse ice dwarf arctic piano scorpion tube";
+        final String validSeed = "e4d6956689cfba26aab4156e5f4600f5f386cdd56ea57f1bfdb40f33048d4d463989c170738ae582f07227af9fd707b40cc7d7d6fd24d14a4ee1e0f45928940d";
+
+        final byte[] seed = NativeBip39.mnemonicToBip39Seed(mnemonic);
+        String seedHex = StringHelper.bytesToHexString(seed);
+
+        assertEquals(
+                "Given seed: " + seedHex,
+                validSeed,
+                seedHex
+        );
+
+        // bip 32 root key    with derivation path: m/44'/60'/0'/0
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
+        System.out.println("root (master) key -> private key: " + rootKey.getPrivateKey().toHexString());
+        System.out.println("root (master) key -> public  key: " + rootKey.getPublicKey().toHexString());
+
+        // bip 39 private key with derivation path: m/44'/60'/0' - dropped external/internal index
+        final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey, MAIN_NET, "m/44'/60'/0'/0");
+        System.out.println("extended (wallet) key -> private key: " + extKey.getPrivateKey().toHexString());
+        System.out.println("extended (wallet) key -> public  key: " + extKey.getPublicKey().toHexString());
+        final PrivateKey privateKey = extKey.getPrivateKey();
+        // to get minter address, we should always use uncompressed key
+        final PublicKey publicKey = privateKey.getPublicKey(false);
+        final MinterAddress outAddress = publicKey.toMinter();
+        System.out.println("address: " + outAddress.toString());
+
+
+    }
+
+    @Test
+    public void testGetAddress() {
+        final String mnemonic = "exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone";
+        final byte[] seed = NativeBip39.mnemonicToBip39Seed(mnemonic);
+        // bip 32 root key    with derivation path: m/44'/60'/0'/0
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
+        // bip 39 private key with derivation path: m/44'/60'/0' - dropped external/internal index
+        final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey, MAIN_NET, "m/44'/60'/0'/0/0");
+        final PrivateKey privateKey = extKey.getPrivateKey();
+        // to get minter address, we should always use uncompressed key
+        final PublicKey publicKey = privateKey.getPublicKey(false);
+        final MinterAddress outAddress = publicKey.toMinter();
+
+        System.out.println("ADDRESS: " + outAddress.toString());
+    }
+
+    @Test
+    public void testGetMyAddress() {
+        final String mnemonic = "royal park wage travel execute focus brother click twin stove drift margin";
+        final MinterAddress validAddress = new MinterAddress("Mxb503f13cD20cB3e42D87b20fAD869c564cc4EF8c");
+
+        final byte[] seed = NativeBip39.mnemonicToBip39Seed(mnemonic);
+        // bip 32 root key
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
+        // bip 39 private key with derivation path: m/44'/60'/0'/0/0
+        final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
+        final PrivateKey privateKey = extKey.getPrivateKey();
+        // to get minter address, we should always use uncompressed key
+        final PublicKey publicKey = privateKey.getPublicKey(false);
+        final MinterAddress outAddress = publicKey.toMinter();
+
+        assertEquals(validAddress, outAddress);
+
+    }
+
+    @Test
     public void testBip39SeedToAddress() {
         final String mnemonic = "royal park wage travel execute focus brother click twin stove drift margin";
-        final MinterAddress address = new MinterAddress("Mx8ab1417f7b0659a60990c91d85b12f368d34fc3a");
+        final MinterAddress address = new MinterAddress("Mxb503f13cD20cB3e42D87b20fAD869c564cc4EF8c");
         final byte[] seed = NativeBip39.mnemonicToBip39Seed(mnemonic);
         assertNotNull(seed);
         assertEquals(64, seed.length);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -125,8 +125,8 @@ public class NativeHDKeyEncoderTest {
         assertEquals(publicKey, publicKeyFromPrivate);
         assertTrue(privateKey.verify());
 
-        final String b44ExtPriv = "xprv9zPRRprz3mGyL7YLgAFT1PoJ787ZZroCHxPpVdEhTaxsLh1uowZyX8cGMdbrmibV9bXBNMUtA6TGePGQrw5tWaM4VFFwwqFo52xTL8EXzZH";
-        final String b44ExtPub = "xpub6DNmqLPst8qGYbconBnTNXk2f9x3yKX3fBKRJ1eK1vVrDVM4MUtE4vvkCw6N6Zj5YYTQB9G723vkNHaxEA7acuM5J2qH7QSs1ryRJ8Mb8kF";
+        final String b44ExtPriv = "xprvA41WfdCkwqbHFi9MTEJrJ1RxPhZXgYzVUkpzXNht4RtQ7V3K1t8QkCTNDEGNxHnck4cN9J4A6bxj3vG6FYQK5gQuSEkiRFV9VLaaiiytAyJ";
+        final String b44ExtPub = "xpub6Gzs58jenD9aUCDpZFqrf9NgwjQ261iLqykbKm7VcmRNzHNTZRSfHzmr4Wv5ffJyBAQD8noAsTR6xkJbspPwv9UXimt9HhJPKymZwWDZGWD";
 
         assertEquals(
                 b44ExtPriv,

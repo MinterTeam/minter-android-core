@@ -30,6 +30,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-beta02'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
 
@@ -57,6 +58,7 @@ ext {
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
 version = '1.0.0'

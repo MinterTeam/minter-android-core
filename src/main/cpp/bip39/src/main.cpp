@@ -85,19 +85,26 @@ int main(int argc, char **argv) {
 
      */
 
+
     Data64 entropy("f0b9c942b9060af6a82d3ac340284d7e");
-    Bip39Mnemonic::MnemonicResult
-        encodedMnemonic = Bip39Mnemonic::encodeBytes(entropy.data(), "en", BIP39_ENTROPY_LEN_128);
+//    Bip39Mnemonic::MnemonicResult
+//        encodedMnemonic = Bip39Mnemonic::encodeBytes(entropy.data(), "en", BIP39_ENTROPY_LEN_128);
+  Bip39Mnemonic::MnemonicResult encodedMnemonic = Bip39Mnemonic::MnemonicResult();
+  encodedMnemonic.raw =
+      "exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone";
+  encodedMnemonic.len = 12;
+  encodedMnemonic.status = Bip39Mnemonic::Ok;
+  encodedMnemonic.words = {
+      "globe", "arrange", "forget", "twice", "potato", "nurse", "ice", "dwarf", "arctic", "piano",
+      "scorpion", "tube"
+  };
 
     HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(HDKeyEncoder::makeBip39Seed(encodedMnemonic.words));
-    HDKey bip32ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");
-    HDKey bip44ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'");
+  HDKey bip44ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0/0");
 
     std::cout << "Mnemonic words count:    " << encodedMnemonic.len << std::endl;
     std::cout << "Mnemonic words:          " << encodedMnemonic.raw << std::endl;
     std::cout << "Bip32 root key:          " << bip32RootKey.extPrivateKey.toString() << std::endl;
-    std::cout << "Bip32 extended priv key: " << bip32ExtKey.extPrivateKey.toString() << std::endl;
-    std::cout << "Bip32 extended pub key:  " << bip32ExtKey.extPublicKey.toString() << std::endl;
     std::cout << "Bip44 priv key:          " << bip44ExtKey.privateKey.toHex() << std::endl;
     std::cout << "Bip44 pub key:           " << bip44ExtKey.publicKey.toHex() << std::endl;
     std::cout << "Bip44 extended priv key: " << bip44ExtKey.extPrivateKey.toString() << std::endl;
@@ -106,10 +113,9 @@ int main(int argc, char **argv) {
     std::cout << "bip32 seed to words:     " << Bip39Mnemonic::decodeMnemonic(bip32RootKey.extPrivateKey.toString().c_str(), "en") << std::endl;
 
     bip32RootKey.clear();
-    bip32ExtKey.clear();
     bip44ExtKey.clear();
 
-    return 0;
+  return 0;
 }
  
  

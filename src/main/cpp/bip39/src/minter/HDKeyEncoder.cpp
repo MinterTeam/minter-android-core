@@ -269,9 +269,18 @@ minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
 std::string minter::HDKeyEncoder::getAddress(const minter::HDKey &key) {
     HDKey k = key;
     fillPublicKey(k);
-    char addr[64];
-    ecdsa_get_address(k.publicKey.cdata(), key.net.bip32[0], key.curve->hasher_pubkey, key.curve->hasher_base58, addr, sizeof(addr));
 
-    return std::string(addr);
+  FixedData<65> uncompressedPublicKey;
+  ecdsa_get_public_key65(k.curve->params, k.publicKey.cdata(), uncompressedPublicKey.data());
+
+  FixedData<64> uncompressedDropFirst = uncompressedPublicKey.takeLastBytes(64);
+  FixedData<32> hashed256;
+  CSHA256 sha256h;
+  sha256h.Write(uncompressedDropFirst.cdata(), uncompressedDropFirst.size());
+  sha256h.Finalize(hashed256.data());
+
+  FixedData<20> out = hashed256.takeLastBytes(20);
+
+  return std::string(out.toHex());
 }
 

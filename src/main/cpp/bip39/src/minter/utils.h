@@ -197,9 +197,21 @@ class Data {
 
     void insert(size_t pos, const std::vector<uint8_t> &data) {
         for (int i = 0; i < data.size(); i++) {
+          if (pos + i >= m_data.size()) {
+            break;
+          }
             m_data[pos + i] = data[i];
         }
     }
+
+  void insert(size_t pos, size_t srcOffset, const std::vector<uint8_t> &data) {
+    for (int i = 0; i < data.size(); i++) {
+      if (pos + i >= m_data.size()) {
+        break;
+      }
+      m_data[pos + i] = data[i + srcOffset];
+    }
+  }
 
     inline uint8_t &operator[](std::size_t idx) noexcept {
         return m_data[idx];
