@@ -1,9 +1,3 @@
-[submodule "mintercore/src/main/cpp/secp256k1"]
-	path = mintercore/src/main/cpp/secp256k1
-	url = git@github.com:edwardstock/native-secp256k1-java.git
-[submodule "mintercore/src/main/cpp/bip39"]
-	path = mintercore/src/main/cpp/bip39
-	url = git@github.com:edwardstock/bip39-java.git
 [submodule "scripts"]
 	path = scripts
 	url = https://github.com/MinterTeam/android-lib-tools.git
