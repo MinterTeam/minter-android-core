@@ -25,6 +25,8 @@
 
 package network.minter.mintercore.crypto;
 
+import com.edwardstock.secp256k1.NativeSecp256k1;
+
 import org.parceler.Parcel;
 
 import java.io.DataInputStream;

@@ -148,6 +148,7 @@ android {
             jniLibs.srcDirs = ['libs']
             java.srcDirs = [
                     'src/main/java',
+                    'src/main/cpp/secp256k1/src/java',
                     'src/main/cpp/bip39/src/java'
             ]
         }

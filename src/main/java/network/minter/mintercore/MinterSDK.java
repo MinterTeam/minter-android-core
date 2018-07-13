@@ -25,12 +25,13 @@
 
 package network.minter.mintercore;
 
+import com.edwardstock.secp256k1.NativeSecp256k1;
+
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Security;
 
 import network.minter.mintercore.bip39.NativeBip39;
-import network.minter.mintercore.crypto.NativeSecp256k1;
 
 /**
  * minter-android-core. 2018
