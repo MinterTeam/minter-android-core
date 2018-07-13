@@ -1,3 +1,9 @@
 [submodule "scripts"]
 	path = scripts
 	url = https://github.com/MinterTeam/android-lib-tools.git
+[submodule "src/main/cpp/bip39"]
+	path = src/main/cpp/bip39
+	url = https://github.com/edwardstock/native-bip39.git
+[submodule "src/main/cpp/secp256k1"]
+	path = src/main/cpp/secp256k1
+	url = https://github.com/edwardstock/native-secp256k1-java.git
