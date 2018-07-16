@@ -2,18 +2,19 @@ package network.minter.mintercore;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.edwardstock.secp256k1.NativeSecp256k1;
+import com.edwardstock.secp256k1.NativeSecp256k1Util;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import network.minter.mintercore.crypto.NativeSecp256k1;
-import network.minter.mintercore.crypto.NativeSecp256k1Util;
 import network.minter.mintercore.internal.helpers.StringHelper;
 
+import static com.edwardstock.secp256k1.NativeSecp256k1.contextCleanup;
+import static com.edwardstock.secp256k1.NativeSecp256k1.contextCreate;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static network.minter.mintercore.crypto.NativeSecp256k1.contextCleanup;
-import static network.minter.mintercore.crypto.NativeSecp256k1.contextCreate;
 import static org.junit.Assert.assertEquals;
 
 /**
