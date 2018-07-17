@@ -72,7 +72,7 @@ android {
         versionCode 1
         versionName version
 
-        testInstrumentationRunner "network.minter.mintercore.MinterTestRunner"
+        testInstrumentationRunner "network.minter.core.MinterTestRunner"
 
         externalNativeBuild {
             cmake {
