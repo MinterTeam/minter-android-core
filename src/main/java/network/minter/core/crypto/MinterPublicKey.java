@@ -52,6 +52,17 @@ public class MinterPublicKey extends PublicKey {
         super(data);
     }
 
+    /**
+     * @return Mpfe6001...61eE99 short pub key
+     */
+    public String toShortString() {
+        final String in = toString();
+        String firstPart = in.substring(0, 8);
+        String lastPart = in.substring(in.length() - 6, in.length());
+
+        return firstPart + "..." + lastPart;
+    }
+
     @Override
     public String toString() {
         return toHexString(MinterSDK.PREFIX_PUBLIC_KEY, false);

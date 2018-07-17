@@ -21,9 +21,9 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
--keep public class network.minter.mintercore.** { *; }
+-keep public class network.minter.core.** { *; }
 -keep public class com.edwardstock.secp256k1.** { *; }
--keep public class network.minter.mintercore.MinterSDK { *; }
+-keep public class network.minter.core.MinterSDK { *; }
 
 # Parceler library
 -keep interface org.parceler.Parcel

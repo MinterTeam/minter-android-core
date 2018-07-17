@@ -96,7 +96,7 @@ public class MinterHash extends PublicKey {
     }
 
     /**
-     * @return Mtfe6001...61eE99 short address
+     * @return Mtfe6001...61eE99 short hash
      */
     public String toShortString() {
         final String in = toString();
