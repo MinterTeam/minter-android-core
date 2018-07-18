@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -72,9 +73,9 @@ public class EncryptedString implements Serializable {
         checkArgument(rawString != null && rawString.length() > 0, "Nothing to encrypt. Raw string is empty");
         checkArgument(
                 encryptionKey32B != null
-                        && encryptionKey32B.length() == 32
+                        && encryptionKey32B.length() == 64
                         && StringHelper.testHex(encryptionKey32B),
-                "Encryption key must have 32 bytes"
+                String.format(Locale.getDefault(), "Encryption key must have 32 bytes (64 in hex representation), given hex length: %d", encryptionKey32B.length())
         );
 
         final AES256Crypt crypt = new AES256Crypt();
@@ -111,9 +112,9 @@ public class EncryptedString implements Serializable {
 
         checkArgument(
                 encryptionKey32B != null
-                        && encryptionKey32B.length() == 32
+                        && encryptionKey32B.length() == 64
                         && StringHelper.testHex(encryptionKey32B),
-                "Encryption key must have 32 bytes"
+                String.format(Locale.getDefault(), "Encryption key must have 32 bytes (64 in hex representation), given hex length: %d", encryptionKey32B.length())
         );
 
         final AES256Crypt crypt = new AES256Crypt();
