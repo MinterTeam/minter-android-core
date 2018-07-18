@@ -184,11 +184,15 @@ public class AES256Crypt {
      * @throws IllegalBlockSizeException
      * @throws BadPaddingException
      */
-    public String encryptRaw(String plainText, String key, String IV)
+    public String encryptRaw(String plainText, String encryptionKey32B, String IV)
             throws InvalidKeyException, UnsupportedEncodingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException,
-            BadPaddingException, NoSuchAlgorithmException {
-        return encryptDecrypt(plainText, SHA256Raw(key), EncryptMode.ENCRYPT, IV);
+            BadPaddingException {
+        return encryptDecrypt(
+                plainText,
+                StringHelper.hexStringToBytes(encryptionKey32B),
+                EncryptMode.ENCRYPT,
+                IV);
     }
 
     /***
@@ -240,11 +244,16 @@ public class AES256Crypt {
      * @throws IllegalBlockSizeException
      * @throws BadPaddingException
      */
-    public String decryptRaw(String encryptedText, String key, String IV)
+    public String decryptRaw(String encryptedText, String encryptionKey32B, String IV)
             throws InvalidKeyException, UnsupportedEncodingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException,
-            BadPaddingException, NoSuchAlgorithmException {
-        return encryptDecrypt(encryptedText, SHA256Raw(key), EncryptMode.DECRYPT, IV);
+            BadPaddingException {
+        return encryptDecrypt(
+                encryptedText,
+                StringHelper.hexStringToBytes(encryptionKey32B),
+                EncryptMode.DECRYPT,
+                IV
+        );
     }
 
 

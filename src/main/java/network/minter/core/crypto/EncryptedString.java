@@ -39,6 +39,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import network.minter.core.internal.helpers.StringHelper;
+
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
 
@@ -53,18 +55,35 @@ public class EncryptedString implements Serializable {
     private final static String IV = "Minter seed";
     String mEncrypted;
 
-    public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey, @NonNull final String iv)
+    /**
+     * @param rawString
+     * @param encryptionKey32B 32 bytes hex string, can be just SHA256 hashed
+     * @param iv
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws UnsupportedEncodingException
+     */
+    public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey32B, @NonNull final String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
         checkArgument(rawString != null && rawString.length() > 0, "Nothing to encrypt. Raw string is empty");
-        checkArgument(encryptionKey != null && encryptionKey.length() > 0, "Encryption key can't be empty");
+        checkArgument(
+                encryptionKey32B != null
+                        && encryptionKey32B.length() == 32
+                        && StringHelper.testHex(encryptionKey32B),
+                "Encryption key must have 32 bytes"
+        );
 
         final AES256Crypt crypt = new AES256Crypt();
-        mEncrypted = crypt.encryptRaw(rawString, encryptionKey, iv);
+        mEncrypted = crypt.encryptRaw(rawString, encryptionKey32B, iv);
     }
 
-    public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey)
+    public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey32B)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
-        this(rawString, encryptionKey, IV);
+        this(rawString, encryptionKey32B, IV);
     }
 
     public EncryptedString(@NonNull final String encryptedString) {
@@ -75,13 +94,30 @@ public class EncryptedString implements Serializable {
     EncryptedString() {
     }
 
-    public String decrypt(@NonNull final String encryptionKey, final String iv)
+    /**
+     * @param encryptionKey32B 32 bytes hex string, can be just SHA256 hashed
+     * @param iv
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws UnsupportedEncodingException
+     */
+    public String decrypt(@NonNull final String encryptionKey32B, final String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
 
-        checkArgument(encryptionKey != null);
+        checkArgument(
+                encryptionKey32B != null
+                        && encryptionKey32B.length() == 32
+                        && StringHelper.testHex(encryptionKey32B),
+                "Encryption key must have 32 bytes"
+        );
 
         final AES256Crypt crypt = new AES256Crypt();
-        return crypt.decryptRaw(mEncrypted, encryptionKey, iv);
+        return crypt.decryptRaw(mEncrypted, encryptionKey32B, iv);
     }
 
     public String decrypt(@NonNull final String encryptionKey)

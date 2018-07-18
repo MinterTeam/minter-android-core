@@ -163,6 +163,10 @@ public class StringHelper {
         return new DecimalFraction(out[0], out[1]);
     }
 
+    public static boolean testHex(String s) {
+        return s.matches(HEX_NUM_PATTERN);
+    }
+
     public static class DecimalFraction {
         public long intPart;
         public long fractionalPart;
