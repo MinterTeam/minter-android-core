@@ -26,22 +26,16 @@
 package network.minter.core.internal.api;
 
 import android.support.annotation.Nullable;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
-import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -74,24 +68,24 @@ public final class ApiService {
     }
 
     public static class Builder implements Cloneable {
+        private String mBaseUrl;
         private String mDateFormat = "yyyy-MM-dd";
         private boolean mDateAsLong = true;
-        private ArrayList<ServiceTypeAdapter> mCustomAdapters = new ArrayList<>();
-        private ArrayList<TypeAdapterFactory> mFactories = new ArrayList<>();
         private boolean mAuthRequired = false;
-        private OnErrorListener mErrorListener;
-        private HashMap<String, String> mHeaders = new HashMap<>();
-        private String mBaseUrl;
-        private EmptyAuthHeaderTokenListener mEmptyAuthHeaderTokenListener;
-        private CallbackProvider<String> mTokenProvider;
         private boolean mDebug = false;
         private int mConnectTimeout = 30;
         private int mReadTimeout = 30;
         private String mAuthHeaderName = "Authorization";
-        private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
         private GsonBuilder mGsonBuilder;
         private Cache mHttpCache = null;
+        private OnErrorListener mErrorListener;
+        private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
+        private CallbackProvider<String> mTokenProvider;
         private Acceptor<OkHttpClient.Builder> mHttpClientConfig;
+        private EmptyAuthHeaderTokenListener mEmptyAuthHeaderTokenListener;
+        private ArrayList<ServiceTypeAdapter> mCustomAdapters;
+        private ArrayList<TypeAdapterFactory> mFactories;
+        private List<Pair<String, String>> mHeaders;
         private List<Interceptor> mInterceptors;
 
         public Builder(String baseUrl, GsonBuilder gsonBuilder) {
@@ -133,6 +127,9 @@ public final class ApiService {
         }
 
         public Builder registerTypeAdapter(ServiceTypeAdapter adapter) {
+            if (mCustomAdapters == null) {
+                mCustomAdapters = new ArrayList<>(2);
+            }
             mCustomAdapters.add(adapter);
             return this;
         }
@@ -153,7 +150,10 @@ public final class ApiService {
         }
 
         public Builder addHeader(String key, String value) {
-            mHeaders.put(key, value);
+            if (mHeaders == null) {
+                mHeaders = new ArrayList<>(2);
+            }
+            mHeaders.add(new Pair<>(key, value));
             return this;
         }
 
@@ -168,11 +168,13 @@ public final class ApiService {
         }
 
         public Builder registerTypeAdapter(Type type, Object object) {
-            mCustomAdapters.add(new ServiceTypeAdapter(type, object));
-            return this;
+            return registerTypeAdapter(new ServiceTypeAdapter(type, object));
         }
 
         public Builder registerTypeAdapterFactory(TypeAdapterFactory adapterFactory) {
+            if (mFactories == null) {
+                mFactories = new ArrayList<>(2);
+            }
             mFactories.add(adapterFactory);
             return this;
         }
@@ -203,6 +205,16 @@ public final class ApiService {
             return this;
         }
 
+        public ApiService.Builder setEmptyAuthTokenListener(EmptyAuthHeaderTokenListener listener) {
+            mEmptyAuthHeaderTokenListener = listener;
+            return this;
+        }
+
+        public Builder setDebugRequestLevel(HttpLoggingInterceptor.Level level) {
+            mDebugLevel = level;
+            return this;
+        }
+
         public Retrofit build() {
             Gson gson = buildGSON();
             OkHttpClient client = buildHttpClient();
@@ -214,27 +226,21 @@ public final class ApiService {
                     .build();
         }
 
-        public ApiService.Builder setEmptyAuthTokenListener(EmptyAuthHeaderTokenListener listener) {
-            mEmptyAuthHeaderTokenListener = listener;
-            return this;
-        }
-
-        public Builder setDebugRequestLevel(HttpLoggingInterceptor.Level level) {
-            mDebugLevel = level;
-            return this;
-        }
-
         private Gson buildGSON() {
             mGsonBuilder
                     .serializeNulls()
                     .setDateFormat(mDateFormat);
 
-            for (ServiceTypeAdapter adapter : mCustomAdapters) {
-                mGsonBuilder.registerTypeAdapter(adapter.type, adapter.object);
+            if (mCustomAdapters != null) {
+                for (ServiceTypeAdapter adapter : mCustomAdapters) {
+                    mGsonBuilder.registerTypeAdapter(adapter.type, adapter.object);
+                }
             }
 
-            for (TypeAdapterFactory factory : mFactories) {
-                mGsonBuilder.registerTypeAdapterFactory(factory);
+            if (mFactories != null) {
+                for (TypeAdapterFactory factory : mFactories) {
+                    mGsonBuilder.registerTypeAdapterFactory(factory);
+                }
             }
 
             if (mDateAsLong) {
@@ -256,8 +262,11 @@ public final class ApiService {
                 Request original = chain.request();
 
                 Request.Builder request = original.newBuilder();
-                for (Map.Entry<String, String> kv : mHeaders.entrySet()) {
-                    request.addHeader(kv.getKey(), kv.getValue());
+
+                if (mHeaders != null) {
+                    for (final Pair<String, String> kv : mHeaders) {
+                        request.addHeader(kv.first, kv.second);
+                    }
                 }
 
                 if (!mAuthRequired) {
@@ -337,38 +346,6 @@ public final class ApiService {
         public ServiceTypeAdapter(Type type, Object object) {
             this.type = type;
             this.object = object;
-        }
-    }
-
-    public static class NullStringToEmptyAdapterFactory implements TypeAdapterFactory {
-        @SuppressWarnings("unchecked")
-        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-
-            Class<? super T> rawType = type.getRawType();
-            if (rawType != String.class) {
-                return null;
-            }
-            return (TypeAdapter<T>) new StringAdapter();
-        }
-    }
-
-    public static class StringAdapter extends TypeAdapter<String> {
-        public void write(JsonWriter writer, String value)
-                throws IOException {
-            if (value == null) {
-                writer.nullValue();
-                return;
-            }
-            writer.value(value);
-        }
-
-        public String read(JsonReader reader)
-                throws IOException {
-            if (reader.peek() == JsonToken.NULL) {
-                reader.nextNull();
-                return "";
-            }
-            return reader.nextString();
         }
     }
 }

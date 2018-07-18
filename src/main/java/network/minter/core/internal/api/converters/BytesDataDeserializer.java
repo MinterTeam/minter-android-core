@@ -33,6 +33,7 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 
 import network.minter.core.crypto.BytesData;
+import network.minter.core.internal.helpers.StringHelper;
 
 import static network.minter.core.MinterSDK.PREFIX_ADDRESS;
 import static network.minter.core.MinterSDK.PREFIX_CHECK;
@@ -61,7 +62,7 @@ public class BytesDataDeserializer implements JsonDeserializer<BytesData> {
             }
         }
 
-        if (!s.matches("[a-fA-F0-9]+")) {
+        if (!s.matches(StringHelper.HEX_NUM_PATTERN)) {
             return null;
         }
 
