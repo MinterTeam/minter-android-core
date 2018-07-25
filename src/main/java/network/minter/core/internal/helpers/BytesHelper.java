@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
+ * @link https://github.com/edwardstock
  *
  * The MIT License
  *
@@ -25,34 +26,57 @@
 
 package network.minter.core.internal.helpers;
 
+import java.math.BigInteger;
+
+import network.minter.core.util.DecodeResult;
+
+import static network.minter.core.internal.common.Preconditions.checkNotNull;
+
 /**
  * minter-android-core. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class BytesHelper {
-    public static byte[] lpad(int size, byte[] input) {
-        if (input.length == size) {
-            return input;
-        }
+	public static byte[] lpad(int size, byte[] input) {
+		if (input.length == size) {
+			return input;
+		}
 
-        if (input.length > size) {
-            final byte[] out = new byte[size];
-            System.arraycopy(input, 0, out, 0, size);
-            return out;
-        }
+		if (input.length > size) {
+			final byte[] out = new byte[size];
+			System.arraycopy(input, 0, out, 0, size);
+			return out;
+		}
 
-        int offset = size - input.length;
-        byte[] out = new byte[size];
+		int offset = size - input.length;
+		byte[] out = new byte[size];
 
-        for (int i = 0, s = 0; i < size; i++) {
-            if (i < offset) {
-                out[i] = (byte) 0;
-            } else {
-                out[i] = input[s++];
-            }
-        }
+		for (int i = 0, s = 0; i < size; i++) {
+			if (i < offset) {
+				out[i] = (byte) 0;
+			} else {
+				out[i] = input[s++];
+			}
+		}
 
-        return out;
-    }
+		return out;
+	}
+
+	public static BigInteger fixBigintSignedByte(BigInteger input) {
+		return fixBigintSignedByte(input.toByteArray());
+	}
+
+	public static BigInteger fixBigintSignedByte(DecodeResult input) {
+		checkNotNull(input);
+		return fixBigintSignedByte(((byte[]) input.getDecoded()));
+	}
+
+	public static BigInteger fixBigintSignedByte(byte[] bigintBytes) {
+		if (bigintBytes == null || bigintBytes.length == 0) {
+			return BigInteger.ZERO;
+		}
+
+		return new BigInteger(1, bigintBytes);
+	}
 }
