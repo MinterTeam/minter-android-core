@@ -24,8 +24,6 @@
  */
 package network.minter.core.util;
 
-import com.cedarsoftware.util.DeepEquals;
-
 import org.spongycastle.util.encoders.Hex;
 
 import java.math.BigInteger;

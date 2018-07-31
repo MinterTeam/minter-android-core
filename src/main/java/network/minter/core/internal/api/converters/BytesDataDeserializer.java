@@ -34,6 +34,7 @@ import java.lang.reflect.Type;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.internal.helpers.StringHelper;
+import timber.log.Timber;
 
 import static network.minter.core.MinterSDK.PREFIX_ADDRESS;
 import static network.minter.core.MinterSDK.PREFIX_CHECK;
@@ -49,8 +50,14 @@ public class BytesDataDeserializer implements JsonDeserializer<BytesData> {
     @Override
     public BytesData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
+        String s;
+        try {
+            s = json.getAsString();
+        } catch (Exception e) {
+            Timber.e("Unable to deserialize BytesData: %s", json.toString());
+            s = null;
+        }
 
-        String s = json.getAsString();
         if (s == null) {
             return null;
         }

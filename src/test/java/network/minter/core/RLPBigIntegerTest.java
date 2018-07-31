@@ -52,7 +52,7 @@ public class RLPBigIntegerTest {
         final byte[] encoded = RLP.encode(val);
         final DecodeResult decodedResult = RLP.decode(encoded, 0);
         final byte[] decoded = ((byte[]) decodedResult.getDecoded());
-        final byte[] decodedFixed = new byte[9];
+        final byte[] decodedFixed = new byte[decoded.length + 1];
         decodedFixed[0] = 0x00;// bigint here only unsigned, so, adding zero
         System.arraycopy(decoded, 0, decodedFixed, 1, decoded.length);
         final BigInteger invalidVal = new BigInteger(decoded);

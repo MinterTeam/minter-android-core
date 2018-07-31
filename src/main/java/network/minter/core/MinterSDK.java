@@ -63,6 +63,10 @@ public class MinterSDK {
             throw new RuntimeException("Unable to load secp256k1 library");
         }
 
+        if (!NativeBip39.isEnabled()) {
+            throw new RuntimeException(NativeBip39.getError());
+        }
+
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
