@@ -29,7 +29,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-beta05'
+        classpath 'com.android.tools.build:gradle:3.2.0-rc01'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
 
@@ -57,9 +58,10 @@ ext {
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '1.0.0'
+version = '0.1.0'
 
 android {
     compileSdkVersion minterMaxSdk
