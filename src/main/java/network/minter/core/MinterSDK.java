@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -39,6 +40,7 @@ import network.minter.core.bip39.NativeBip39;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterSDK {
+    @SuppressWarnings("unused")
     public final static String DEFAULT_COIN = BuildConfig.DEFAULT_COIN_NAME;
     public final static String PREFIX_ADDRESS = "Mx";
     public final static String PREFIX_TX = "Mt";
@@ -72,7 +74,7 @@ public class MinterSDK {
 
     public static MinterSDK getInstance() {
         if (INSTANCE == null) {
-            throw new IllegalStateException("Have you forget to call MinterSDK.initialize()?");
+            throw new IllegalStateException("Did you forget to call MinterSDK.initialize()?");
         }
         return INSTANCE;
     }

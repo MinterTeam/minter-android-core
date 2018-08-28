@@ -29,7 +29,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-rc01'
+        classpath 'com.android.tools.build:gradle:3.2.0-rc02'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
@@ -49,7 +49,7 @@ allprojects {
 
 ext {
     minterMinSdk = 16
-    minterMaxSdk = 27
+    minterMaxSdk = 28
     minterBuildTools = "28.0.0"
     minterLibSupport = "27.1.1"
     pomDescription = "Android Minter Core SDK"
@@ -61,7 +61,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '0.1.0'
+version = '0.1.1'
 
 android {
     compileSdkVersion minterMaxSdk
