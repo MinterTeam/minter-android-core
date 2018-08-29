@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -144,6 +145,29 @@ public class StringHelper {
      * @param num
      * @return always 2 elements
      */
+    public static DecimalStringFraction splitDecimalStringFractions(BigDecimal num) {
+        final String sNum = num.toPlainString();
+        final String[] fractions = sNum.split("\\.");
+        final String[] out = new String[2];
+        // just in case
+        if (fractions.length == 0) {
+            out[0] = "0";
+            out[1] = "0";
+        } else if (fractions.length == 1) {
+            out[0] = fractions[0];
+            out[1] = "0";
+        } else {
+            out[0] = fractions[0];
+            out[1] = fractions[1];
+        }
+
+        return new DecimalStringFraction(out[0], out[1]);
+    }
+
+    /**
+     * @param num
+     * @return always 2 elements
+     */
     public static DecimalFraction splitDecimalFractions(BigDecimal num) {
         final String sNum = num.toPlainString();
         final String[] fractions = sNum.split("\\.");
@@ -165,6 +189,16 @@ public class StringHelper {
 
     public static boolean testHex(String s) {
         return s.matches(HEX_NUM_PATTERN);
+    }
+
+    public static class DecimalStringFraction {
+        public String intPart;
+        public String fractionalPart;
+
+        public DecimalStringFraction(String intPart, String fractionalPart) {
+            this.intPart = intPart;
+            this.fractionalPart = fractionalPart;
+        }
     }
 
     public static class DecimalFraction {
