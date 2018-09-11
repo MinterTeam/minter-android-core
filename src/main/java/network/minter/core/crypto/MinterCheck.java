@@ -38,7 +38,7 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  */
 @Parcel
 public class MinterCheck extends PublicKey {
-    public static final String TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_CHECK + "|" + MinterSDK.PREFIX_CHECK.toLowerCase() + ")?([a-fA-F0-9]+)$";
+    public static final String PATTERN = "^(" + MinterSDK.PREFIX_CHECK + "|" + MinterSDK.PREFIX_CHECK.toLowerCase() + ")?([a-fA-F0-9]+)$";
 
     public MinterCheck(Byte[] data) {
         super(
@@ -55,7 +55,7 @@ public class MinterCheck extends PublicKey {
     public MinterCheck(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && hexData.toString().matches(TX_HASH_PATTERN),
+                        hexData != null && hexData.toString().matches(PATTERN),
                         hexData,
                         "Minter check has invalid format and must contains 'Mc' at the beginning"
                 )
