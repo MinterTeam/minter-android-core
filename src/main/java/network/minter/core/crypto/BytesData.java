@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -31,15 +32,18 @@ import org.parceler.Parcel;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.internal.helpers.StringHelper;
 import network.minter.core.util.FastByteComparisons;
 
+import static network.minter.core.internal.helpers.BytesHelper.copyAllBytes;
+import static network.minter.core.internal.helpers.BytesHelper.nativeBytes;
+
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
@@ -48,12 +52,74 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     boolean mValid = true;
     int mHashCode = 0;
 
+    /**
+     * Mutable constructor, be carefully
+     * @param buffer
+     */
+    public BytesData(ByteBuffer buffer) {
+        this(buffer.array());
+        mValid = true;
+    }
+
+    /**
+     * @param buffer
+     * @param immutable copy data or not
+     */
+    public BytesData(ByteBuffer buffer, boolean immutable) {
+        this(immutable ? copyAllBytes(buffer.array()) : buffer.array());
+    }
+
+    /**
+     * Mutable constructor, be carefully
+     * @param data
+     */
     @SuppressWarnings("CopyConstructorMissesField")
     public BytesData(BytesData data) {
         this(data.getData());
         mValid = true;
     }
 
+    /**
+     * @param data
+     * @param immutable copy data or not
+     */
+    @SuppressWarnings("CopyConstructorMissesField")
+    public BytesData(BytesData data, boolean immutable) {
+        this(immutable ? data.getDataImmutable() : data.getData());
+    }
+
+    /**
+     * @param data
+     * @param immutable copy data or not
+     */
+    public BytesData(Byte[] data, boolean immutable) {
+        this(immutable ? copyAllBytes(data) : nativeBytes(data));
+    }
+
+    /**
+     * Mutable constructor, be carefully
+     * @param data
+     */
+    public BytesData(Byte[] data) {
+        if (data == null)
+            throw new NullPointerException("Data must not be null");
+
+        mData = nativeBytes(data);
+        mHashCode = Arrays.hashCode(data);
+    }
+
+    /**
+     * @param data
+     * @param immutable copy data or not
+     */
+    public BytesData(byte[] data, boolean immutable) {
+        this(immutable ? copyAllBytes(data) : data);
+    }
+
+    /**
+     * Mutable constructor, be carefully
+     * @param data
+     */
     public BytesData(byte[] data) {
         if (data == null)
             throw new NullPointerException("Data must not be null");
@@ -75,12 +141,26 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     }
 
     public boolean equals(Object other) {
-        if (!(other instanceof BytesData))
+        if (!mValid) {
             return false;
-        byte[] otherData = ((BytesData) other).getData();
-        return FastByteComparisons.compareTo(
-                mData, 0, mData.length,
-                otherData, 0, otherData.length) == 0;
+        }
+
+        if (!(other instanceof BytesData) && !(other instanceof byte[]) && !(other instanceof Byte[]) && !(other instanceof ByteBuffer)) {
+            return false;
+        }
+
+        final byte[] otherData;
+        if (other instanceof byte[]) {
+            otherData = ((byte[]) other);
+        } else if (other instanceof Byte[]) {
+            otherData = nativeBytes(((Byte[]) other));
+        } else if (other instanceof ByteBuffer) {
+            otherData = ((ByteBuffer) other).array();
+        } else {
+            otherData = ((BytesData) other).getData();
+        }
+
+        return FastByteComparisons.equal(mData, otherData);
     }
 
     @Override
@@ -108,7 +188,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     /**
      * Calculates sha3 hash from bytes
-     *
      * @return
      */
     public byte[] sha3() {
@@ -117,7 +196,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     /**
      * Calculates sha3 hash from bytes and set new data to this object
-     *
      * @return current object
      */
     public BytesData sha3Mutable() {
@@ -127,7 +205,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     /**
      * Calculates sha3 hash from bytes and returns raw mData
-     *
      * @return
      */
     public BytesData sha3Data() {
@@ -136,7 +213,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     /**
      * Converts mData to hex string with uppercase option
-     *
      * @param uppercase Transform string to uppercase
      * @return hex string
      */
@@ -154,7 +230,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     /**
      * Converts mData to hex lowercase string
-     *
      * @return hex string
      */
     public String toHexString() {
@@ -163,7 +238,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     /**
      * Copies mData to new array and returns it.
-     *
      * @return new byte[]
      */
     public byte[] getDataImmutable() {
@@ -175,7 +249,6 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     /**
      * Fills mData with zeros
      * Don't use without method
-     *
      * @see #isValid()
      */
     public void cleanup() {
@@ -187,12 +260,12 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
         for (int i = 0; i < size(); i++) {
             getData()[i] = '\0';
         }
+        mData = null;
         mValid = false;
     }
 
     /**
      * Check mData is in valid state
-     *
      * @return false is method #cleanup() called, otherwise true
      */
     public boolean isValid() {
@@ -201,7 +274,7 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
 
     public byte[] takeFirst(int len) {
         if (len < 0) {
-            throw new IllegalArgumentException("Length can't be less than 0");
+            throw new IndexOutOfBoundsException("Length can't be less than 0");
         }
         if (getData().length < len) {
             throw new IndexOutOfBoundsException(String.format("Data size less than %d: actual %d", len, size()));
@@ -245,8 +318,11 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     }
 
     public byte[] takeLast(int len) {
+        if (len < 0) {
+            throw new IndexOutOfBoundsException("Length can't be less than 0");
+        }
         if (len >= size()) {
-            throw new IllegalArgumentException("Length can't be more than mData size");
+            throw new IndexOutOfBoundsException("Length can't be more than mData size");
         }
 
         if (len == 0) {

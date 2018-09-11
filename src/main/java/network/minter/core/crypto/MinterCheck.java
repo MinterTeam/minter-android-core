@@ -34,46 +34,43 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
 
 /**
  * minter-android-core. 2018
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 @Parcel
-public class MinterAddress extends PublicKey {
-    public static final String ADDRESS_PATTERN = "^(" + MinterSDK.PREFIX_ADDRESS + "|" + MinterSDK.PREFIX_ADDRESS.toLowerCase() + ")?([a-fA-F0-9]{40})$";
+public class MinterCheck extends PublicKey {
+    public static final String TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_CHECK + "|" + MinterSDK.PREFIX_CHECK.toLowerCase() + ")?([a-fA-F0-9]+)$";
 
-
-    public MinterAddress(Byte[] data) {
+    public MinterCheck(Byte[] data) {
         super(
-                checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")
+                checkArgument(data.length > 0, data, "Minter check data can't be empty")
         );
     }
 
-    public MinterAddress(byte[] data) {
+    public MinterCheck(byte[] data) {
         super(
-                checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")
+                checkArgument(data.length > 0, data, "Minter check data can't be empty")
         );
     }
 
-    public MinterAddress(CharSequence hexData) {
+    public MinterCheck(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && hexData.toString().matches(ADDRESS_PATTERN),
+                        hexData != null && hexData.toString().matches(TX_HASH_PATTERN),
                         hexData,
-                        "Minter public key in hex format must contains 40 or 42 characters, where first 2 chars is a prefix: Mx"
+                        "Minter check has invalid format and must contains 'Mc' at the beginning"
                 )
         );
     }
 
-    public MinterAddress(MinterAddress data) {
+    public MinterCheck(MinterCheck data) {
         super(data.getData());
     }
 
     /**
-     * Creates minter public key from raw public key
-     *
-     * @param data Raw public key extracted from private key
+     * Creates minter check key from raw data
+     * @param data Raw data
      */
-    public MinterAddress(PublicKey data) {
+    public MinterCheck(BytesData data) {
         // don't change source public key
         super(
                 new BytesData(data.dropFirst())
@@ -82,21 +79,13 @@ public class MinterAddress extends PublicKey {
         );
     }
 
-    MinterAddress() {
-    }
-
-    public static boolean testString(CharSequence input) {
-        if (input == null || input.length() == 0) {
-            return false;
-        }
-
-        return input.toString().matches(ADDRESS_PATTERN);
+    MinterCheck() {
     }
 
     @Override
-    public MinterAddress clone() {
+    public MinterCheck clone() {
         super.clone();
-        MinterAddress out = new MinterAddress();
+        MinterCheck out = new MinterCheck();
         out.mValid = mValid;
         out.mData = new byte[mData.length];
         System.arraycopy(mData, 0, out.mData, 0, mData.length);
@@ -105,16 +94,14 @@ public class MinterAddress extends PublicKey {
     }
 
     /**
-     * Convert public key to minter address short public key and converts to hex string with prefix
-     *
-     * @return last 20 bytes with minter prefix of sha3-hashed original public key
+     * Convert bytes to minter short check and converts to hex string with prefix
      */
     public String toString() {
-        return toHexString(MinterSDK.PREFIX_ADDRESS, false);
+        return toHexString(MinterSDK.PREFIX_CHECK, false);
     }
 
     /**
-     * @return Mxfe6001...61eE99 short address
+     * @return Mcfe6001...61eE99 short check
      */
     public String toShortString() {
         final String in = toString();

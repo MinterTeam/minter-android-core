@@ -1,7 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -78,5 +78,28 @@ public class BytesHelper {
         }
 
         return new BigInteger(1, bigintBytes);
+    }
+
+    public static byte[] copyAllBytes(Byte[] data) {
+        return copyAllBytes(nativeBytes(data));
+    }
+
+    public static byte[] copyAllBytes(byte[] data) {
+        final byte[] out = new byte[data.length];
+        System.arraycopy(data, 0, out, 0, data.length);
+        return out;
+    }
+
+    public static byte[] nativeBytes(Byte[] src) {
+        if (src == null || src.length == 0) {
+            return new byte[0];
+        }
+
+        final byte[] out = new byte[src.length];
+        for (int i = 0; i < src.length; i++) {
+            out[i] = src[i];
+        }
+
+        return out;
     }
 }
