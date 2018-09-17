@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,10 +26,7 @@
 
 package network.minter.core;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
@@ -41,14 +39,24 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@RunWith(AndroidJUnit4.class)
 public class PrivateKeyTest {
 
     static {
         MinterSDK.initialize();
+    }
+
+    @Test
+    public void testCreateFromMnemonic() {
+        String mnemonic = "guide rescue bike august sunny mutual void such beyond angle adapt settle";
+        PrivateKey outPk = new PrivateKey("78f7fe0189d8b1b5e16e4cb7225eb4dda747161d5919ac7c71f3a8a4ab2028fa");
+        PrivateKey pk = PrivateKey.fromMnemonic(mnemonic);
+        MinterAddress address = new MinterAddress("Mx92a1dd593e1a844ddcba964bd1fd822d3e761a0b");
+
+        assertEquals(outPk.toHexString(), pk.toHexString());
+        assertEquals(outPk, pk);
+        assertEquals(address.toString(), outPk.getPublicKey().toMinter().toString());
     }
 
     @Test

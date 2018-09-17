@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,10 +26,7 @@
 
 package network.minter.core;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import network.minter.core.bip39.HDKey;
 import network.minter.core.bip39.NativeBip39;
@@ -44,10 +42,8 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@RunWith(AndroidJUnit4.class)
 public class NativeHDKeyEncoderTest {
 
     static {

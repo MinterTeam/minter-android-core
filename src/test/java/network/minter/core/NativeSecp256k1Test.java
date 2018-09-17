@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,14 +26,11 @@
 
 package network.minter.core;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import com.edwardstock.secp256k1.NativeSecp256k1;
 import com.edwardstock.secp256k1.NativeSecp256k1Util;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import network.minter.core.internal.helpers.StringHelper;
 
@@ -44,10 +42,8 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@RunWith(AndroidJUnit4.class)
 public class NativeSecp256k1Test {
     static {
         NativeSecp256k1.init();
