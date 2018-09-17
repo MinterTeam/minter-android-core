@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,10 +26,7 @@
 
 package network.minter.core;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import network.minter.core.bip39.HDKey;
 import network.minter.core.bip39.MnemonicResult;
@@ -47,27 +45,25 @@ import static network.minter.core.bip39.NativeHDKeyEncoder.MAIN_NET;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
- * <p>
- * <p>
- * * entropy: f0b9c942b9060af6a82d3ac340284d7e
- * * words: vague soft expose improve gaze kitten pass point select access battle wish
- * * bip39seed: f01e96ba468700a7fa92b8fdf500b8d3cef5cd88e1592a83f31631e9c3f3ed86cffbaba747e2d3f00476b17f3c8b4c19f3f6577cf619464886402ce0faeef01c
- * * bip32root key: xprv9s21ZrQH143K2Pr9zz5gPaxJHrJj1YR5As1SA2z6D5a9yTkN9nhUMt2Z1CJxFfSe8VzxmGYeeuVi26Uim7papujvs4hf5dwauQFrqgEU7Nf
- * *
- * * bip44:
- * * network: 36 (ETH)
- * * purpose: 44
- * * coin: 60
- * * accout: 0
- * * external/internal: 0/1
- * *
- * * derivation path: m/44'/60'/0'/0
- * * acc ext. private: xprv9zPRRprz3mGyL7YLgAFT1PoJ787ZZroCHxPpVdEhTaxsLh1uowZyX8cGMdbrmibV9bXBNMUtA6TGePGQrw5tWaM4VFFwwqFo52xTL8EXzZH
- * * acc ext. public:  xpub6DNmqLPst8qGYbconBnTNXk2f9x3yKX3fBKRJ1eK1vVrDVM4MUtE4vvkCw6N6Zj5YYTQB9G723vkNHaxEA7acuM5J2qH7QSs1ryRJ8Mb8kF
+ *         <p>
+ *         <p>
+ *         * entropy: f0b9c942b9060af6a82d3ac340284d7e
+ *         * words: vague soft expose improve gaze kitten pass point select access battle wish
+ *         * bip39seed: f01e96ba468700a7fa92b8fdf500b8d3cef5cd88e1592a83f31631e9c3f3ed86cffbaba747e2d3f00476b17f3c8b4c19f3f6577cf619464886402ce0faeef01c
+ *         * bip32root key: xprv9s21ZrQH143K2Pr9zz5gPaxJHrJj1YR5As1SA2z6D5a9yTkN9nhUMt2Z1CJxFfSe8VzxmGYeeuVi26Uim7papujvs4hf5dwauQFrqgEU7Nf
+ *         *
+ *         * bip44:
+ *         * network: 36 (ETH)
+ *         * purpose: 44
+ *         * coin: 60
+ *         * accout: 0
+ *         * external/internal: 0/1
+ *         *
+ *         * derivation path: m/44'/60'/0'/0
+ *         * acc ext. private: xprv9zPRRprz3mGyL7YLgAFT1PoJ787ZZroCHxPpVdEhTaxsLh1uowZyX8cGMdbrmibV9bXBNMUtA6TGePGQrw5tWaM4VFFwwqFo52xTL8EXzZH
+ *         * acc ext. public:  xpub6DNmqLPst8qGYbconBnTNXk2f9x3yKX3fBKRJ1eK1vVrDVM4MUtE4vvkCw6N6Zj5YYTQB9G723vkNHaxEA7acuM5J2qH7QSs1ryRJ8Mb8kF
  */
-@RunWith(AndroidJUnit4.class)
 public class NativeBip39MnemonicTest {
 
     static {

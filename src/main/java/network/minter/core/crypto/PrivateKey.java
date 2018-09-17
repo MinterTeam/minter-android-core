@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,6 +26,8 @@
 
 package network.minter.core.crypto;
 
+import android.support.annotation.NonNull;
+
 import com.edwardstock.secp256k1.NativeSecp256k1;
 
 import org.parceler.Parcel;
@@ -34,20 +37,46 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import network.minter.core.bip39.HDKey;
+import network.minter.core.bip39.MnemonicResult;
+import network.minter.core.bip39.NativeHDKeyEncoder;
+
+import static network.minter.core.internal.common.Preconditions.checkArgument;
 
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
 public class PrivateKey extends BytesData implements java.security.PrivateKey {
-    public PrivateKey(String pk) {
-        super(pk);
-    }
-
     public PrivateKey(BytesData data) {
         super(data);
+    }
+
+    public PrivateKey(BytesData data, boolean immutable) {
+        super(data, immutable);
+    }
+
+    public PrivateKey(Byte[] data, boolean immutable) {
+        super(data, immutable);
+    }
+
+    public PrivateKey(Byte[] data) {
+        super(data);
+    }
+
+    public PrivateKey(byte[] data, boolean immutable) {
+        super(data, immutable);
+    }
+
+    public PrivateKey(ByteBuffer buffer) {
+        super(buffer);
+    }
+
+    public PrivateKey(ByteBuffer buffer, boolean immutable) {
+        super(buffer, immutable);
     }
 
     public PrivateKey(byte[] data) {
@@ -62,15 +91,23 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
     PrivateKey() {
     }
 
-    /* @TODO
-    public static PrivateKey fromMnemonic(String mnemonic) {
-        return null;
+    public static PrivateKey fromMnemonic(@NonNull final String mnemonic) {
+        checkArgument(mnemonic != null && !mnemonic.isEmpty(), "Mnemonic phrase can't be empty");
+        final MnemonicResult mnemonicResult = new MnemonicResult(mnemonic);
+        final BytesData seed = new BytesData(mnemonicResult.toSeed());
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getData());
+        final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
+        final PrivateKey privateKey = extKey.getPrivateKey();
+
+        seed.cleanup();
+        rootKey.clear();
+        extKey.clear();
+
+        return privateKey;
     }
-    */
 
     /**
      * Load private key from file
-     *
      * @param file
      * @return PrivateKey data
      * @throws IOException if file not found, can't open stream or something else
@@ -93,7 +130,6 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
 
     /**
      * Check private key for validity
-     *
      * @return true if private key is valid
      */
     public boolean verify() {
@@ -119,7 +155,6 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
 
     /**
      * Extract public key from private
-     *
      * @return Public Key data
      */
     public PublicKey getPublicKey(boolean compressed) {

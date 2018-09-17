@@ -63,6 +63,12 @@ apply plugin: 'com.jfrog.bintray'
 group = 'network.minter.android'
 version = '0.1.2'
 
+def libPath = ""
+if(hasProperty("nativeLibPath")) {
+    libPath = getProperty("nativeLibPath")
+}
+println "Native lib path: ${libPath}"
+
 android {
     compileSdkVersion minterMaxSdk
 
@@ -78,6 +84,16 @@ android {
             cmake {
                 cppFlags "-std=c++14"
             }
+        }
+    }
+
+    testOptions {
+        unitTests {
+            all {
+                jvmArgs "-Djava.library.path=${libPath}"
+            }
+            includeAndroidResources = true
+            returnDefaultValues = true
         }
     }
 
