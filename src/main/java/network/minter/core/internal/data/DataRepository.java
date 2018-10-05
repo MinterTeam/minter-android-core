@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,8 +26,8 @@
 
 package network.minter.core.internal.data;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.common.Lazy;
@@ -43,7 +44,7 @@ public abstract class DataRepository<Service> {
     private final ApiService.Builder mApi;
     private final Lazy<Service> mService;
 
-    public DataRepository(@NonNull final ApiService.Builder apiBuilder) {
+    public DataRepository(@Nonnull final ApiService.Builder apiBuilder) {
         mApi = checkNotNull(apiBuilder, "Api client required");
         checkNotNull(getServiceClass(), "Service class is null!");
         mService = LazyMem.memoize(() -> {
@@ -67,12 +68,12 @@ public abstract class DataRepository<Service> {
      *
      * @return
      */
-    @NonNull
+    @Nonnull
     public Service getInstantService() {
         return getInstantService(null);
     }
 
-    @NonNull
+    @Nonnull
     public Service getInstantService(@Nullable Configurator cfg) {
         final ApiService.Builder b = mApi.clone();
         if (cfg != null) {
@@ -128,7 +129,7 @@ public abstract class DataRepository<Service> {
     protected void configureService(ApiService.Builder apiBuilder) {
     }
 
-    @NonNull
+    @Nonnull
     abstract protected Class<Service> getServiceClass();
 
     /**

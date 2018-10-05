@@ -26,14 +26,14 @@
 
 package network.minter.core.crypto;
 
-import android.support.annotation.NonNull;
-
 import org.parceler.Parcel;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import javax.annotation.Nonnull;
 
 import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.internal.helpers.StringHelper;
@@ -169,7 +169,7 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     }
 
     @Override
-    public int compareTo(@NonNull BytesData o) {
+    public int compareTo(@Nonnull BytesData o) {
         return FastByteComparisons.compareTo(
                 mData, 0, mData.length,
                 o.getData(), 0, o.getData().length);

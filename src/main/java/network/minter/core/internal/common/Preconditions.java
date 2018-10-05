@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,10 +26,11 @@
 
 package network.minter.core.internal.common;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.Collection;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static java.lang.String.format;
 
@@ -46,7 +48,7 @@ public class Preconditions {
      * @return the non-null reference that was validated
      * @throws NullPointerException if {@code reference} is null
      */
-    @NonNull
+    @Nonnull
     public static <T> T checkNotNull(final T reference, final String message) {
         if (reference == null) {
             throw new NullPointerException(message);
@@ -54,12 +56,12 @@ public class Preconditions {
         return reference;
     }
 
-    @NonNull
+    @Nonnull
     public static <T> T checkNotNull(final T reference) {
         return checkNotNull(reference, null);
     }
 
-    @NonNull
+    @Nonnull
     public static <T> Collection<T> checkNotEmpty(final Collection<T> collection) {
         if (collection.isEmpty()) {
             throw new IllegalArgumentException();
@@ -76,8 +78,7 @@ public class Preconditions {
         return collection;
     }
 
-    @SafeVarargs
-    @NonNull
+    @Nonnull
     public static <T> T firstNonNull(final T ref0, final T... refs) {
         if (ref0 != null) {
             return ref0;
@@ -94,7 +95,7 @@ public class Preconditions {
         return checkNotNull(outRef);
     }
 
-    @NonNull
+    @Nonnull
     public static String firstNonEmpty(final String ref0, final String... refs) {
         if (ref0 != null && !ref0.isEmpty()) {
             return ref0;

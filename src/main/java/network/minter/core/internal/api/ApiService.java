@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,9 +26,6 @@
 
 package network.minter.core.internal.api;
 
-import android.support.annotation.Nullable;
-import android.util.Pair;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -40,8 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import network.minter.core.internal.common.Acceptor;
-import network.minter.core.internal.common.CallbackProvider;
+import network.minter.core.internal.common.Lazy;
+import network.minter.core.internal.common.Pair;
 import network.minter.core.internal.exceptions.NetworkException;
 import okhttp3.Cache;
 import okhttp3.Interceptor;
@@ -55,7 +56,6 @@ import timber.log.Timber;
 
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public final class ApiService {
@@ -80,8 +80,9 @@ public final class ApiService {
         private Cache mHttpCache = null;
         private OnErrorListener mErrorListener;
         private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
-        private CallbackProvider<String> mTokenProvider;
+        private Lazy<String> mTokenProvider;
         private Acceptor<OkHttpClient.Builder> mHttpClientConfig;
+        private Acceptor<Retrofit.Builder> mRetrofitClientConfig;
         private EmptyAuthHeaderTokenListener mEmptyAuthHeaderTokenListener;
         private ArrayList<ServiceTypeAdapter> mCustomAdapters;
         private ArrayList<TypeAdapterFactory> mFactories;
@@ -98,8 +99,23 @@ public final class ApiService {
             mGsonBuilder = new GsonBuilder();
         }
 
+        /**
+         * Configure OkHttp client before it will be created using callback
+         * @param acceptor
+         * @return
+         */
         public Builder setHttpClientConfig(Acceptor<OkHttpClient.Builder> acceptor) {
             mHttpClientConfig = acceptor;
+            return this;
+        }
+
+        /**
+         * Configure retrofit before it will be created using callback
+         * @param acceptor
+         * @return
+         */
+        public Builder setRetrofitClientConfig(Acceptor<Retrofit.Builder> acceptor) {
+            mRetrofitClientConfig = acceptor;
             return this;
         }
 
@@ -162,7 +178,7 @@ public final class ApiService {
             return this;
         }
 
-        public Builder setTokenGetter(CallbackProvider<String> callback) {
+        public Builder setTokenGetter(Lazy<String> callback) {
             mTokenProvider = callback;
             return this;
         }
@@ -190,6 +206,11 @@ public final class ApiService {
             return this;
         }
 
+        /**
+         * Pass to any request doing with current client instance, http header with auth token
+         * @param required
+         * @return
+         */
         public Builder authRequired(boolean required) {
             mAuthRequired = required;
             return this;
@@ -219,10 +240,15 @@ public final class ApiService {
             Gson gson = buildGSON();
             OkHttpClient client = buildHttpClient();
 
-            return new Retrofit.Builder()
-                    .baseUrl(mBaseUrl)
+            final Retrofit.Builder builder = new Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create(gson));
+
+            if (mRetrofitClientConfig != null) {
+                mRetrofitClientConfig.accept(builder);
+            }
+
+            return builder.baseUrl(mBaseUrl)
                     .client(client)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
 

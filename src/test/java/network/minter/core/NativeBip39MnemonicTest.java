@@ -122,6 +122,14 @@ public class NativeBip39MnemonicTest {
     }
 
     @Test
+    public void testGenerateMnemonic() {
+        final MnemonicResult res = NativeBip39.generate();
+        assertNotNull(res.getMnemonic());
+        assertEquals(12, res.size());
+        assertTrue(res.getStatus(), res.isOk());
+    }
+
+    @Test
     public void testBip39SeedToNikita() {
         final String mnemonic = "globe arrange forget twice potato nurse ice dwarf arctic piano scorpion tube";
         final String validSeed = "e4d6956689cfba26aab4156e5f4600f5f386cdd56ea57f1bfdb40f33048d4d463989c170738ae582f07227af9fd707b40cc7d7d6fd24d14a4ee1e0f45928940d";

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,25 +26,24 @@
 
 package network.minter.core.internal.exceptions;
 
-import android.annotation.SuppressLint;
-import android.support.annotation.Nullable;
-
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.net.UnknownServiceException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.TimeoutException;
+
+import javax.annotation.Nullable;
 
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-import static network.minter.core.internal.common.Preconditions.firstNonNull;
+import static com.google.common.base.MoreObjects.firstNonNull;
 
 
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class NetworkException extends RuntimeException {
@@ -95,10 +95,9 @@ public class NetworkException extends RuntimeException {
             return Unknown;
         }
 
-        @SuppressLint("DefaultLocale")
         @Override
         public String toString() {
-            return String.format("ERR::%s::%d", name().toUpperCase(), code);
+            return String.format(Locale.getDefault(), "ERR::%s::%d", name().toUpperCase(), code);
         }
     }
 

@@ -26,8 +26,6 @@
 
 package network.minter.core.crypto;
 
-import android.support.annotation.NonNull;
-
 import com.edwardstock.secp256k1.NativeSecp256k1;
 
 import org.parceler.Parcel;
@@ -38,6 +36,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import javax.annotation.Nonnull;
 
 import network.minter.core.bip39.HDKey;
 import network.minter.core.bip39.MnemonicResult;
@@ -91,7 +91,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
     PrivateKey() {
     }
 
-    public static PrivateKey fromMnemonic(@NonNull final String mnemonic) {
+    public static PrivateKey fromMnemonic(@Nonnull final String mnemonic) {
         checkArgument(mnemonic != null && !mnemonic.isEmpty(), "Mnemonic phrase can't be empty");
         final MnemonicResult mnemonicResult = new MnemonicResult(mnemonic);
         final BytesData seed = new BytesData(mnemonicResult.toSeed());

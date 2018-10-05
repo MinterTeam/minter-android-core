@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,8 +26,6 @@
 
 package network.minter.core.crypto;
 
-import android.support.annotation.NonNull;
-
 import org.parceler.Parcel;
 
 import java.io.Serializable;
@@ -36,6 +35,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -68,7 +68,7 @@ public class EncryptedString implements Serializable {
      * @throws InvalidKeyException
      * @throws UnsupportedEncodingException
      */
-    public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey32B, @NonNull final String iv)
+    public EncryptedString(@Nonnull final String rawString, @Nonnull final String encryptionKey32B, @Nonnull final String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
         checkArgument(rawString != null && rawString.length() > 0, "Nothing to encrypt. Raw string is empty");
         checkArgument(
@@ -82,12 +82,12 @@ public class EncryptedString implements Serializable {
         mEncrypted = crypt.encryptRaw(rawString, encryptionKey32B, iv);
     }
 
-    public EncryptedString(@NonNull final String rawString, @NonNull final String encryptionKey32B)
+    public EncryptedString(@Nonnull final String rawString, @Nonnull final String encryptionKey32B)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
         this(rawString, encryptionKey32B, IV);
     }
 
-    public EncryptedString(@NonNull final String encryptedString) {
+    public EncryptedString(@Nonnull final String encryptedString) {
         mEncrypted = checkNotNull(encryptedString, "Encrypted data can't be null. It may lead decryption errors");
     }
 
@@ -107,7 +107,7 @@ public class EncryptedString implements Serializable {
      * @throws InvalidKeyException
      * @throws UnsupportedEncodingException
      */
-    public String decrypt(@NonNull final String encryptionKey32B, final String iv)
+    public String decrypt(@Nonnull final String encryptionKey32B, final String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
 
         checkArgument(
@@ -121,12 +121,12 @@ public class EncryptedString implements Serializable {
         return crypt.decryptRaw(mEncrypted, encryptionKey32B, iv);
     }
 
-    public String decrypt(@NonNull final String encryptionKey)
+    public String decrypt(@Nonnull final String encryptionKey)
             throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException {
         return decrypt(encryptionKey, IV);
     }
 
-    @NonNull
+    @Nonnull
     public String getEncrypted() {
         return mEncrypted;
     }
