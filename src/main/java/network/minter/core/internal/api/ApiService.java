@@ -44,6 +44,7 @@ import network.minter.core.internal.common.Acceptor;
 import network.minter.core.internal.common.Lazy;
 import network.minter.core.internal.common.Pair;
 import network.minter.core.internal.exceptions.NetworkException;
+import network.minter.core.internal.log.Mint;
 import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -52,7 +53,6 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import timber.log.Timber;
 
 /**
  * minter-android-core. 2018
@@ -330,7 +330,7 @@ public final class ApiService {
             }
 
             if (mDebug) {
-                HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+                HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> Mint.tag("OkHttp").d(message));
                 loggingInterceptor.setLevel(mDebugLevel);
                 httpClient.addInterceptor(loggingInterceptor);
             }
@@ -344,7 +344,7 @@ public final class ApiService {
                 httpClient.addInterceptor(chain -> {
                     for (Map.Entry<String, List<String>> item : chain.request().headers().toMultimap().entrySet()) {
                         for (String sub : item.getValue()) {
-                            Timber.tag("OkHttp").d("%s: %s", item.getKey(), sub);
+                            Mint.tag("OkHttp").d("%s: %s", item.getKey(), sub);
                         }
                     }
                     return chain.proceed(chain.request());

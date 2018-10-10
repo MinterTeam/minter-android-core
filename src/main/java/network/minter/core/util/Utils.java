@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -37,7 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import timber.log.Timber;
+import network.minter.core.internal.log.Mint;
 
 public class Utils {
     private static final DataWord DIVISOR = new DataWord(64);
@@ -209,7 +210,7 @@ public class Utils {
      * Show std err messages in red and throw RuntimeException to stop execution.
      */
     public static void showErrorAndExit(String message, String... messages) {
-        Timber.e(message);
+        Mint.e(message);
         final String ANSI_RED = "\u001B[31m";
         final String ANSI_RESET = "\u001B[0m";
 
@@ -229,7 +230,7 @@ public class Utils {
      * Show std warning messages in red.
      */
     public static void showWarn(String message, String... messages) {
-        Timber.w(message);
+        Mint.w(message);
         final String ANSI_RED = "\u001B[31m";
         final String ANSI_RESET = "\u001B[0m";
 

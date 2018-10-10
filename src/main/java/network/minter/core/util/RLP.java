@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import timber.log.Timber;
+import network.minter.core.internal.log.Mint;
 
 import static java.util.Arrays.copyOfRange;
 import static network.minter.core.util.ByteUtil.byteArrayToInt;
@@ -984,7 +985,7 @@ public class RLP {
 
             while (pos < endPos) {
 
-                Timber.d("fullTraverse: level: " + level + " startPos: " + pos + " endPos: " + endPos);
+                Mint.d("fullTraverse: level: " + level + " startPos: " + pos + " endPos: " + endPos);
 
 
                 // It's a list with a payload more than 55 bytes

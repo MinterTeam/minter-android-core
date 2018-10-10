@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -34,7 +35,7 @@ import java.lang.reflect.Type;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.internal.helpers.StringHelper;
-import timber.log.Timber;
+import network.minter.core.internal.log.Mint;
 
 import static network.minter.core.MinterSDK.PREFIX_ADDRESS;
 import static network.minter.core.MinterSDK.PREFIX_CHECK;
@@ -54,7 +55,7 @@ public class BytesDataDeserializer implements JsonDeserializer<BytesData> {
         try {
             s = json.getAsString();
         } catch (Exception e) {
-            Timber.e("Unable to deserialize BytesData: %s", json.toString());
+            Mint.e("Unable to deserialize BytesData: %s", json.toString());
             s = null;
         }
 

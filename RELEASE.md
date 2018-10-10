@@ -8,6 +8,7 @@
  - Added random generate method to create random mnemonic (using native PCG random)
  - `CallbackProvider<T>` now deprecated. Use `Lazy<T>`
  - Added `Retrofit.Builder` configuration callback in `ApiService.Builder`
+ - Added unified logger: see `Mint`
 
 ## 0.1.3
  - Added ability to create private key from mnemonic phrase directly

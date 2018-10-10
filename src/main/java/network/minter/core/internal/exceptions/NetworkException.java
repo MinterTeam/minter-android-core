@@ -228,7 +228,7 @@ public class NetworkException extends RuntimeException {
     }
 
     //	public String getTrace() {
-//		return ExceptionHelper.getStackTrace(firstNonNull(another, this));
+//		return ExceptionHelper.extractStackTrace(firstNonNull(another, this));
 //	}
     public String getExceptionMessage() {
         return mExceptionMessage;

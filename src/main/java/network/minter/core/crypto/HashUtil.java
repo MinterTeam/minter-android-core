@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -37,10 +38,10 @@ import java.security.Security;
 import java.util.Random;
 
 import network.minter.core.internal.helpers.StringHelper;
+import network.minter.core.internal.log.Mint;
 import network.minter.core.util.RLP;
 import network.minter.core.util.SpongyCastleProvider;
 import network.minter.core.util.Utils;
-import timber.log.Timber;
 
 import static java.util.Arrays.copyOfRange;
 import static network.minter.core.util.ByteUtil.EMPTY_BYTE_ARRAY;
@@ -91,7 +92,7 @@ public class HashUtil {
             MessageDigest sha256digest = MessageDigest.getInstance("SHA-256");
             return sha256digest.digest(input);
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Can't find such algorithm");
+            Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
     }
@@ -103,7 +104,7 @@ public class HashUtil {
             digest.update(input);
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Can't find such algorithm");
+            Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
 
@@ -117,16 +118,15 @@ public class HashUtil {
             digest.update(input2, 0, input2.length);
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Can't find such algorithm");
+            Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
     }
 
     /**
      * hashing chunk of the data
-     *
-     * @param input  - data for hash
-     * @param start  - start of hashing chunk
+     * @param input - data for hash
+     * @param start - start of hashing chunk
      * @param length - length of hashing chunk
      * @return - keccak hash of the chunk
      */
@@ -137,7 +137,7 @@ public class HashUtil {
             digest.update(input, start, length);
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Can't find such algorithm");
+            Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
     }
@@ -149,7 +149,7 @@ public class HashUtil {
             digest.update(input);
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Can't find such algorithm");
+            Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
     }
@@ -172,7 +172,6 @@ public class HashUtil {
     /**
      * Calculates RIGTMOST160(SHA3(input)). This is used in address
      * calculations. *
-     *
      * @param input - data
      * @return - 20 right bytes of the hash keccak of the data
      */
@@ -183,8 +182,7 @@ public class HashUtil {
 
     /**
      * The way to calculate new address inside ethereum
-     *
-     * @param addr  - creating addres
+     * @param addr - creating addres
      * @param nonce - nonce of creating address
      * @return new address
      */
@@ -209,8 +207,7 @@ public class HashUtil {
      * Calculates the SHA-256 hash of the given byte range, and then hashes the
      * resulting hash again. This is standard procedure in Bitcoin. The
      * resulting hash is in big endian form.
-     *
-     * @param input  -
+     * @param input -
      * @param offset -
      * @param length -
      * @return -
@@ -223,7 +220,7 @@ public class HashUtil {
             byte[] first = sha256digest.digest();
             return sha256digest.digest(first);
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Can't find such algorithm");
+            Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
     }
