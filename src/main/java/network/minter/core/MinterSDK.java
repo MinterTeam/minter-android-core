@@ -33,10 +33,10 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
 import java.security.Security;
 
 import network.minter.core.bip39.NativeBip39;
+import network.minter.core.internal.exceptions.NativeLoadException;
 
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterSDK {
@@ -51,7 +51,7 @@ public class MinterSDK {
     private MinterSDK() {
     }
 
-    public static void initialize() {
+    public static void initialize() throws NativeLoadException {
         if (INSTANCE != null) {
             return;
         }
@@ -62,14 +62,23 @@ public class MinterSDK {
         NativeBip39.init();
 
         if (!NativeSecp256k1.isEnabled()) {
-            throw new RuntimeException("Unable to load secp256k1 library");
+            throw new NativeLoadException(NativeSecp256k1.getError());
         }
 
         if (!NativeBip39.isEnabled()) {
-            throw new RuntimeException(NativeBip39.getError());
+            throw new NativeLoadException(NativeBip39.getError());
         }
 
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+
+    /**
+     * Use this if you are catched {@link UnsatisfiedLinkError} and loaded native libraries by yourself, if not, it will crash at unexpected place
+     * @param enabledNativeLibs
+     */
+    public static void setEnabledNativeLibs(boolean enabledNativeLibs) {
+        NativeSecp256k1.setEnabled(enabledNativeLibs);
+        NativeBip39.setEnabled(enabledNativeLibs);
     }
 
     public static MinterSDK getInstance() {

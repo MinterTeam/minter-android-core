@@ -4,6 +4,7 @@
  - **BREAKING CHANGES**:
     - Removed UriDeserializer
     - Replaced `android.util.Pair` with custom class. Android's `Pair` uses `java.util.Objects` and it's not supported on android < 19
+    - Added checked `NativeLoadException` for `MinterSDK.initialize()`
  - Reduced android dependencies usage
  - Added random generate method to create random mnemonic (using native PCG random)
  - `CallbackProvider<T>` now deprecated. Use `Lazy<T>`

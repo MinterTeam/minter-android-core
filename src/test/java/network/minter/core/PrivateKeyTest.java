@@ -33,6 +33,7 @@ import java.util.Arrays;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.PrivateKey;
 import network.minter.core.crypto.PublicKey;
+import network.minter.core.internal.exceptions.NativeLoadException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +45,11 @@ import static org.junit.Assert.assertEquals;
 public class PrivateKeyTest {
 
     static {
-        MinterSDK.initialize();
+        try {
+            MinterSDK.initialize();
+        } catch (NativeLoadException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

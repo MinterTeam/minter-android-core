@@ -35,6 +35,7 @@ import network.minter.core.bip39.NativeHDKeyEncoder;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.PrivateKey;
 import network.minter.core.crypto.PublicKey;
+import network.minter.core.internal.exceptions.NativeLoadException;
 import network.minter.core.internal.helpers.StringHelper;
 
 import static junit.framework.Assert.assertEquals;
@@ -67,7 +68,11 @@ import static network.minter.core.bip39.NativeHDKeyEncoder.MAIN_NET;
 public class NativeBip39MnemonicTest {
 
     static {
-        MinterSDK.initialize();
+        try {
+            MinterSDK.initialize();
+        } catch (NativeLoadException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
