@@ -26,7 +26,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterSdkVersion = "0.1.3"
+    minterSdkVersion = "0.2.0"
 }
 
 dependencies {
@@ -41,8 +41,11 @@ dependencies {
 ## Basic Usage
 ### Initialize it
 ```java
-
-MinterSDK.initialize();
+try {
+    MinterSDK.initialize();
+} catch (NativeLoadException e) {
+    // handle linkage error
+}
 ```
 
 ### Usage
