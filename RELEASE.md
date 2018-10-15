@@ -10,6 +10,7 @@
  - `CallbackProvider<T>` now deprecated. Use `Lazy<T>`
  - Added `Retrofit.Builder` configuration callback in `ApiService.Builder`
  - Added unified logger: see `Mint`
+ - Added public SONAME and arrays of native lib file names
 
 ## 0.1.3
  - Added ability to create private key from mnemonic phrase directly
