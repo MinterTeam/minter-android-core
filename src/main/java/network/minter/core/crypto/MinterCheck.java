@@ -66,19 +66,6 @@ public class MinterCheck extends PublicKey {
         super(data.getData());
     }
 
-    /**
-     * Creates minter check key from raw data
-     * @param data Raw data
-     */
-    public MinterCheck(BytesData data) {
-        // don't change source public key
-        super(
-                new BytesData(data.dropFirst())
-                        .sha3Mutable()
-                        .takeLastMutable(20)
-        );
-    }
-
     MinterCheck() {
     }
 
