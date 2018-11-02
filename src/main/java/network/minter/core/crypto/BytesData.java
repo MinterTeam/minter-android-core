@@ -39,6 +39,7 @@ import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.internal.helpers.StringHelper;
 import network.minter.core.util.FastByteComparisons;
 
+import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.helpers.BytesHelper.copyAllBytes;
 import static network.minter.core.internal.helpers.BytesHelper.nativeBytes;
 
@@ -117,6 +118,28 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     }
 
     /**
+     * 2d array will be flatten into 1d
+     * @param dataArray
+     */
+    public BytesData(byte[]... dataArray) {
+        checkArgument(dataArray != null, "Data array can't be null");
+
+        int len = 0;
+        for (byte[] sub : dataArray) {
+            len += sub.length;
+        }
+        byte[] out = new byte[len];
+        int offset = 0;
+        for (byte[] sub : dataArray) {
+            System.arraycopy(sub, 0, out, offset, sub.length);
+            offset += sub.length;
+        }
+
+        mData = out;
+        mHashCode = Arrays.hashCode(out);
+    }
+
+    /**
      * Mutable constructor, be carefully
      * @param data
      */
@@ -187,11 +210,28 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     }
 
     /**
+     * Calculate simple sha256 hash
+     * @return hash bytes
+     */
+    public byte[] sha256() {
+        return HashUtil.sha256(getData());
+    }
+
+    /**
+     * Mutable sha256 hashing
+     * @return self instance
+     */
+    public BytesData sha256Mutable() {
+        mData = sha256();
+        return this;
+    }
+
+    /**
      * Calculates sha3 hash from bytes
      * @return
      */
     public byte[] sha3() {
-        return HashUtil.sha3(getData());
+        return HashUtil.sha3(getDataImmutable());
     }
 
     /**

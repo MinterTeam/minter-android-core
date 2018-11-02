@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -27,7 +28,6 @@ package network.minter.core.internal.common;
 
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class Conditional<T> {
@@ -36,10 +36,11 @@ public class Conditional<T> {
     private Value<T> mValue;
 
     /**
-     * Пример: <p> private Conditional<AppValue> someCond = new Conditional<>(()->App.isRunning(),
-     * ()-> App.getValueBigInteger()); <p> someCond.call(appVal -> appVal.doSomeAction()) <p> Кастомный
-     * коллбэк с кастомным значением
-     *
+     * Пример: {@code
+     * private Conditional<AppValue> someCond = new Conditional<>(()->App.isRunning(),
+     * ()-> App.getValueBigInteger()); <p> someCond.call(appVal -> appVal.doSomeAction())
+     * }
+     * Кастомный коллбэк с кастомным значением
      * @param condition
      * @param value
      */
@@ -51,10 +52,11 @@ public class Conditional<T> {
     /**
      * Коллбэк проверяет, если возвращаемое значение != null то условие равно true
      * <p>
+     * {@code
      * private Conditional<AppValue> someCond = new Conditional<>(()->App.getValueBigInteger());
-     * s
+     * <p>
      * someCond.call(appVal -> appVal.doSomeAction()) выполнится если App.getValueBigInteger() != null
-     *
+     * }
      * @param value
      */
     public Conditional(Value<T> value) {

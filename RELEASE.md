@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.2.1
+ - Added ability to pass `byte[][]` or `byte[]...` to `BytesData` (to combine multiple arrays like from RecoverableSignature)
+ - Added **sha256** hash method to `BytesData`
+
 ## 0.2.0
  - **BREAKING CHANGES**:
     - Removed UriDeserializer

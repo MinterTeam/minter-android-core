@@ -32,6 +32,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import network.minter.core.crypto.BytesData;
+import network.minter.core.util.FastByteComparisons;
 
 import static junit.framework.TestCase.assertTrue;
 import static network.minter.core.util.FastByteComparisons.equal;
@@ -44,6 +45,42 @@ import static org.junit.Assert.assertNotNull;
  * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
 public class BytesDataTest {
+
+    @Test
+    public void testArrayArrayConstructor() {
+        final byte[][] a = new byte[3][2];
+        a[0] = new byte[]{0xF, 0xF - 1};
+        a[1] = new byte[]{0xF - 2, 0xF - 3};
+        a[2] = new byte[]{0xF - 4, 0xF - 5};
+
+        BytesData bd = new BytesData(a);
+        assertEquals(a.length * 2, bd.size());
+        // flatten
+        assertEquals(0xF, bd.getData()[0]);
+        assertEquals(0xF - 1, bd.getData()[1]);
+        assertEquals(0xF - 2, bd.getData()[2]);
+        assertEquals(0xF - 3, bd.getData()[3]);
+        assertEquals(0xF - 4, bd.getData()[4]);
+        assertEquals(0xF - 5, bd.getData()[5]);
+    }
+
+    @SuppressWarnings("PointlessArithmeticExpression")
+    @Test
+    public void testArrayArrayConstructorVaArgs() {
+        BytesData bd = new BytesData(
+                new byte[]{0xF - 0, 0xF - 1},
+                new byte[]{0xF - 2, 0xF - 3},
+                new byte[]{0xF - 4, 0xF - 5}
+        );
+        assertEquals(3 * 2, bd.size());
+        // flatten
+        assertEquals(0xF, bd.getData()[0]);
+        assertEquals(0xF - 1, bd.getData()[1]);
+        assertEquals(0xF - 2, bd.getData()[2]);
+        assertEquals(0xF - 3, bd.getData()[3]);
+        assertEquals(0xF - 4, bd.getData()[4]);
+        assertEquals(0xF - 5, bd.getData()[5]);
+    }
 
     @Test
     public void testArrayConstructor() {
@@ -213,6 +250,31 @@ public class BytesDataTest {
         }
 
         assertNotNull(t);
+    }
+
+    @Test
+    public void testSha256ImplicitlyImmutable() {
+        byte[] src = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
+        BytesData data = new BytesData(src);
+
+        byte[] hash = data.sha256();
+        // cause current constructor is not immutable
+        assertFalse(FastByteComparisons.equal(hash, src));
+        // the same
+        assertFalse(FastByteComparisons.equal(hash, data.getData()));
+    }
+
+    @Test
+    public void testSha256ExplicitlyMutable() {
+        byte[] src = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
+        BytesData data = new BytesData(src);
+
+        byte[] before = data.getData();
+        data.sha256Mutable();
+        // hashed data saved only inside BytesData, src didn't touched
+        assertFalse(FastByteComparisons.equal(data.getData(), src));
+        // and even copied data before hashing
+        assertFalse(FastByteComparisons.equal(data.getData(), before));
     }
 
     @Test

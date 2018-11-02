@@ -61,7 +61,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '0.2.0'
+version = '0.2.1'
 
 def libPath = ""
 if(hasProperty("nativeLibPath")) {
@@ -179,6 +179,36 @@ android {
 
 ext {
     scastleVersion = '1.58.0.0'
+
+    buildArtifactName = project.name
+    buildArtifactVersion = version
+    buildArtifactGroup = group
+
+    pomName = "Minter Core"
+    pomUrl = "https://github.com/MinterTeam/minter-android-core"
+    pomScm = {
+        connection = "scm:git:git://github.com/MinterTeam/minter-android-core.git"
+        url = pomUrl
+    }
+    pomInceptionYear = "2018"
+    pomContributors = {}
+    pomDescription = "Minter core sdk library, contains transaction signing and common helpers"
+    pomDevelopers = {
+        developer {
+            id = "edwardstock"
+            name = "Eduard Maximovich"
+            email = "edwatd.vstock@gmail.com"
+            roles = ["maintainer"]
+            timezone = "Europe/Moscow"
+        }
+    }
+    pomLicenses = {
+        license {
+            name = "MIT License"
+            url = "https://opensource.org/licenses/MIT"
+            distribution = "repo"
+        }
+    }
 }
 
 dependencies {
@@ -188,7 +218,7 @@ dependencies {
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // network
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
@@ -198,7 +228,7 @@ dependencies {
     implementation "com.madgag.spongycastle:prov:${scastleVersion}"
 
     // stuff
-    implementation 'com.jakewharton.timber:timber:4.6.1'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.parceler:parceler-api:1.1.11'
     annotationProcessor 'org.parceler:parceler:1.1.11'
 
