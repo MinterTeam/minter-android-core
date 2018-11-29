@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -38,12 +39,10 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  */
 @Parcel
 public class MinterHash extends PublicKey {
-    public static final String TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_TX + "|" + MinterSDK.PREFIX_TX.toLowerCase() + ")?([a-fA-F0-9]{40})$";
+    public static final String TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_TX + "|" + MinterSDK.PREFIX_TX.toLowerCase() + ")?([a-fA-F0-9]+)$";
 
     public MinterHash(byte[] data) {
-        super(
-                checkArgument(data.length == 20, data, "Minter hash must contains exact 20 bytes")
-        );
+        super(data);
     }
 
     public MinterHash(CharSequence hexData) {
@@ -51,27 +50,13 @@ public class MinterHash extends PublicKey {
                 checkArgument(
                         hexData != null && hexData.toString().matches(TX_HASH_PATTERN),
                         hexData,
-                        "Minter hash in hex format must contains 40 or 42 characters, where first 2 chars is a prefix \"Mt\""
+                        "Invalid minter hash hex string"
                 )
         );
     }
 
     public MinterHash(MinterHash data) {
         super(data.getData());
-    }
-
-    /**
-     * Creates minter public key from raw public key
-     *
-     * @param data Raw public key extracted from private key
-     */
-    public MinterHash(PublicKey data) {
-        // don't change source public key
-        super(
-                new BytesData(data.dropFirst())
-                        .sha3Mutable()
-                        .takeLastMutable(20)
-        );
     }
 
     MinterHash() {
@@ -91,6 +76,7 @@ public class MinterHash extends PublicKey {
     /**
      * Convert bytes to minter short hash and converts to hex string with prefix
      */
+    @Override
     public String toString() {
         return toHexString(MinterSDK.PREFIX_TX, false);
     }
