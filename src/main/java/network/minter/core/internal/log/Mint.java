@@ -59,6 +59,17 @@ public abstract class Mint {
      * Priority constant for the println method.
      */
     public static final int ASSERT = 7;
+    private final static Leaf sDummyLeaf = new Leaf() {
+        @Override
+        public void log(int priority, String message, Object... args) {
+            // do nothing
+        }
+
+        @Override
+        public void log(int priority, Throwable t, String message, Object... args) {
+            // do nothing
+        }
+    };
     private static Leaf sLog;
 
     /**
@@ -71,6 +82,9 @@ public abstract class Mint {
     }
 
     public static Leaf tag(String tag) {
+        if (sLog == null) {
+            return sDummyLeaf;
+        }
         sLog.explicitTag.set(tag);
         return sLog;
     }
@@ -166,7 +180,7 @@ public abstract class Mint {
     }
 
     public static abstract class Leaf {
-        private final ThreadLocal<String> explicitTag = new ThreadLocal<>();
+        private ThreadLocal<String> explicitTag = new ThreadLocal<>();
 
         /** Log at {@code priority} a message with optional format args. */
         public abstract void log(int priority, String message, Object... args);
@@ -248,6 +262,9 @@ public abstract class Mint {
 
         @Nullable
         protected final String getTag() {
+            if (explicitTag == null) {
+                explicitTag = new ThreadLocal<>();
+            }
             String tag = explicitTag.get();
             if (tag != null) {
                 explicitTag.remove();

@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.2
+ - Hotfix: logger Mint.tag() worked wrong with NPE. Fixed with dummy object on uninitialized logger.
+
 ## 0.2.1
  - MinterHash fix, length can be more than 20 bytes
  - Added ability to pass `byte[][]` or `byte[]...` to `BytesData` (to combine multiple arrays like from RecoverableSignature)

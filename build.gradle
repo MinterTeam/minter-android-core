@@ -90,7 +90,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '0.2.1'
+version = '0.2.2'
 
 def libPath = ""
 if(hasProperty("nativeLibPath")) {
