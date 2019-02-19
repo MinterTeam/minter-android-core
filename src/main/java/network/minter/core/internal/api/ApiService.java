@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -125,6 +125,15 @@ public final class ApiService {
             }
 
             mInterceptors.add(interceptor);
+            return this;
+        }
+
+        public Builder removeHttpInterceptor(Interceptor interceptor) {
+            if (mInterceptors == null || interceptor == null) {
+                return this;
+            }
+
+            mInterceptors.remove(interceptor);
             return this;
         }
 

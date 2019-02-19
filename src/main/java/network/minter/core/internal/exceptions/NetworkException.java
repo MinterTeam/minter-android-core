@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,6 +26,9 @@
 
 package network.minter.core.internal.exceptions;
 
+import java.io.EOFException;
+import java.io.IOError;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -55,6 +58,9 @@ public class NetworkException extends RuntimeException {
         add(UnknownServiceException.class);
         add(UnknownHostException.class);
         add(ConnectException.class);
+        add(EOFException.class);
+        add(IOException.class);
+        add(IOError.class);
     }};
     private final Code mStatusCode;
     private String mUserMessage;
@@ -77,9 +83,12 @@ public class NetworkException extends RuntimeException {
         TimedOut(1001),
         UnknownHost(1002),
         UnknownService(1003),
-        HostUnreachable(1004);
+        HostUnreachable(1004),
+        UnexpectedEOF(1005),
+        UnexpectedIO(1006),
+        ;
 
-        private int code = 1000;
+        private final int code;
 
         Code(int c) {
             code = c;
@@ -111,13 +120,7 @@ public class NetworkException extends RuntimeException {
             mExceptionMessage = another.getMessage();
         } else if (another instanceof UnknownHostException) {
             mStatusCode = Code.UnknownHost;
-            // @TODO
-//            if (Dogsy.app().network().hasNetworkConnection()) {
-//                mUserMessage = "Ошибка сети. Попробуйте повторить операцию позднее.";
-//            } else {
             mUserMessage = "Bad internet connection";
-//            }
-
             mExceptionMessage = another.getMessage();
         } else if (another instanceof UnknownServiceException) {
             mStatusCode = Code.UnknownService;
@@ -151,6 +154,14 @@ public class NetworkException extends RuntimeException {
         } else if (another instanceof ConnectException) {
             mStatusCode = Code.HostUnreachable;
             mUserMessage = "Service unavailable. Please, try again later";
+            mExceptionMessage = another.getMessage();
+        } else if (another instanceof EOFException) {
+            mStatusCode = Code.UnexpectedEOF;
+            mUserMessage = "Unexpected server response: empty body";
+            mExceptionMessage = another.getMessage();
+        } else if (another instanceof IOException || another instanceof IOError) {
+            mStatusCode = Code.UnexpectedIO;
+            mUserMessage = "Input/Output error: " + another.getMessage();
             mExceptionMessage = another.getMessage();
         } else {
             mStatusCode = Code.Unknown;

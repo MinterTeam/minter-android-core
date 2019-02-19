@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.2.3
+ - Added `removeHttpInterceptor` to `ApiService` client, for easy http request mocking
+ - Added `java.io.EOFException` as friend exception to `NetworkException`. Also added `IOException` and `IOError`
+
 ## 0.2.2
  - Hotfix: logger Mint.tag() worked wrong with NPE. Fixed with dummy object on uninitialized logger.
 

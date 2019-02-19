@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -29,7 +29,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
@@ -90,7 +90,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '0.2.2'
+version = '0.2.3'
 
 def libPath = ""
 if(hasProperty("nativeLibPath")) {
@@ -247,10 +247,10 @@ dependencies {
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // network
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.google.guava:guava:26.0-android'
 
     implementation "com.madgag.spongycastle:core:${scastleVersion}"
@@ -258,8 +258,8 @@ dependencies {
 
     // stuff
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation 'org.parceler:parceler-api:1.1.11'
-    annotationProcessor 'org.parceler:parceler:1.1.11'
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
 
     // testing
     testImplementation 'junit:junit:4.12'
