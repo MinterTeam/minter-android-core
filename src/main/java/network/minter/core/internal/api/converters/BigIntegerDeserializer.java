@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -49,6 +50,10 @@ public class BigIntegerDeserializer implements JsonDeserializer<BigInteger> {
 
         BigInteger out;
         String val = json.getAsString();
+        if (val.isEmpty()) {
+            return new BigInteger("0");
+        }
+
         if (val.length() < 2) {
             return new BigInteger(val);
         }

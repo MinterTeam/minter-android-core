@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.4
+ - BigIntegerDeserializer now handles empty strings as zero value
+
 ## 0.2.3
  - Added `removeHttpInterceptor` to `ApiService` client, for easy http request mocking
  - Added `java.io.EOFException` as friend exception to `NetworkException`. Also added `IOException` and `IOError`
