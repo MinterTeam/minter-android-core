@@ -39,9 +39,7 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  */
 @Parcel
 public class MinterAddress extends PublicKey {
-    public static final String ADDRESS_PATTERN = "^(" + MinterSDK.PREFIX_ADDRESS + "|"
-            + MinterSDK.PREFIX_ADDRESS.toLowerCase() + "|" + MinterSDK.PREFIX_PUBLIC_KEY
-            + MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase() + ")?([a-fA-F0-9]{40})$";
+    public static final String ADDRESS_PATTERN = "^(" + MinterSDK.PREFIX_ADDRESS + "|" + MinterSDK.PREFIX_ADDRESS.toLowerCase() + ")?([a-fA-F0-9]{40})$";
 
 
     public MinterAddress(Byte[] data) {
