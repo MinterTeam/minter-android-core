@@ -26,6 +26,8 @@
 
 package network.minter.core.internal.api;
 
+import android.os.Build;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -39,6 +41,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
+import javax.net.ssl.SSLContext;
 
 import network.minter.core.internal.common.Acceptor;
 import network.minter.core.internal.common.Lazy;
@@ -46,13 +49,16 @@ import network.minter.core.internal.common.Pair;
 import network.minter.core.internal.exceptions.NetworkException;
 import network.minter.core.internal.log.Mint;
 import okhttp3.Cache;
+import okhttp3.ConnectionSpec;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 /**
  * minter-android-core. 2018
@@ -370,7 +376,32 @@ public final class ApiService {
                 }
             }
 
-            return httpClient.build();
+            return enableTls12OnPreLollipop(httpClient).build();
+        }
+
+        private OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
+            if (Build.VERSION.SDK_INT >= 18 && Build.VERSION.SDK_INT < 22) {
+                try {
+                    SSLContext sc = SSLContext.getInstance("TLSv1.2");
+                    sc.init(null, null, null);
+                    client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+
+                    ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                            .tlsVersions(TlsVersion.TLS_1_2)
+                            .build();
+
+                    List<ConnectionSpec> specs = new ArrayList<>();
+                    specs.add(cs);
+                    specs.add(ConnectionSpec.COMPATIBLE_TLS);
+                    specs.add(ConnectionSpec.CLEARTEXT);
+
+                    client.connectionSpecs(specs);
+                } catch (Exception exc) {
+                    Timber.e(exc);
+                }
+            }
+
+            return client;
         }
     }
 
