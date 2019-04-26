@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.5
+ - Enable TLS v1.1 and v1.2 an android 4.4
+
 ## 0.2.4
  - BigIntegerDeserializer now handles empty strings as zero value
 
