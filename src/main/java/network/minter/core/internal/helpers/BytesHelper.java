@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -63,6 +63,22 @@ public class BytesHelper {
         return out;
     }
 
+    public static byte[] dropFirstZeroes(byte[] input) {
+        int targetLen = input.length;
+        int i = 0;
+        while (input[i] == 0x00) {
+            i++;
+            targetLen--;
+        }
+
+        byte[] target = new byte[targetLen];
+        for (int c = i, n = 0; c < input.length; c++, n++) {
+            target[n] = input[c];
+        }
+
+        return target;
+    }
+
     public static BigInteger fixBigintSignedByte(BigInteger input) {
         return fixBigintSignedByte(input.toByteArray());
     }
@@ -101,5 +117,22 @@ public class BytesHelper {
         }
 
         return out;
+    }
+
+    public static boolean equals(byte[] a, byte[] b) {
+        if (a.length != b.length) {
+            return false;
+        }
+        if (a[0] != b[0] || a[a.length - 1] != b[b.length - 1]) {
+            return false;
+        }
+
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] != b[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

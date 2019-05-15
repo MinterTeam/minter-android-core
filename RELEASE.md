@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.6
+ - Added helper function for dropping leading zero bytes
+
 ## 0.2.5
  - Enable TLS v1.1 and v1.2 an android 4.4
 

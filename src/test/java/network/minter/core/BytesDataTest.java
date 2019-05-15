@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -32,6 +32,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import network.minter.core.crypto.BytesData;
+import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.util.FastByteComparisons;
 
 import static junit.framework.TestCase.assertTrue;
@@ -383,5 +384,47 @@ public class BytesDataTest {
         assertFalse(data.isValid());
         // after cleanup, equals method will always return false
         assertFalse(data.equals(cleaned));
+    }
+
+    @Test
+    public void testDropFirstZeroes() {
+        // 1
+        final byte[] src1 = new byte[]{
+                (byte) 0xFF, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, (byte) 0xFF
+        };
+        byte[] target1 = BytesHelper.dropFirstZeroes(src1);
+        assertEquals(src1.length, target1.length);
+        assertTrue(BytesHelper.equals(src1, target1));
+
+        // 2
+        final byte[] src2 = new byte[]{
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, (byte) 0xFF
+        };
+        byte[] target2 = BytesHelper.dropFirstZeroes(src2);
+        assertEquals(20, src2.length);
+        assertEquals(1, target2.length);
+        assertTrue(BytesHelper.equals(new byte[]{(byte) 0xFF}, target2));
+
+        // 3
+        final byte[] src3 = new byte[]{
+                0x00, (byte) 0xAA, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, (byte) 0xFF
+        };
+        byte[] target3 = BytesHelper.dropFirstZeroes(src3);
+        assertEquals(20, src3.length);
+        assertEquals(19, target3.length);
+        assertEquals((byte) 0xAA, target3[0]);
+        assertEquals((byte) 0xFF, target3[target3.length - 1]);
     }
 }
