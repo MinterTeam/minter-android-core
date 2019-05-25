@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -53,6 +53,10 @@ public class MinterAddress extends PublicKey {
                 checkArgument(data.length == 20, data, "Minter public key must contains exact 20 bytes")
         );
     }
+
+	public MinterAddress(char[] data) {
+		super(data);
+	}
 
     public MinterAddress(CharSequence hexData) {
         super(

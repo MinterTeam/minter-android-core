@@ -26,6 +26,8 @@
 
 package network.minter.core.internal.helpers;
 
+import org.spongycastle.util.BigIntegers;
+
 import java.math.BigInteger;
 
 import network.minter.core.util.DecodeResult;
@@ -38,6 +40,31 @@ import static network.minter.core.internal.common.Preconditions.checkNotNull;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class BytesHelper {
+	public static char[] lpad(int size, char[] input) {
+		if (input.length == size) {
+			return input;
+		}
+
+		if (input.length > size) {
+			final char[] out = new char[size];
+			System.arraycopy(input, 0, out, 0, size);
+			return out;
+		}
+
+		int offset = size - input.length;
+		char[] out = new char[size];
+
+		for (int i = 0, s = 0; i < size; i++) {
+			if (i < offset) {
+				out[i] = (byte) 0;
+			} else {
+				out[i] = input[s++];
+			}
+		}
+
+		return out;
+	}
+
     public static byte[] lpad(int size, byte[] input) {
         if (input.length == size) {
             return input;
@@ -63,7 +90,97 @@ public class BytesHelper {
         return out;
     }
 
-    public static byte[] dropFirstZeroes(byte[] input) {
+	public static char[] bytesToChars(byte[] in) {
+		if (in == null || in.length == 0) {
+			return new char[0];
+		}
+
+		char[] out = new char[in.length];
+		for (int i = 0; i < in.length; i++) {
+			out[i] = (char) (in[i] & 0xFF);
+		}
+
+		return out;
+	}
+
+	public static byte[] charsToBytes(char[] in) {
+		if (in == null || in.length == 0) {
+			return new byte[0];
+		}
+
+		byte[] out = new byte[in.length];
+		for (int i = 0; i < in.length; i++) {
+			out[i] = (byte) (in[i] & 0xFF);
+		}
+
+		return out;
+	}
+
+	public static byte[] intsToBytes(int[] in) {
+		if (in == null || in.length == 0) {
+			return new byte[0];
+		}
+
+		byte[] out = new byte[in.length];
+		for (int i = 0; i < in.length; i++) {
+			out[i] = (byte) in[i];
+		}
+
+		return out;
+	}
+
+	public static char[] intsToChars(int[] in) {
+		if (in == null || in.length == 0) {
+			return new char[0];
+		}
+
+		char[] out = new char[in.length];
+		for (int i = 0; i < in.length; i++) {
+			out[i] = (char) (in[i] & 0xFF);
+		}
+
+		return out;
+	}
+
+	public static byte[] bigintToBytes(BigInteger num) {
+		if (num == null) {
+			return new byte[0];
+		}
+
+		byte[] biArr;
+		if (num.equals(new BigInteger("128"))) {
+			biArr = new byte[]{(byte) 0x80};
+		} else {
+			biArr = BigIntegers.asUnsignedByteArray(num);
+		}
+
+		return biArr;
+	}
+
+	public static char[] dropLeadingZeroes(char[] input) {
+		if (input == null || input.length == 0) {
+			return input;
+		}
+
+		int targetLen = input.length;
+		int i = 0;
+		while (input[i] == 0x00) {
+			i++;
+			targetLen--;
+		}
+
+		char[] target = new char[targetLen];
+		for (int c = i, n = 0; c < input.length; c++, n++) {
+			target[n] = input[c];
+		}
+
+		return target;
+	}
+
+	public static byte[] dropLeadingZeroes(byte[] input) {
+		if (input == null || input.length == 0) {
+			return input;
+		}
         int targetLen = input.length;
         int i = 0;
         while (input[i] == 0x00) {
@@ -88,6 +205,32 @@ public class BytesHelper {
         return fixBigintSignedByte(((byte[]) input.getDecoded()));
     }
 
+	public static BigInteger fixBigintSignedByte(Object bigintBytes) {
+		if (bigintBytes instanceof byte[]) {
+			return fixBigintSignedByte((byte[]) bigintBytes);
+		} else if (bigintBytes instanceof char[]) {
+			return fixBigintSignedByte((char[]) bigintBytes);
+		} else if (bigintBytes instanceof String) {
+			// fuckn hack! we can't have leading zero byte for single byte value, but BigInteger generates for value 128 - 2 bytes value = byte[]{0, -127}
+			// Also we have problem with RLP decoding from simple single byte[1] value that equals = byte[]{0x80}, as it interprets as EMPTY value
+			// @see RLP.decode(): 442 line
+			//
+			// second way - move all encodings to native code, we would have unsigned byte
+			// third way - custom bigint value with integer backend or rework RLP decoder
+			return fixBigintSignedByte(new byte[]{0x00, (byte) 0x80});
+		}
+
+		throw new RuntimeException("Unsupported RLP object: " + bigintBytes.getClass().getName());
+	}
+
+	public static BigInteger fixBigintSignedByte(char[] bigintBytes) {
+		if (bigintBytes == null || bigintBytes.length == 0) {
+			return BigInteger.ZERO;
+		}
+
+		return new BigInteger(1, charsToBytes(bigintBytes));
+	}
+
     public static BigInteger fixBigintSignedByte(byte[] bigintBytes) {
         if (bigintBytes == null || bigintBytes.length == 0) {
             return BigInteger.ZERO;
@@ -100,11 +243,37 @@ public class BytesHelper {
         return copyAllBytes(nativeBytes(data));
     }
 
+	public static char[] copyAllBytes(Character[] data) {
+		final char[] out = new char[data.length];
+		System.arraycopy(data, 0, out, 0, data.length);
+		return out;
+	}
+
+
+	public static char[] copyAllBytes(char[] data) {
+		final char[] out = new char[data.length];
+		System.arraycopy(data, 0, out, 0, data.length);
+		return out;
+	}
+
     public static byte[] copyAllBytes(byte[] data) {
         final byte[] out = new byte[data.length];
         System.arraycopy(data, 0, out, 0, data.length);
         return out;
     }
+
+	public static char[] nativeChars(Character[] src) {
+		if (src == null || src.length == 0) {
+			return new char[0];
+		}
+
+		final char[] out = new char[src.length];
+		for (int i = 0; i < src.length; i++) {
+			out[i] = src[i];
+		}
+
+		return out;
+	}
 
     public static byte[] nativeBytes(Byte[] src) {
         if (src == null || src.length == 0) {
@@ -118,6 +287,36 @@ public class BytesHelper {
 
         return out;
     }
+
+	public static char[] nativeBytesToChars(Byte[] src) {
+		if (src == null || src.length == 0) {
+			return new char[0];
+		}
+
+		final char[] out = new char[src.length];
+		for (int i = 0; i < src.length; i++) {
+			out[i] = (char) (src[i].byteValue() & 0xFF);
+		}
+
+		return out;
+	}
+
+	public static boolean equals(char[] a, char[] b) {
+		if (a.length != b.length) {
+			return false;
+		}
+		if (a[0] != b[0] || a[a.length - 1] != b[b.length - 1]) {
+			return false;
+		}
+
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] != b[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
     public static boolean equals(byte[] a, byte[] b) {
         if (a.length != b.length) {

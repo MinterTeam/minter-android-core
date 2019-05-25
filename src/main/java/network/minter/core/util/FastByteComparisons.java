@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -27,6 +28,10 @@
 package network.minter.core.util;
 
 
+import java.util.Arrays;
+
+import network.minter.core.internal.helpers.BytesHelper;
+
 /**
  * Utility code to do optimized byte-array comparison.
  * This is borrowed and slightly modified from Guava's {@link UnsignedBytes}
@@ -38,6 +43,20 @@ public abstract class FastByteComparisons {
     public static boolean equal(byte[] b1, byte[] b2) {
         return b1.length == b2.length && compareTo(b1, 0, b1.length, b2, 0, b2.length) == 0;
     }
+
+	public static boolean equal(char[] b1, char[] b2) {
+		return BytesHelper.equals(b1, b2);
+	}
+
+	public static boolean equal(byte[] b1, char[] b2) {
+		char[] b11 = BytesHelper.bytesToChars(b1);
+		return equal(b11, b2);
+	}
+
+	public static boolean equal(char[] b1, byte[] b2) {
+		char[] b22 = BytesHelper.bytesToChars(b2);
+		return equal(b1, b22);
+	}
 
     /**
      * Lexicographically compare two byte arrays.

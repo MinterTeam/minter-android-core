@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -36,10 +37,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import network.minter.core.internal.helpers.BytesHelper;
+
 public class ByteUtil {
 
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+	public static final char[] EMPTY_CHAR_ARRAY = new char[0];
     public static final byte[] ZERO_BYTE_ARRAY = new byte[]{0};
+	public static final char[] ZERO_CHAR_ARRAY = new char[]{0};
 
     /**
      * Creates a copy of bytes and appends b to the end of it
@@ -179,28 +184,53 @@ public class ByteUtil {
      */
     public static byte[] intToBytesNoLeadZeroes(int val) {
 
-        if (val == 0) return EMPTY_BYTE_ARRAY;
+	    if (val == 0) return EMPTY_BYTE_ARRAY;
 
-        int lenght = 0;
+	    int lenght = 0;
 
-        int tmpVal = val;
-        while (tmpVal != 0) {
-            tmpVal = tmpVal >>> 8;
-            ++lenght;
-        }
+	    int tmpVal = val;
+	    while (tmpVal != 0) {
+		    tmpVal = tmpVal >>> 8;
+		    ++lenght;
+	    }
 
-        byte[] result = new byte[lenght];
+	    byte[] result = new byte[lenght];
 
-        int index = result.length - 1;
-        while (val != 0) {
+	    int index = result.length - 1;
+	    while (val != 0) {
 
-            result[index] = (byte) (val & 0xFF);
-            val = val >>> 8;
-            index -= 1;
-        }
+		    result[index] = (byte) (val & 0xFF);
+		    val = val >>> 8;
+		    index -= 1;
+	    }
 
-        return result;
+	    return result;
     }
+
+	public static char[] intToCharsNoLeadZeroes(int val) {
+
+		if (val == 0) return EMPTY_CHAR_ARRAY;
+
+		int lenght = 0;
+
+		int tmpVal = val;
+		while (tmpVal != 0) {
+			tmpVal = tmpVal >>> 8;
+			++lenght;
+		}
+
+		char[] result = new char[lenght];
+
+		int index = result.length - 1;
+		while (val != 0) {
+
+			result[index] = (char) (val & 0xFF);
+			val = val >>> 8;
+			index -= 1;
+		}
+
+		return result;
+	}
 
 
     /**
@@ -246,6 +276,20 @@ public class ByteUtil {
             return 0;
         return new BigInteger(1, b).intValue();
     }
+
+	public static int charArrayToInt(char[] b) {
+		if (b == null || b.length == 0)
+			return 0;
+
+		return new BigInteger(1, BytesHelper.charsToBytes(b)).intValue();
+	}
+
+	public static int intArrayToInt(int[] b) {
+		if (b == null || b.length == 0)
+			return 0;
+
+		return new BigInteger(1, BytesHelper.intsToBytes(b)).intValue();
+	}
 
     /**
      * Cast hex encoded value from byte[] to long

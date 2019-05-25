@@ -396,7 +396,7 @@ public class BytesDataTest {
                 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, (byte) 0xFF
         };
-        byte[] target1 = BytesHelper.dropFirstZeroes(src1);
+	    byte[] target1 = BytesHelper.dropLeadingZeroes(src1);
         assertEquals(src1.length, target1.length);
         assertTrue(BytesHelper.equals(src1, target1));
 
@@ -408,7 +408,7 @@ public class BytesDataTest {
                 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, (byte) 0xFF
         };
-        byte[] target2 = BytesHelper.dropFirstZeroes(src2);
+	    byte[] target2 = BytesHelper.dropLeadingZeroes(src2);
         assertEquals(20, src2.length);
         assertEquals(1, target2.length);
         assertTrue(BytesHelper.equals(new byte[]{(byte) 0xFF}, target2));
@@ -421,7 +421,7 @@ public class BytesDataTest {
                 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, (byte) 0xFF
         };
-        byte[] target3 = BytesHelper.dropFirstZeroes(src3);
+	    byte[] target3 = BytesHelper.dropLeadingZeroes(src3);
         assertEquals(20, src3.length);
         assertEquals(19, target3.length);
         assertEquals((byte) 0xAA, target3[0]);

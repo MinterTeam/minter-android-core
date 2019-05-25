@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -29,6 +29,7 @@ package network.minter.core.internal.helpers;
 import java.math.BigDecimal;
 
 import network.minter.core.MinterSDK;
+import network.minter.core.crypto.UnsignedBytesData;
 
 /**
  * minter-android-core. 2018
@@ -72,9 +73,33 @@ public class StringHelper {
         return new String(out);
     }
 
+	public static String charsToHexString(final char[] data) {
+		return charsToHexString(data, false);
+	}
+
     public static String bytesToHexString(final byte[] data) {
         return bytesToHexString(data, false);
     }
+
+	public static String charsToHexString(final char[] data, boolean uppercase) {
+		if (data == null || data.length == 0) {
+			return "";
+		}
+
+		int size = data.length;
+		char[] hexChars = new char[data.length * 2];
+		for (int j = 0; j < size; j++) {
+			int v = data[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+
+		if (uppercase) {
+			return new String(hexChars).toUpperCase();
+		}
+
+		return new String(hexChars);
+	}
 
     public static String bytesToHexString(final byte[] data, boolean uppercase) {
         if (data == null || data.length == 0) {
@@ -95,6 +120,32 @@ public class StringHelper {
 
         return new String(hexChars);
     }
+
+	public static int[] hexStringToInts(final String s) {
+		if (s == null || s.length() == 0) {
+			return new int[0];
+		}
+
+		String in = s
+				.replace(MinterSDK.PREFIX_ADDRESS, "")
+				.replace(MinterSDK.PREFIX_ADDRESS.toLowerCase(), "")
+				.replace(MinterSDK.PREFIX_CHECK, "")
+				.replace(MinterSDK.PREFIX_CHECK.toLowerCase(), "")
+				.replace(MinterSDK.PREFIX_PUBLIC_KEY, "")
+				.replace(MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase(), "")
+				.replace(MinterSDK.PREFIX_TX, "")
+				.replace(MinterSDK.PREFIX_TX.toLowerCase(), "")
+				.replace("0x", "");
+
+		int len = in.length();
+		int[] data = new int[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = ((Character.digit(in.charAt(i), 16) << 4)
+					+ Character.digit(in.charAt(i + 1), 16)
+			);
+		}
+		return data;
+	}
 
     public static byte[] hexStringToBytes(final String s) {
         if (s == null || s.length() == 0) {
@@ -121,13 +172,56 @@ public class StringHelper {
         return data;
     }
 
+	public static char[] hexStringToChars(final String s) {
+		if (s == null || s.length() == 0) {
+			return new char[0];
+		}
+
+		String in = s
+				.replace(MinterSDK.PREFIX_ADDRESS, "")
+				.replace(MinterSDK.PREFIX_ADDRESS.toLowerCase(), "")
+				.replace(MinterSDK.PREFIX_CHECK, "")
+				.replace(MinterSDK.PREFIX_CHECK.toLowerCase(), "")
+				.replace(MinterSDK.PREFIX_PUBLIC_KEY, "")
+				.replace(MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase(), "")
+				.replace(MinterSDK.PREFIX_TX, "")
+				.replace(MinterSDK.PREFIX_TX.toLowerCase(), "")
+				.replace("0x", "");
+
+		int len = in.length();
+		char[] data = new char[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (char) ((Character.digit(in.charAt(i), 16) << 4)
+					+ Character.digit(in.charAt(i + 1), 16)
+			);
+		}
+		return data;
+	}
+
     public static String bytesToString(String hexString) {
         return bytesToString(hexStringToBytes(hexString));
     }
 
+	public static String charsToString(String hexString) {
+		return charsToString(hexStringToChars(hexString));
+	}
+
+	public static String charsToString(char[] data) {
+		return charsToString(data, data.length);
+	}
+
     public static String bytesToString(byte[] data) {
         return bytesToString(data, data.length);
     }
+
+	public static String charsToString(char[] data, int readLength) {
+		if (data.length < readLength) {
+			throw new ArrayIndexOutOfBoundsException(
+					"Read length less than array size: " + String.valueOf(readLength) + " of " +
+							String.valueOf(data.length));
+		}
+		return new String(data);
+	}
 
     public static String bytesToString(byte[] data, int readLength) {
         if (data.length < readLength) {

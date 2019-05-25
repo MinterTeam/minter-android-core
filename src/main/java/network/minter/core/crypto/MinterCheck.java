@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -51,6 +51,10 @@ public class MinterCheck extends PublicKey {
                 checkArgument(data.length > 0, data, "Minter check data can't be empty")
         );
     }
+
+	public MinterCheck(char[] data) {
+		super(checkArgument(data.length > 0, data, "Minter check data can't be empty"));
+	}
 
     public MinterCheck(CharSequence hexData) {
         super(

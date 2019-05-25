@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -47,6 +48,10 @@ public class MinterPublicKey extends PublicKey {
                 hexData,
                 "Invalid public key format"));
     }
+
+	public MinterPublicKey(char[] data) {
+		super(data);
+	}
 
     public MinterPublicKey(BytesData data) {
         super(data);

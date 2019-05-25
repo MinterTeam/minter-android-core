@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -82,6 +82,10 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
     public PrivateKey(byte[] data) {
         super(data);
     }
+
+	public PrivateKey(char[] data) {
+		super(data);
+	}
 
     public PrivateKey(CharSequence hexData) {
         super(hexData);
