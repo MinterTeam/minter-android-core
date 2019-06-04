@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.3.1
+ - Checking for existence `android.os*` class in `ApiService`
+
 ## 0.3.0
  - Created Unsigned byte buffer to deal with RLP single byte (value 128) encoding as `{128}` than as `{0, -127}`. Backend for it: `char` type instead of byte.
  - Created RLP for working with `char[]` values 

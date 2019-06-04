@@ -26,8 +26,6 @@
 
 package network.minter.core.internal.api;
 
-import android.os.Build;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -385,26 +383,31 @@ public final class ApiService {
 
 		@SuppressWarnings("deprecation")
 		private OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
-			if (Build.VERSION.SDK_INT >= 18 && Build.VERSION.SDK_INT < 22) {
-				try {
-					SSLContext sc = SSLContext.getInstance("TLSv1.2");
-					sc.init(null, null, null);
-					client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+            try {
+                Class tmp = Class.forName("android.os.Build");
 
-					ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-							.tlsVersions(TlsVersion.TLS_1_2)
-							.build();
+                if (android.os.Build.VERSION.SDK_INT >= 18 && android.os.Build.VERSION.SDK_INT < 22) {
+                    try {
+                        SSLContext sc = SSLContext.getInstance("TLSv1.2");
+                        sc.init(null, null, null);
+                        client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
 
-					List<ConnectionSpec> specs = new ArrayList<>();
-					specs.add(cs);
-					specs.add(ConnectionSpec.COMPATIBLE_TLS);
-					specs.add(ConnectionSpec.CLEARTEXT);
+                        ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                                .tlsVersions(TlsVersion.TLS_1_2)
+                                .build();
 
-					client.connectionSpecs(specs);
-				} catch (Exception exc) {
-					Timber.e(exc);
-				}
-			}
+                        List<ConnectionSpec> specs = new ArrayList<>();
+                        specs.add(cs);
+                        specs.add(ConnectionSpec.COMPATIBLE_TLS);
+                        specs.add(ConnectionSpec.CLEARTEXT);
+
+                        client.connectionSpecs(specs);
+                    } catch (Exception exc) {
+                        Timber.e(exc);
+                    }
+                }
+            } catch (ClassNotFoundException ignore) {
+            }
 
 			return client;
 		}
