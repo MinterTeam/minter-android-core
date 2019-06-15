@@ -27,6 +27,7 @@
 package network.minter.core.crypto;
 
 import network.minter.core.MinterSDK;
+import network.minter.core.util.RLPBoxed;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 
@@ -35,7 +36,7 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class MinterPublicKey extends PublicKey {
+public class MinterPublicKey extends PublicKey implements RLPBoxed.FixedByteLength {
     public static final String PUB_KEY_PATTERN = "^(" + MinterSDK.PREFIX_PUBLIC_KEY + "|" + MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase() + ")?([a-fA-F0-9]{64})$";
 
     public MinterPublicKey(byte[] data) {

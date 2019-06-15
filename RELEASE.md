@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.3.2
+ - Fixed RLP encoding for raw bytes contains leading zeroes
+
 ## 0.3.1
  - Checking for existence `android.os*` class in `ApiService`
 

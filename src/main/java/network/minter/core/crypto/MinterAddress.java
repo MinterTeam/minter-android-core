@@ -29,6 +29,7 @@ package network.minter.core.crypto;
 import org.parceler.Parcel;
 
 import network.minter.core.MinterSDK;
+import network.minter.core.util.RLPBoxed;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 
@@ -38,7 +39,7 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
-public class MinterAddress extends PublicKey {
+public class MinterAddress extends PublicKey implements RLPBoxed.FixedByteLength {
     public static final String ADDRESS_PATTERN = "^(" + MinterSDK.PREFIX_ADDRESS + "|" + MinterSDK.PREFIX_ADDRESS.toLowerCase() + ")?([a-fA-F0-9]{40})$";
 
 
