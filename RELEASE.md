@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.4.0
+ - Updated BIP39 library
+ - Updated secp256k1 library - fixed NPE after fail signing
+
 ## 0.3.2
  - Fixed RLP encoding for raw bytes contains leading zeroes
 

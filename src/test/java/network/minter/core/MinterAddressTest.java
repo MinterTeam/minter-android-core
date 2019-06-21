@@ -31,8 +31,6 @@ import org.junit.Test;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterPublicKey;
 import network.minter.core.crypto.UnsignedBytesData;
-import network.minter.core.internal.helpers.BytesHelper;
-import network.minter.core.internal.helpers.StringHelper;
 import network.minter.core.util.DecodeResult;
 import network.minter.core.util.RLPBoxed;
 
@@ -75,6 +73,25 @@ public class MinterAddressTest {
         UnsignedBytesData bd = new UnsignedBytesData(add);
         System.out.println(bd.toHexString());
         assertEquals(20, add.length);
+
+    }
+
+    @Test
+    public void testFirstZeroBytesAddressArrayRLP() {
+        MinterAddress[] addresses = new MinterAddress[]{
+                new MinterAddress("Mx00aacae635ad329dc2a3f0509f947065703efc79"),
+                new MinterAddress("Mx00aacae635ad329dc2a3f0509f947065703efc79"),
+        };
+
+        char[] enc = RLPBoxed.encode(new Object[]{addresses});
+        DecodeResult res = RLPBoxed.decode(enc, 0);
+        Object[] dec = (Object[]) res.getDecoded();
+        Object[] dec0 = (Object[]) dec[0];
+        char[] add1 = (char[]) dec0[0];
+        char[] add2 = (char[]) dec0[1];
+
+        assertEquals(20, add1.length);
+        assertEquals(20, add2.length);
 
     }
 
