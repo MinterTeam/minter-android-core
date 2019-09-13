@@ -325,7 +325,7 @@ public class RLPBoxed {
             char[] prefix = encodeLength(output.length, OFFSET_SHORT_LIST);
             return concatenate(prefix, output);
         } else {
-            boolean dropLeadingZeroes = !(input instanceof FixedByteLength);
+            boolean dropLeadingZeroes = !(input instanceof FixedByteLength) && !BytesHelper.nullBytes(input);
             char[] inputAsBytes = toChars(input);
             if (inputAsBytes.length == 1 && (inputAsBytes[0] & 0xff) <= 0x80) {
                 return inputAsBytes;
@@ -954,7 +954,7 @@ public class RLPBoxed {
     /*
      *  Utility function to convert Objects into byte arrays
      */
-    private static char[] toChars(Object input) {
+    public static char[] toChars(Object input) {
         if (input instanceof byte[]) {
             return bytesToChars(((byte[]) input));
         } else if (input instanceof char[]) {
@@ -1064,7 +1064,7 @@ public class RLPBoxed {
         }
 
         public byte[] getEncoded() {
-            byte encoded[][] = new byte[cnt][];
+            byte[][] encoded = new byte[cnt][];
             for (int i = 0; i < cnt; i++) {
                 encoded[i] = encodeElement(getBytes(i));
             }

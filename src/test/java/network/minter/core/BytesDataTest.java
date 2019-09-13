@@ -33,7 +33,9 @@ import java.nio.ByteOrder;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.internal.helpers.BytesHelper;
+import network.minter.core.internal.helpers.StringHelper;
 import network.minter.core.util.FastByteComparisons;
+import network.minter.core.util.RLPBoxed;
 
 import static junit.framework.TestCase.assertTrue;
 import static network.minter.core.util.FastByteComparisons.equal;
@@ -426,5 +428,15 @@ public class BytesDataTest {
         assertEquals(19, target3.length);
         assertEquals((byte) 0xAA, target3[0]);
         assertEquals((byte) 0xFF, target3[target3.length - 1]);
+    }
+
+    @Test
+    public void testStringRPad() {
+        String source = "";
+        String target = StringHelper.strrpad(10, "");
+
+        char[] res = RLPBoxed.encode(new Object[]{target});
+        System.out.println(target);
+
     }
 }

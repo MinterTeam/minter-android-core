@@ -39,6 +39,7 @@ import static junit.framework.TestCase.assertTrue;
 import static network.minter.core.util.FastByteComparisons.equal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -428,4 +429,26 @@ public class UnsignedBytesDataTest {
 		assertEquals((byte) 0xAA, target3[0]);
 		assertEquals((byte) 0xFF, target3[target3.length - 1]);
 	}
+
+    @Test
+    public void testEmptyArrays() {
+        char[] src1 = new char[0];
+        char[] target1 = new char[0];
+
+        UnsignedBytesData bd1_1 = new UnsignedBytesData(src1);
+        UnsignedBytesData bd1_2 = new UnsignedBytesData(target1);
+
+        assertTrue(bd1_1.equals(bd1_2));
+        assertEquals(bd1_1, bd1_2);
+
+        char[] src2 = new char[0];
+        char[] target2 = new char[]{0xFF};
+
+        UnsignedBytesData bd2_1 = new UnsignedBytesData(src2);
+        UnsignedBytesData bd2_2 = new UnsignedBytesData(target2);
+
+        assertFalse(bd2_1.equals(bd2_2));
+        assertNotEquals(bd2_1, bd2_2);
+
+    }
 }

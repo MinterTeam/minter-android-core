@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.5.0
+ - Fixed bytes comparison if both arrays have zero length
+ - Fixed RLP encoding empty string with fixed bytes length
+ - Now SDK uses androidx instead of legacy support libraries
+
 ## 0.4.0
  - Updated BIP39 library
  - Updated secp256k1 library - fixed NPE after fail signing

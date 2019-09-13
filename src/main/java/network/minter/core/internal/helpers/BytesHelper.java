@@ -33,6 +33,7 @@ import java.math.BigInteger;
 import network.minter.core.util.DecodeResult;
 
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
+import static network.minter.core.util.RLPBoxed.toChars;
 
 /**
  * minter-android-core. 2018
@@ -164,7 +165,7 @@ public class BytesHelper {
 
 		int targetLen = input.length;
 		int i = 0;
-		while (input[i] == 0x00) {
+        while (i < input.length && input[i] == 0x00) {
 			i++;
 			targetLen--;
 		}
@@ -328,6 +329,26 @@ public class BytesHelper {
 
         for (int i = 0; i < a.length; i++) {
             if (a[i] != b[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean nullBytes(Object input) {
+        if (input instanceof char[]) {
+            return nullBytes(toChars(input));
+        } else if (input instanceof String) {
+            return nullBytes(toChars(input));
+        }
+
+        return false;
+    }
+
+    public static boolean nullBytes(char[] input) {
+        for (char i : input) {
+            if (i != (char) 0x00) {
                 return false;
             }
         }

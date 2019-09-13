@@ -26,10 +26,7 @@
 
 package network.minter.core.crypto;
 
-import com.google.common.collect.Comparators;
-
 import org.parceler.Parcel;
-import org.spongycastle.util.encoders.Hex;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -45,9 +42,7 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.helpers.BytesHelper.bytesToChars;
 import static network.minter.core.internal.helpers.BytesHelper.charsToBytes;
 import static network.minter.core.internal.helpers.BytesHelper.copyAllBytes;
-import static network.minter.core.internal.helpers.BytesHelper.intsToBytes;
 import static network.minter.core.internal.helpers.BytesHelper.intsToChars;
-import static network.minter.core.internal.helpers.BytesHelper.nativeBytes;
 import static network.minter.core.internal.helpers.BytesHelper.nativeBytesToChars;
 import static network.minter.core.internal.helpers.BytesHelper.nativeChars;
 
@@ -268,6 +263,10 @@ public class UnsignedBytesData implements Comparable<UnsignedBytesData>, Seriali
 		} else {
 			otherData = ((UnsignedBytesData) other).getData();
 		}
+
+        if (mData.length == otherData.length) {
+            return true;
+        }
 
 		return FastByteComparisons.equal(mData, otherData);
 	}
