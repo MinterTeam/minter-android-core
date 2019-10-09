@@ -26,16 +26,11 @@
 
 package network.minter.core;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
-import org.spongycastle.util.BigIntegers;
 
 import java.math.BigInteger;
 
-import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.UnsignedBytesData;
-import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.util.DecodeResult;
 import network.minter.core.util.RLP;
 import network.minter.core.util.RLPBoxed;
@@ -127,17 +122,17 @@ public class RLPBigIntegerTest {
 	}
 
 	@Test
-	public void testRLPEncodeDecode128_192() {
-		for (int i = 1; i <= 0xFFFFFF; i++) {
+    public void testRLPEncodeDecode0_512() {
+        for (int i = 0; i <= 0xFFFFFF; i++) {
 			BigInteger val = BigInteger.valueOf(i);
 
 
-			byte[] encoded = RLP.encode(new Object[]{BytesHelper.bigintToBytes(val), ""});
-			DecodeResult res = RLP.decode(encoded, 0);
+            char[] encoded = RLPBoxed.encode(new Object[]{val, ""});
+            DecodeResult res = RLPBoxed.decode(encoded, 0);
 			Object[] dec = (Object[]) res.getDecoded();
 			BigInteger bg;
 			try {
-				bg = BytesHelper.fixBigintSignedByte(dec[0]);
+                bg = fixBigintSignedByte(dec[0]);
 			} catch (Throwable t) {
 				System.err.println("Failed on number: " + i);
 				throw t;
@@ -161,7 +156,7 @@ public class RLPBigIntegerTest {
 			Object[] dec = (Object[]) res.getDecoded();
 			BigInteger bg;
 			try {
-				bg = BytesHelper.fixBigintSignedByte(dec[0]);
+                bg = fixBigintSignedByte(dec[0]);
 			} catch (Throwable t) {
 				System.err.println("Failed on number: " + i);
 				throw t;
@@ -180,5 +175,33 @@ public class RLPBigIntegerTest {
 
 		assertEquals("c28180", bd.toHexString());
 	}
+
+    @Test
+    public void testZeroNum() {
+        BigInteger nonce = new BigInteger("0");
+        char[] encoded = RLPBoxed.encode(new Object[]{nonce});
+        UnsignedBytesData bd = new UnsignedBytesData(encoded);
+
+        DecodeResult decoded = RLPBoxed.decode(encoded, 0);
+        Object[] dec = (Object[]) decoded.getDecoded();
+
+        BigInteger res = fixBigintSignedByte(dec[0]);
+        assertEquals(BigInteger.ZERO, res);
+
+        assertEquals("c180", bd.toHexString());
+    }
+
+    @Test
+    public void test128Num() {
+        BigInteger nonce = new BigInteger("128");
+        char[] encoded = RLPBoxed.encode(new Object[]{nonce});
+        UnsignedBytesData bd = new UnsignedBytesData(encoded);
+
+        DecodeResult decoded = RLPBoxed.decode(encoded, 0);
+        Object[] dec = (Object[]) decoded.getDecoded();
+
+        BigInteger res = fixBigintSignedByte(dec[0]);
+        assertEquals(nonce, res);
+    }
 
 }

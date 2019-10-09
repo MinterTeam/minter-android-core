@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.6.0
+ - Fixed encoding zero value in RLP
+
 ## 0.5.0
  - Fixed bytes comparison if both arrays have zero length
  - Fixed RLP encoding empty string with fixed bytes length

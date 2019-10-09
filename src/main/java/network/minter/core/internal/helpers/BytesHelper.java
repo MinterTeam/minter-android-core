@@ -212,6 +212,9 @@ public class BytesHelper {
 		} else if (bigintBytes instanceof char[]) {
 			return fixBigintSignedByte((char[]) bigintBytes);
 		} else if (bigintBytes instanceof String) {
+            if (bigintBytes.equals("")) {
+                return fixBigintSignedByte(new byte[]{0x00});
+            }
 			// fuckn hack! we can't have leading zero byte for single byte value, but BigInteger generates for value 128 - 2 bytes value = byte[]{0, -127}
 			// Also we have problem with RLP decoding from simple single byte[1] value that equals = byte[]{0x80}, as it interprets as EMPTY value
 			// @see RLP.decode(): 442 line
