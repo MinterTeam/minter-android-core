@@ -29,7 +29,6 @@ package network.minter.core.internal.helpers;
 import java.math.BigDecimal;
 
 import network.minter.core.MinterSDK;
-import network.minter.core.crypto.UnsignedBytesData;
 
 /**
  * minter-android-core. 2018
@@ -206,6 +205,23 @@ public class StringHelper {
 		return charsToString(hexStringToChars(hexString));
 	}
 
+    public static String charsToString(Object[] undefined) {
+        if (undefined == null || undefined.length == 0) {
+            return "";
+        }
+
+        try {
+            char[] out = new char[undefined.length];
+            for (int i = 0; i < undefined.length; i++) {
+                out[i] = ((char) undefined[i]);
+            }
+
+            return charsToString(out);
+        } catch (Throwable t) {
+            return "";
+        }
+    }
+
 	public static String charsToString(char[] data) {
 		return charsToString(data, data.length);
 	}
@@ -217,15 +233,15 @@ public class StringHelper {
 	public static String charsToString(char[] data, int readLength) {
 		if (data.length < readLength) {
 			throw new ArrayIndexOutOfBoundsException(
-					"Read length less than array size: " + String.valueOf(readLength) + " of " +
-							String.valueOf(data.length));
+                    "Read length less than array size: " + readLength + " of " +
+                            data.length);
 		}
 		return new String(data);
 	}
 
     public static String bytesToString(byte[] data, int readLength) {
         if (data.length < readLength) {
-            throw new ArrayIndexOutOfBoundsException("Read length less than array size: " + String.valueOf(readLength) + " of " + String.valueOf(data.length));
+            throw new ArrayIndexOutOfBoundsException("Read length less than array size: " + readLength + " of " + data.length);
         }
         final char[] out = new char[readLength];
         for (int i = 0; i < readLength; i++) {

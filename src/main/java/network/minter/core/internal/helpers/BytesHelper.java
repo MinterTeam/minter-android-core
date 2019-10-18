@@ -222,7 +222,9 @@ public class BytesHelper {
 			// second way - move all encodings to native code, we would have unsigned byte
 			// third way - custom bigint value with integer backend or rework RLP decoder
 			return fixBigintSignedByte(new byte[]{0x00, (byte) 0x80});
-		}
+        } else if (bigintBytes instanceof Object[]) {
+            return fixBigintSignedByte(new byte[]{0x00});
+        }
 
 		throw new RuntimeException("Unsupported RLP object: " + bigintBytes.getClass().getName());
 	}

@@ -36,6 +36,8 @@ import network.minter.core.util.RLP;
 import network.minter.core.util.RLPBoxed;
 
 import static network.minter.core.internal.helpers.BytesHelper.fixBigintSignedByte;
+import static network.minter.core.internal.helpers.StringHelper.charsToHexString;
+import static network.minter.core.internal.helpers.StringHelper.charsToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -120,6 +122,56 @@ public class RLPBigIntegerTest {
 			}
 		}
 	}
+
+    @Test
+    public void testRLPObjectArr() {
+        Object[] v1 = new Object[0];
+        assertEquals("", charsToString(v1));
+
+        Object[] v2 = new Object[]{'a'};
+        assertEquals("a", charsToString(v2));
+
+        char[] v3c = new char[]{'h', 'e', 'l', 'l', 'o'};
+        Object[] v3 = new Object[v3c.length];
+        {
+            for (int i = 0; i < v3c.length; i++) {
+                v3[i] = v3c[i];
+            }
+        }
+        assertEquals("hello", charsToString(v3));
+    }
+
+    @Test
+    public void testRLPDecodeEmptyObjectArray() {
+        UnsignedBytesData encoded = new UnsignedBytesData("0xc1c0");
+        DecodeResult tmp = RLPBoxed.decode(encoded.getData(), 0);
+        Object[] res = ((Object[]) tmp.getDecoded());
+
+        String t1 = charsToString(fromRawRlp(0, res));
+        assertEquals("", t1);
+    }
+
+    @Test
+    public void testRLPEncodeEmptyList() {
+        UnsignedBytesData data = new UnsignedBytesData(new char[0]);
+        char[] encoded = RLPBoxed.encode(new Object[]{data.getData()});
+        String encodedHex = charsToHexString(encoded);
+
+        assertEquals("c180", encodedHex);
+
+        DecodeResult tmp = RLPBoxed.decode(encoded, 0);
+        Object[] res = ((Object[]) tmp.getDecoded());
+
+        String t1 = charsToString(fromRawRlp(0, res));
+        assertEquals("", t1);
+    }
+
+    char[] fromRawRlp(int idx, Object[] raw) {
+        if (raw[idx] instanceof String) {
+            return ((String) raw[idx]).toCharArray();
+        }
+        return (char[]) raw[idx];
+    }
 
 	@Test
     public void testRLPEncodeDecode0_512() {
