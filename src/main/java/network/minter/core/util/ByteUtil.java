@@ -331,6 +331,12 @@ public class ByteUtil {
         return retVal;
     }
 
+    public static String oneCharToHexString(char value) {
+        String retVal = Integer.toString(value & 0xFF, 16);
+        if (retVal.length() == 1) retVal = "0" + retVal;
+        return retVal;
+    }
+
     /**
      * Calculate the number of bytes need
      * to encode the number
@@ -567,7 +573,15 @@ public class ByteUtil {
         return (array == null) || (array.length == 0);
     }
 
+    public static boolean isNullOrZeroArray(char[] array) {
+        return (array == null) || (array.length == 0);
+    }
+
     public static boolean isSingleZero(byte[] array) {
+        return (array.length == 1 && array[0] == 0);
+    }
+
+    public static boolean isSingleZero(char[] array) {
         return (array.length == 1 && array[0] == 0);
     }
 

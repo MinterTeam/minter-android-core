@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -31,6 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import network.minter.core.crypto.HashUtil;
+import network.minter.core.internal.helpers.StringHelper;
+
+import static network.minter.core.internal.helpers.BytesHelper.bytesToChars;
 
 
 /**
@@ -138,6 +142,16 @@ public class Value {
         return ByteUtil.EMPTY_BYTE_ARRAY;
     }
 
+    public char[] asChars() {
+        decode();
+        if (isBytes()) {
+            return (char[]) value;
+        } else if (isString()) {
+            return bytesToChars(asString().getBytes());
+        }
+        return bytesToChars(ByteUtil.EMPTY_BYTE_ARRAY);
+    }
+
     public String getHex() {
         return Hex.toHexString(this.encode());
     }
@@ -225,6 +239,11 @@ public class Value {
     public boolean isBytes() {
         decode();
         return value instanceof byte[];
+    }
+
+    public boolean isChars() {
+        decode();
+        return value instanceof char[];
     }
 
     // it's only if the isBytes() = true;
@@ -356,6 +375,23 @@ public class Value {
                 return output.toString();
             }
             return Hex.toHexString(this.asBytes());
+        } else if (isChars()) {
+            StringBuilder output = new StringBuilder();
+            if (isHashCode()) {
+                output.append(StringHelper.charsToHexString(asChars()));
+            } else if (isReadableString()) {
+                output.append("'");
+                for (char oneByte : asChars()) {
+                    if (oneByte < 16) {
+                        output.append("\\x").append(ByteUtil.oneCharToHexString(oneByte));
+                    } else {
+                        output.append(Character.valueOf(oneByte));
+                    }
+                }
+                output.append("'");
+                return output.toString();
+            }
+            return StringHelper.charsToHexString(asChars());
         } else if (isString()) {
             return asString();
         }

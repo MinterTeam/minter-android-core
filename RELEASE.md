@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.6.1
+ - Interpret RLP empty object[] as empty char[]
+
 ## 0.6.0
  - Fixed encoding zero value in RLP
 
