@@ -451,4 +451,13 @@ public class UnsignedBytesDataTest {
         assertNotEquals(bd2_1, bd2_2);
 
     }
+
+    @Test
+    public void testBlindEquals() {
+        UnsignedBytesData b1 = new UnsignedBytesData("1dc55bbd25cbd57a7e1b778a8292e0b9ed079b6b59b74905be237290e8c4d2db");
+        UnsignedBytesData b2 = new UnsignedBytesData("5afa84a3971fb430fd3594a0d573a3fa9618299e970912d4754e02c7bf61b343");
+
+        assertFalse(b1.equals(b2));
+        assertNotEquals(b1, b2);
+    }
 }

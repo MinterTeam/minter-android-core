@@ -29,6 +29,8 @@ package network.minter.core.internal.helpers;
 import java.math.BigDecimal;
 
 import network.minter.core.MinterSDK;
+import network.minter.core.crypto.BytesData;
+import network.minter.core.crypto.UnsignedBytesData;
 
 /**
  * minter-android-core. 2018
@@ -197,8 +199,16 @@ public class StringHelper {
 		return data;
 	}
 
+    public static String bytesToString(BytesData data) {
+        return bytesToString(data.getData());
+    }
+
     public static String bytesToString(String hexString) {
         return bytesToString(hexStringToBytes(hexString));
+    }
+
+    public static String charsToString(UnsignedBytesData data) {
+        return charsToString(data.getData());
     }
 
 	public static String charsToString(String hexString) {
@@ -223,11 +233,11 @@ public class StringHelper {
     }
 
 	public static String charsToString(char[] data) {
-		return charsToString(data, data.length);
+        return new String(data);
 	}
 
     public static String bytesToString(byte[] data) {
-        return bytesToString(data, data.length);
+        return new String(data);
     }
 
 	public static String charsToString(char[] data, int readLength) {
@@ -236,8 +246,18 @@ public class StringHelper {
                     "Read length less than array size: " + readLength + " of " +
                             data.length);
 		}
-		return new String(data);
-	}
+
+        char[] out = new char[readLength];
+        System.arraycopy(data, 0, out, 0, readLength);
+        return new String(out);
+    }
+
+    public static String charsToStringSafe(char[] data, int readLength) {
+        int toRead = Math.min(data.length, readLength);
+        char[] out = new char[toRead];
+        System.arraycopy(data, 0, out, 0, toRead);
+        return new String(out);
+    }
 
     public static String bytesToString(byte[] data, int readLength) {
         if (data.length < readLength) {

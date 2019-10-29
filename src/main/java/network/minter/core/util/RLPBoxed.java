@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import network.minter.core.crypto.BytesData;
+import network.minter.core.crypto.UnsignedBytesData;
 import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.internal.log.Mint;
 
@@ -990,8 +991,10 @@ public class RLPBoxed {
             return toChars(val.asObj());
         } else if (input instanceof BytesData) {
             return BytesHelper.bytesToChars(((BytesData) input).getData());
+        } else if (input instanceof UnsignedBytesData) {
+            return ((UnsignedBytesData) input).getData();
         }
-        throw new RuntimeException("Unsupported type: Only accepting String, Integer and BigInteger for now");
+        throw new RuntimeException("Unsupported type: supported types: byte[], String, Long, Integer, BigInteger, BytesData, UnsignedBytes for now");
     }
 
     private static byte[] decodeItemBytes(byte[] data, int index) {

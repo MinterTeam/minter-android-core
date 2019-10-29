@@ -43,6 +43,7 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.helpers.BytesHelper.charsToBytes;
 import static network.minter.core.internal.helpers.BytesHelper.copyAllBytes;
 import static network.minter.core.internal.helpers.BytesHelper.nativeBytes;
+import static network.minter.core.internal.helpers.StringHelper.bytesToString;
 
 /**
  * minter-android-core. 2018
@@ -198,6 +199,10 @@ public class BytesData implements Comparable<BytesData>, Serializable, Cloneable
     @Override
     public String toString() {
         return Hex.toHexString(mData);
+    }
+
+    public String toStringASCII() {
+        return bytesToString(mData);
     }
 
     @Override

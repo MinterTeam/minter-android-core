@@ -45,6 +45,7 @@ import static network.minter.core.internal.helpers.BytesHelper.copyAllBytes;
 import static network.minter.core.internal.helpers.BytesHelper.intsToChars;
 import static network.minter.core.internal.helpers.BytesHelper.nativeBytesToChars;
 import static network.minter.core.internal.helpers.BytesHelper.nativeChars;
+import static network.minter.core.internal.helpers.StringHelper.charsToString;
 
 /**
  * minter-android-core. 2018
@@ -264,8 +265,8 @@ public class UnsignedBytesData implements Comparable<UnsignedBytesData>, Seriali
 			otherData = ((UnsignedBytesData) other).getData();
 		}
 
-        if (mData.length == otherData.length) {
-            return true;
+        if (mData.length != otherData.length) {
+            return false;
         }
 
 		return FastByteComparisons.equal(mData, otherData);
@@ -275,6 +276,10 @@ public class UnsignedBytesData implements Comparable<UnsignedBytesData>, Seriali
 	public String toString() {
 		return StringHelper.charsToHexString(mData);
 	}
+
+    public String toStringASCII() {
+        return charsToString(mData);
+    }
 
 	@Override
 	public int compareTo(@Nonnull UnsignedBytesData o) {

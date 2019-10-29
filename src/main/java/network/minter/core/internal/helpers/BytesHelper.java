@@ -308,6 +308,10 @@ public class BytesHelper {
 	}
 
 	public static boolean equals(char[] a, char[] b) {
+        if (a.length == 0 && b.length == 0) {
+            return true;
+        }
+
 		if (a.length != b.length) {
 			return false;
 		}
