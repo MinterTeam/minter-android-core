@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -26,7 +27,6 @@
 package network.minter.core.internal.api.converters;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
@@ -36,12 +36,13 @@ import network.minter.core.crypto.MinterAddress;
 
 /**
  * minter-android-core. 2018
- *
+ * @deprecated use {@link MinterAddressJsonConverter}
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Deprecated
 public class MinterAddressSerializer implements JsonSerializer<MinterAddress> {
     @Override
     public JsonElement serialize(MinterAddress src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.toString());
+        return new MinterAddressJsonConverter().serialize(src, typeOfSrc, context);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -30,6 +30,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
@@ -44,10 +47,11 @@ import static network.minter.core.MinterSDK.PREFIX_TX;
 
 /**
  * minter-android-core. 2018
- *
+ * @deprecated use {@link BytesDataJsonConverter}
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class BytesDataDeserializer implements JsonDeserializer<BytesData> {
+@Deprecated
+public class BytesDataDeserializer implements JsonDeserializer<BytesData>, JsonSerializer<BytesData> {
     @Override
     public BytesData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
@@ -75,5 +79,10 @@ public class BytesDataDeserializer implements JsonDeserializer<BytesData> {
         }
 
         return new BytesData(json.getAsString());
+    }
+
+    @Override
+    public JsonElement serialize(BytesData src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(src.toHexString());
     }
 }

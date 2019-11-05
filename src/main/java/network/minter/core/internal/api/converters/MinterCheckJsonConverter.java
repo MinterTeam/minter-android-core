@@ -30,29 +30,40 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-import network.minter.core.crypto.MinterHash;
+import network.minter.core.crypto.MinterCheck;
 
 /**
- * minter-android-core. 2018
- * @deprecated use {@link MinterHashJsonConverter}
+ * minter-android-core. 2019
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Deprecated
-public class MinterHashDeserializer implements JsonDeserializer<MinterHash>, JsonSerializer<MinterHash> {
+public class MinterCheckJsonConverter implements JsonDeserializer<MinterCheck>, JsonSerializer<MinterCheck> {
+
     @Override
-    public MinterHash deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public MinterCheck deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
-        return new MinterHashJsonConverter().deserialize(json, typeOfT, context);
+        if (json.isJsonNull()) {
+            return null;
+        }
+
+        String val = json.getAsString();
+
+        if (!val.matches(MinterCheck.PATTERN)) {
+            return null;
+        }
+
+        return new MinterCheck(val);
+
     }
 
     @Override
-    public JsonElement serialize(MinterHash src, Type typeOfSrc, JsonSerializationContext context) {
-        return new MinterHashJsonConverter().serialize(src, typeOfSrc, context);
+    public JsonElement serialize(MinterCheck src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(src.toString());
     }
 }

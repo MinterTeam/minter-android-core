@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -36,24 +37,15 @@ import network.minter.core.crypto.MinterAddress;
 
 /**
  * minter-android-core. 2018
- *
+ * @deprecated use {@link MinterAddressJsonConverter}
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Deprecated
 public class MinterAddressDeserializer implements JsonDeserializer<MinterAddress> {
     @Override
     public MinterAddress deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
-        if (json.isJsonNull()) {
-            return null;
-        }
-
-        String val = json.getAsString();
-
-        try {
-            return new MinterAddress(val);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        return new MinterAddressJsonConverter().deserialize(json, typeOfT, context);
     }
 }

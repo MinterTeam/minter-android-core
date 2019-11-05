@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.6.3
+ - Deprecated old-style Gson converters, pay attention on deprecated notices
+
 ## 0.6.2
  - Added support for **UnsignedBytesData** to RLP encoding
  - Fixed major issue: UnsignedBytesData#equals() on the same length and different data, returned true instead of false

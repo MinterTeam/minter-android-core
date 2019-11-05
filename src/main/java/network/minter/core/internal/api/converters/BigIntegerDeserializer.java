@@ -30,40 +30,28 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 
 /**
  * minter-android-core. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @deprecated use {@link BigIntegerJsonConverter}
  */
-public class BigIntegerDeserializer implements JsonDeserializer<BigInteger> {
+@Deprecated
+public class BigIntegerDeserializer implements JsonDeserializer<BigInteger>, JsonSerializer<BigInteger> {
     @Override
     public BigInteger deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
-        if(json.isJsonNull() || !json.isJsonPrimitive()) {
-            return null;
-        }
+        return new BigIntegerJsonConverter().deserialize(json, typeOfT, context);
+    }
 
-        BigInteger out;
-        String val = json.getAsString();
-        if (val.isEmpty()) {
-            return new BigInteger("0");
-        }
-
-        if (val.length() < 2) {
-            return new BigInteger(val);
-        }
-
-        if (val.substring(0, 2).equals("0x")) {
-            out = new BigInteger(val.substring(2), 16);
-        } else {
-            out = new BigInteger(val, 10);
-        }
-
-        return out;
+    @Override
+    public JsonElement serialize(BigInteger src, Type typeOfSrc, JsonSerializationContext context) {
+        return new BigIntegerJsonConverter().serialize(src, typeOfSrc, context);
     }
 }

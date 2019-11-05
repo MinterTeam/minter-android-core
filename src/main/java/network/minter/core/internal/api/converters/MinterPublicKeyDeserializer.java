@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -29,6 +30,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
@@ -36,25 +39,19 @@ import network.minter.core.crypto.MinterPublicKey;
 
 /**
  * minter-android-core. 2018
- *
+ * @deprecated use {@link MinterPublicKeyJsonConverter}
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class MinterPublicKeyDeserializer implements JsonDeserializer<MinterPublicKey> {
+@Deprecated
+public class MinterPublicKeyDeserializer implements JsonDeserializer<MinterPublicKey>, JsonSerializer<MinterPublicKey> {
     @Override
     public MinterPublicKey deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
+        return new MinterPublicKeyJsonConverter().deserialize(json, typeOfT, context);
+    }
 
-        if (json.isJsonNull()) {
-            return null;
-        }
-
-        String val = json.getAsString();
-
-        if (!val.matches(MinterPublicKey.PUB_KEY_PATTERN)) {
-            return null;
-        }
-
-        return new MinterPublicKey(val);
-
+    @Override
+    public JsonElement serialize(MinterPublicKey src, Type typeOfSrc, JsonSerializationContext context) {
+        return new MinterPublicKeyJsonConverter().serialize(src, typeOfSrc, context);
     }
 }

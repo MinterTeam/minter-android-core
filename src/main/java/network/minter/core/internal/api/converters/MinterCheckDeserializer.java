@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -30,6 +30,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
@@ -37,24 +39,21 @@ import network.minter.core.crypto.MinterCheck;
 
 /**
  * minter-android-core. 2018
+ * @deprecated use {@link MinterCheckJsonConverter}
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class MinterCheckDeserializer implements JsonDeserializer<MinterCheck> {
+@Deprecated
+public class MinterCheckDeserializer implements JsonDeserializer<MinterCheck>, JsonSerializer<MinterCheck> {
     @Override
     public MinterCheck deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
-        if (json.isJsonNull()) {
-            return null;
-        }
+        return new MinterCheckJsonConverter().deserialize(json, typeOfT, context);
 
-        String val = json.getAsString();
+    }
 
-        if (!val.matches(MinterCheck.PATTERN)) {
-            return null;
-        }
-
-        return new MinterCheck(val);
-
+    @Override
+    public JsonElement serialize(MinterCheck src, Type typeOfSrc, JsonSerializationContext context) {
+        return new MinterCheckJsonConverter().serialize(src, typeOfSrc, context);
     }
 }

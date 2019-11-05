@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -36,18 +37,15 @@ import network.minter.core.crypto.EncryptedString;
 
 /**
  * minter-android-core. 2018
- *
+ * @deprecated use {@link EncryptedStringJsonConverter}
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Deprecated
 public class EncryptedStringDeserializer implements JsonDeserializer<EncryptedString> {
     @Override
     public EncryptedString deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
-        if(json.isJsonNull()) {
-            return null;
-        }
-
-        return new EncryptedString(json.getAsString());
+        return new EncryptedStringJsonConverter().deserialize(json, typeOfT, context);
     }
 }
