@@ -43,7 +43,7 @@ import static network.minter.core.internal.helpers.BytesHelper.bytesToChars;
 public class Value {
 
     private Object value;
-    private byte[] rlp;
+    private char[] rlp;
     private byte[] sha3;
 
     private boolean decoded = false;
@@ -63,7 +63,11 @@ public class Value {
         }
     }
 
-    public static Value fromRlpEncoded(byte[] data) {
+    public void init(char[] rlp) {
+        this.rlp = rlp;
+    }
+
+    public static Value fromRlpEncoded(char[] data) {
 
         if (data != null && data.length != 0) {
             Value v = new Value();
@@ -71,10 +75,6 @@ public class Value {
             return v;
         }
         return null;
-    }
-
-    public void init(byte[] rlp) {
-        this.rlp = rlp;
     }
 
     public Value withHash(byte[] hash) {
@@ -153,11 +153,11 @@ public class Value {
     }
 
     public String getHex() {
-        return Hex.toHexString(this.encode());
+        return StringHelper.charsToHexString(encode());
     }
 
-    public byte[] getData() {
-        return this.encode();
+    public char[] getData() {
+        return encode();
     }
 
 
@@ -186,14 +186,14 @@ public class Value {
 
     public void decode() {
         if (!this.decoded) {
-            this.value = RLP.decode(rlp, 0).getDecoded();
+            this.value = RLPBoxed.decode(rlp, 0).getDecoded();
             this.decoded = true;
         }
     }
 
-    public byte[] encode() {
+    public char[] encode() {
         if (rlp == null)
-            rlp = RLP.encode(value);
+            rlp = RLPBoxed.encode(value);
         return rlp;
     }
 

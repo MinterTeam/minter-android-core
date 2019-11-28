@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.7.0
+ - Refactored chars buffer
+ - Removed old deserializers
+ - Deleted old BytesData (with byte[] backend), renamed UnsignedBytesData to BytesData - now backend is char[]
+
 ## 0.6.3
  - Deprecated old-style Gson converters, pay attention on deprecated notices
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -27,21 +27,18 @@ package network.minter.core.crypto;
 
 import org.spongycastle.crypto.Digest;
 import org.spongycastle.crypto.digests.RIPEMD160Digest;
-import org.spongycastle.util.encoders.Hex;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
-import java.util.Random;
 
+import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.internal.helpers.StringHelper;
 import network.minter.core.internal.log.Mint;
-import network.minter.core.util.RLP;
+import network.minter.core.util.RLPBoxed;
 import network.minter.core.util.SpongyCastleProvider;
-import network.minter.core.util.Utils;
 
 import static java.util.Arrays.copyOfRange;
 import static network.minter.core.util.ByteUtil.EMPTY_BYTE_ARRAY;
@@ -64,8 +61,8 @@ public class HashUtil {
         HASH_256_ALGORITHM_NAME = "ETH-KECCAK-256";
         HASH_512_ALGORITHM_NAME = "ETH-KECCAK-512";
         EMPTY_DATA_HASH = sha3(EMPTY_BYTE_ARRAY);
-        EMPTY_LIST_HASH = sha3(RLP.encodeList());
-        EMPTY_TRIE_HASH = sha3(RLP.encodeElement(EMPTY_BYTE_ARRAY));
+        EMPTY_LIST_HASH = sha3(RLPBoxed.encodeList());
+        EMPTY_TRIE_HASH = sha3(RLPBoxed.encodeElement(EMPTY_BYTE_ARRAY));
     }
 
     public static String sha256HexDouble(String input) {
@@ -76,11 +73,7 @@ public class HashUtil {
         if (input == null) {
             return "";
         }
-        try {
-            return StringHelper.bytesToHexString(sha256(input.getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return StringHelper.bytesToHexString(sha256(input.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -95,6 +88,19 @@ public class HashUtil {
             Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
+    }
+
+    public static byte[] sha3(char[] input) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance(HASH_256_ALGORITHM_NAME, CRYPTO_PROVIDER);
+            digest.update(BytesHelper.charsToBytes(input));
+            return digest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            Mint.e(e, "Can't find such algorithm");
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static byte[] sha3(byte[] input) {
@@ -181,78 +187,13 @@ public class HashUtil {
     }
 
     /**
-     * The way to calculate new address inside ethereum
-     * @param addr - creating addres
-     * @param nonce - nonce of creating address
-     * @return new address
+     * Calculates RIGTMOST160(SHA3(input)). This is used in address
+     * calculations. *
+     * @param input - data
+     * @return - 20 right bytes of the hash keccak of the data
      */
-    public static byte[] calcNewAddr(byte[] addr, byte[] nonce) {
-
-        byte[] encSender = RLP.encodeElement(addr);
-        byte[] encNonce = RLP.encodeBigInteger(new BigInteger(1, nonce));
-
-        return sha3omit12(RLP.encodeList(encSender, encNonce));
-    }
-
-    /**
-     * @param input -
-     * @return -
-     * @see #doubleDigest(byte[], int, int)
-     */
-    public static byte[] doubleDigest(byte[] input) {
-        return doubleDigest(input, 0, input.length);
-    }
-
-    /**
-     * Calculates the SHA-256 hash of the given byte range, and then hashes the
-     * resulting hash again. This is standard procedure in Bitcoin. The
-     * resulting hash is in big endian form.
-     * @param input -
-     * @param offset -
-     * @param length -
-     * @return -
-     */
-    public static byte[] doubleDigest(byte[] input, int offset, int length) {
-        try {
-            MessageDigest sha256digest = MessageDigest.getInstance("SHA-256");
-            sha256digest.reset();
-            sha256digest.update(input, offset, length);
-            byte[] first = sha256digest.digest();
-            return sha256digest.digest(first);
-        } catch (NoSuchAlgorithmException e) {
-            Mint.e(e, "Can't find such algorithm");
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * @return generates random peer id for the HelloMessage
-     */
-    public static byte[] randomPeerId() {
-
-        byte[] peerIdBytes = new BigInteger(512, Utils.getRandom()).toByteArray();
-
-        final String peerId;
-        if (peerIdBytes.length > 64)
-            peerId = Hex.toHexString(peerIdBytes, 1, 64);
-        else
-            peerId = Hex.toHexString(peerIdBytes);
-
-        return Hex.decode(peerId);
-    }
-
-    /**
-     * @return - generate random 32 byte hash
-     */
-    public static byte[] randomHash() {
-
-        byte[] randomHash = new byte[32];
-        Random random = new Random();
-        random.nextBytes(randomHash);
-        return randomHash;
-    }
-
-    public static String shortHash(byte[] hash) {
-        return Hex.toHexString(hash).substring(0, 6);
+    public static byte[] sha3omit12(char[] input) {
+        byte[] hash = sha3(input);
+        return copyOfRange(hash, 12, hash.length);
     }
 }

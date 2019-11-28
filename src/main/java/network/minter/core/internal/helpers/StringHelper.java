@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 
 import network.minter.core.MinterSDK;
 import network.minter.core.crypto.BytesData;
-import network.minter.core.crypto.UnsignedBytesData;
 
 /**
  * minter-android-core. 2018
@@ -200,14 +199,14 @@ public class StringHelper {
 	}
 
     public static String bytesToString(BytesData data) {
-        return bytesToString(data.getData());
+        return bytesToString(data.getBytes());
     }
 
     public static String bytesToString(String hexString) {
         return bytesToString(hexStringToBytes(hexString));
     }
 
-    public static String charsToString(UnsignedBytesData data) {
+    public static String charsToString(BytesData data) {
         return charsToString(data.getData());
     }
 

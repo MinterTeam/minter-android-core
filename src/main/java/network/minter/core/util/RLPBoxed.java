@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Set;
 
 import network.minter.core.crypto.BytesData;
-import network.minter.core.crypto.UnsignedBytesData;
 import network.minter.core.internal.helpers.BytesHelper;
 import network.minter.core.internal.log.Mint;
 
@@ -140,6 +139,23 @@ public class RLPBoxed {
     /* ******************************************************
      *                      DECODING                        *
      * ******************************************************/
+
+    public static String decodeString(char[] data) {
+        return decodeString(data, 0);
+    }
+
+    public static String decodeString(char[] data, int pos) {
+        DecodeResult decoded = decode(data, pos);
+        if (decoded == null || decoded.getDecoded() == null) {
+            return null;
+        }
+        char[] res = ((char[]) decoded.getDecoded());
+        if (res.length == 0) {
+            return "";
+        }
+
+        return new String(((char[]) decoded.getDecoded())).replace("\0", "");
+    }
 
     public static int decodeInt(byte[] data, int index) {
 
@@ -454,6 +470,10 @@ public class RLPBoxed {
             return encodeElement(BytesHelper.bytesToChars(asUnsignedByteArray(srcBigInteger)));
     }
 
+    public static char[] encodeElement(byte[] srcData) {
+        return encodeElement(bytesToChars(srcData));
+    }
+
     public static char[] encodeElement(char[] srcData) {
 
         // [0x80]
@@ -629,6 +649,20 @@ public class RLPBoxed {
         }
 
         return output;
+    }
+
+    public static char[] encodeList() {
+        return encodeList(new char[0]);
+    }
+
+    public static char[] encodeList(byte[]... elements) {
+        char[][] out = new char[elements.length][];
+        int i = 0;
+        for (byte[] v : elements) {
+            out[i++] = bytesToChars(v);
+        }
+
+        return encodeList(out);
     }
 
     public static char[] encodeList(char[]... elements) {
@@ -990,9 +1024,7 @@ public class RLPBoxed {
             Value val = (Value) input;
             return toChars(val.asObj());
         } else if (input instanceof BytesData) {
-            return BytesHelper.bytesToChars(((BytesData) input).getData());
-        } else if (input instanceof UnsignedBytesData) {
-            return ((UnsignedBytesData) input).getData();
+            return ((BytesData) input).getData();
         }
         throw new RuntimeException("Unsupported type: supported types: byte[], String, Long, Integer, BigInteger, BytesData, UnsignedBytes for now");
     }

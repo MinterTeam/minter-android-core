@@ -30,11 +30,12 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 
-import network.minter.core.crypto.UnsignedBytesData;
+import network.minter.core.crypto.BytesData;
 import network.minter.core.util.DecodeResult;
-import network.minter.core.util.RLP;
 import network.minter.core.util.RLPBoxed;
 
+import static network.minter.core.internal.helpers.BytesHelper.bytesToChars;
+import static network.minter.core.internal.helpers.BytesHelper.charsToBytes;
 import static network.minter.core.internal.helpers.BytesHelper.fixBigintSignedByte;
 import static network.minter.core.internal.helpers.StringHelper.charsToHexString;
 import static network.minter.core.internal.helpers.StringHelper.charsToString;
@@ -54,14 +55,14 @@ public class RLPBigIntegerTest {
 	public void resultBeforeAndAfterAreEquals_10() {
 		final String amount = "10";
 		final BigInteger val = new BigInteger(amount).multiply(VALUE_MUL);
-		final byte[] encoded = RLP.encode(val);
-		final DecodeResult decodedResult = RLP.decode(encoded, 0);
-		final byte[] decoded = ((byte[]) decodedResult.getDecoded());
-		final byte[] decodedFixed = new byte[decoded.length + 1];
+        final char[] encoded = RLPBoxed.encode(val);
+        final DecodeResult decodedResult = RLPBoxed.decode(encoded, 0);
+        final char[] decoded = ((char[]) decodedResult.getDecoded());
+        final char[] decodedFixed = new char[decoded.length + 1];
 		decodedFixed[0] = 0x00;// bigint here only unsigned, so, adding zero
 		System.arraycopy(decoded, 0, decodedFixed, 1, decoded.length);
-		final BigInteger invalidVal = new BigInteger(decoded);
-		final BigInteger validVal = new BigInteger(decodedFixed);
+        final BigInteger invalidVal = new BigInteger(charsToBytes(decoded));
+        final BigInteger validVal = new BigInteger(charsToBytes(decodedFixed));
 
 		assertNotEquals(val, invalidVal); // fails! because rlp drops first zero from bigint (sign mask)
 		assertEquals(val, validVal); // success
@@ -72,10 +73,10 @@ public class RLPBigIntegerTest {
 	public void resultBeforeAndAfterAreEquals_9() {
 		final String amount = "9";
 		final BigInteger val = new BigInteger(amount).multiply(VALUE_MUL);
-		final byte[] encoded = RLP.encode(val);
-		final DecodeResult decodedResult = RLP.decode(encoded, 0);
-		final byte[] decoded = ((byte[]) decodedResult.getDecoded());
-		final BigInteger decodedVal = new BigInteger(decoded);
+        final char[] encoded = RLPBoxed.encode(val);
+        final DecodeResult decodedResult = RLPBoxed.decode(encoded, 0);
+        final char[] decoded = ((char[]) decodedResult.getDecoded());
+        final BigInteger decodedVal = new BigInteger(charsToBytes(decoded));
 
 		assertEquals(val, decodedVal); // success!
 	}
@@ -84,9 +85,9 @@ public class RLPBigIntegerTest {
 	public void resultBeforeAndAfterAreEquals_2362() {
 		final String amount = "2362";
 		final BigInteger val = new BigInteger(amount).multiply(VALUE_MUL);
-		final byte[] encoded = RLP.encode(val);
-		final DecodeResult decodedResult = RLP.decode(encoded, 0);
-		final byte[] decoded = ((byte[]) decodedResult.getDecoded());
+        final char[] encoded = RLPBoxed.encode(val);
+        final DecodeResult decodedResult = RLPBoxed.decode(encoded, 0);
+        final char[] decoded = ((char[]) decodedResult.getDecoded());
 		final BigInteger decodedVal = fixBigintSignedByte(decoded);
 
 		assertEquals(val, decodedVal); // success!
@@ -101,13 +102,13 @@ public class RLPBigIntegerTest {
 			try {
 				final String amount = String.valueOf(i);
 				final BigInteger val = new BigInteger(amount).multiply(VALUE_MUL);
-				final byte[] encoded = RLP.encode(val);
-				final DecodeResult decodedResult = RLP.decode(encoded, 0);
-				final byte[] decoded;
+                final char[] encoded = RLPBoxed.encode(val);
+                final DecodeResult decodedResult = RLPBoxed.decode(encoded, 0);
+                final char[] decoded;
 				if (decodedResult.getDecoded() instanceof String) {
-					decoded = new BigInteger("0").toByteArray();
+                    decoded = bytesToChars(new BigInteger("0").toByteArray());
 				} else {
-					decoded = ((byte[]) decodedResult.getDecoded());
+                    decoded = ((char[]) decodedResult.getDecoded());
 				}
 				final BigInteger decodedVal = fixBigintSignedByte(decoded);
 
@@ -143,7 +144,7 @@ public class RLPBigIntegerTest {
 
     @Test
     public void testRLPDecodeEmptyObjectArray() {
-        UnsignedBytesData encoded = new UnsignedBytesData("0xc1c0");
+        BytesData encoded = new BytesData("0xc1c0");
         DecodeResult tmp = RLPBoxed.decode(encoded.getData(), 0);
         Object[] res = ((Object[]) tmp.getDecoded());
 
@@ -153,7 +154,7 @@ public class RLPBigIntegerTest {
 
     @Test
     public void testRLPEncodeEmptyList() {
-        UnsignedBytesData data = new UnsignedBytesData(new char[0]);
+        BytesData data = new BytesData(new char[0]);
         char[] encoded = RLPBoxed.encode(new Object[]{data.getData()});
         String encodedHex = charsToHexString(encoded);
 
@@ -223,7 +224,7 @@ public class RLPBigIntegerTest {
 	public void testSome() {
 		BigInteger nonce = new BigInteger("128");
 		char[] encoded = RLPBoxed.encode(new Object[]{nonce});
-		UnsignedBytesData bd = new UnsignedBytesData(encoded);
+        BytesData bd = new BytesData(encoded);
 
 		assertEquals("c28180", bd.toHexString());
 	}
@@ -232,7 +233,7 @@ public class RLPBigIntegerTest {
     public void testZeroNum() {
         BigInteger nonce = new BigInteger("0");
         char[] encoded = RLPBoxed.encode(new Object[]{nonce});
-        UnsignedBytesData bd = new UnsignedBytesData(encoded);
+        BytesData bd = new BytesData(encoded);
 
         DecodeResult decoded = RLPBoxed.decode(encoded, 0);
         Object[] dec = (Object[]) decoded.getDecoded();
@@ -247,7 +248,7 @@ public class RLPBigIntegerTest {
     public void test128Num() {
         BigInteger nonce = new BigInteger("128");
         char[] encoded = RLPBoxed.encode(new Object[]{nonce});
-        UnsignedBytesData bd = new UnsignedBytesData(encoded);
+        BytesData bd = new BytesData(encoded);
 
         DecodeResult decoded = RLPBoxed.decode(encoded, 0);
         Object[] dec = (Object[]) decoded.getDecoded();

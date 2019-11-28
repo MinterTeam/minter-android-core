@@ -59,10 +59,6 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         super(data, immutable);
     }
 
-    public PrivateKey(Byte[] data, boolean immutable) {
-        super(data, immutable);
-    }
-
     public PrivateKey(Byte[] data) {
         super(data);
     }
@@ -99,7 +95,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         checkArgument(mnemonic != null && !mnemonic.isEmpty(), "Mnemonic phrase can't be empty");
         final MnemonicResult mnemonicResult = new MnemonicResult(mnemonic);
         final BytesData seed = new BytesData(mnemonicResult.toSeed());
-        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getData());
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getBytes());
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
         final PrivateKey privateKey = extKey.getPrivateKey();
 
@@ -144,7 +140,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         long ctx = NativeSecp256k1.contextCreate();
         boolean res;
         try {
-            res = NativeSecp256k1.secKeyVerify(ctx, getData());
+            res = NativeSecp256k1.secKeyVerify(ctx, getBytes());
         } catch (Throwable t) {
             res = false;
         } finally {
@@ -169,7 +165,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         long ctx = NativeSecp256k1.contextCreate();
         PublicKey out;
         try {
-            out = new PublicKey(NativeSecp256k1.computePubkey(ctx, getData(), compressed));
+            out = new PublicKey(NativeSecp256k1.computePubkey(ctx, getBytes(), compressed));
         } finally {
             NativeSecp256k1.contextCleanup(ctx);
         }
@@ -189,7 +185,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
 
     @Override
     public byte[] getEncoded() {
-        return getDataImmutable();
+        return getBytes();
     }
 
     @Override
@@ -207,7 +203,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         super.clone();
         PrivateKey out = new PrivateKey();
         out.mValid = mValid;
-        out.mData = new byte[mData.length];
+        out.mData = new char[mData.length];
         System.arraycopy(mData, 0, out.mData, 0, mData.length);
 
         return out;

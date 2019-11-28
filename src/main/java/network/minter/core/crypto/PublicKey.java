@@ -97,7 +97,7 @@ public class PublicKey extends BytesData implements java.security.PublicKey {
         super.clone();
         PublicKey out = new PublicKey();
         out.mValid = mValid;
-        out.mData = new byte[mData.length];
+        out.mData = new char[mData.length];
         System.arraycopy(mData, 0, out.mData, 0, mData.length);
 
         return out;

@@ -28,9 +28,9 @@ package network.minter.core;
 
 import org.junit.Test;
 
+import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterPublicKey;
-import network.minter.core.crypto.UnsignedBytesData;
 import network.minter.core.util.DecodeResult;
 import network.minter.core.util.RLPBoxed;
 
@@ -70,7 +70,7 @@ public class MinterAddressTest {
         DecodeResult res = RLPBoxed.decode(enc, 0);
         Object[] dec = (Object[]) res.getDecoded();
         char[] add = (char[]) dec[0];
-        UnsignedBytesData bd = new UnsignedBytesData(add);
+        BytesData bd = new BytesData(add);
         System.out.println(bd.toHexString());
         assertEquals(20, add.length);
 
@@ -102,7 +102,7 @@ public class MinterAddressTest {
         DecodeResult res = RLPBoxed.decode(enc, 0);
         Object[] dec = (Object[]) res.getDecoded();
         char[] add = (char[]) dec[0];
-        UnsignedBytesData bd = new UnsignedBytesData(add);
+        BytesData bd = new BytesData(add);
         System.out.println(bd.toHexString());
         assertEquals(32, add.length);
     }

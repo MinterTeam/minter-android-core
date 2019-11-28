@@ -78,7 +78,7 @@ public class MinterCheck extends PublicKey {
         super.clone();
         MinterCheck out = new MinterCheck();
         out.mValid = mValid;
-        out.mData = new byte[mData.length];
+        out.mData = new char[mData.length];
         System.arraycopy(mData, 0, out.mData, 0, mData.length);
 
         return out;
@@ -97,7 +97,7 @@ public class MinterCheck extends PublicKey {
     public String toShortString() {
         final String in = toString();
         String firstPart = in.substring(0, 8);
-        String lastPart = in.substring(in.length() - 6, in.length());
+        String lastPart = in.substring(in.length() - 6);
 
         return firstPart + "..." + lastPart;
     }
