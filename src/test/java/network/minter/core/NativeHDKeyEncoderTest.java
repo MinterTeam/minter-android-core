@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,11 +26,12 @@
 
 package network.minter.core;
 
+import com.edwardstock.bip3x.HDKey;
+import com.edwardstock.bip3x.NativeBip39;
+import com.edwardstock.bip3x.NativeHDKeyEncoder;
+
 import org.junit.Test;
 
-import network.minter.core.bip39.HDKey;
-import network.minter.core.bip39.NativeBip39;
-import network.minter.core.bip39.NativeHDKeyEncoder;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.PrivateKey;
 import network.minter.core.crypto.PublicKey;
@@ -84,9 +85,9 @@ public class NativeHDKeyEncoderTest {
                 extPrivKeyString
         );
 
-        PrivateKey privateKey = rootKey.getPrivateKey();
+        PrivateKey privateKey = new PrivateKey(rootKey.getPrivateKeyBytes());
         PublicKey publicKeyFromPrivate = privateKey.getPublicKey(true);
-        PublicKey publicKey = rootKey.getPublicKey();
+        PublicKey publicKey = new PublicKey(rootKey.getPublicKeyBytes());
 
         assertEquals(32, privateKey.size());
         assertEquals(33, publicKey.size());
@@ -113,9 +114,9 @@ public class NativeHDKeyEncoderTest {
         HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
 
         // check for private and public exists
-        PrivateKey privateKey = extKey.getPrivateKey();
+        PrivateKey privateKey = new PrivateKey(extKey.getPrivateKeyBytes());
         PublicKey publicKeyFromPrivate = privateKey.getPublicKey(true);
-        PublicKey publicKey = extKey.getPublicKey();
+        PublicKey publicKey = new PublicKey(extKey.getPublicKeyBytes());
 
         assertEquals(32, privateKey.size());
         assertEquals(33, publicKey.size());

@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.8.0
+ - Removed native builds, now it's a separate dependencies
+
 ## 0.7.0
  - Refactored chars buffer
  - Removed old deserializers

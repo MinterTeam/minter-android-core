@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,6 +26,9 @@
 
 package network.minter.core.crypto;
 
+import com.edwardstock.bip3x.HDKey;
+import com.edwardstock.bip3x.MnemonicResult;
+import com.edwardstock.bip3x.NativeHDKeyEncoder;
 import com.edwardstock.secp256k1.NativeSecp256k1;
 
 import org.parceler.Parcel;
@@ -38,10 +41,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import javax.annotation.Nonnull;
-
-import network.minter.core.bip39.HDKey;
-import network.minter.core.bip39.MnemonicResult;
-import network.minter.core.bip39.NativeHDKeyEncoder;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 
@@ -97,7 +96,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         final BytesData seed = new BytesData(mnemonicResult.toSeed());
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getBytes());
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
-        final PrivateKey privateKey = extKey.getPrivateKey();
+        final PrivateKey privateKey = new PrivateKey(extKey.getPrivateKeyBytes());
 
         seed.cleanup();
         rootKey.clear();

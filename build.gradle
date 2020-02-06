@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -27,6 +27,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
@@ -38,10 +39,11 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenLocal()
         maven { url "https://dl.bintray.com/ethereum/maven/" }
         maven { url 'https://clojars.org/repo/' }
         maven { url 'https://jitpack.io' }
-        maven { url "https://maven.edwardstock.com/artifactory/libs-release-local" }
+        maven { url "https://dl.bintray.com/edwardstock/android" }
         maven { url "https://repo1.maven.org/maven2/com/google/zxing/" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
@@ -89,15 +91,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '0.7.0'
-
-def libPath = ""
-if(hasProperty("nativeLibPath")) {
-    libPath = getProperty("nativeLibPath")
-}
-println "Native lib path: ${libPath}"
-
-
+version = '0.8.0'
 
 android {
     compileSdkVersion minterMaxSdk
@@ -109,23 +103,6 @@ android {
         versionName version
 
         testInstrumentationRunner "network.minter.core.MinterTestRunner"
-
-        externalNativeBuild {
-            cmake {
-                arguments '-DWITH_BIP39_TEST=Off', '-DENABLE_GO=Off', '-DENABLE_JNI=On', '-DENABLE_CONAN_BUILD=Off'
-                cppFlags "-std=c++14"
-            }
-        }
-    }
-
-    testOptions {
-        unitTests {
-            all {
-                jvmArgs "-Djava.library.path=${libPath}"
-            }
-            includeAndroidResources = true
-            returnDefaultValues = true
-        }
     }
 
     buildTypes {
@@ -185,28 +162,6 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
     }
-
-    sourceSets {
-        main {
-            jni.srcDirs = [
-                    'src/main/cpp/secp256k1/src/java',
-                    'src/main/cpp/bip39/src/java'
-            ]
-            jniLibs.srcDirs = ['libs']
-            java.srcDirs = [
-                    'src/main/java',
-                    'src/main/cpp/secp256k1/src/java',
-                    'src/main/cpp/bip39/src/java'
-            ]
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            path 'src/main/cpp/CMakeLists.txt'
-            version '3.10.2'
-        }
-    }
 }
 
 ext {
@@ -248,6 +203,9 @@ dependencies {
 
     // annotations
     compileOnly 'javax.annotation:jsr250-api:1.0'
+
+    implementation 'com.edwardstock.android:bip3x:1.0.0'
+    implementation 'com.edwardstock.android:secp256k1:1.0.0'
 
     // network
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'

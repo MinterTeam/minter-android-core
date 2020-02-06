@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,13 +26,13 @@
 
 package network.minter.core;
 
+import com.edwardstock.bip3x.NativeBip39;
 import com.edwardstock.secp256k1.NativeSecp256k1;
 
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Security;
 
-import network.minter.core.bip39.NativeBip39;
 import network.minter.core.internal.exceptions.NativeLoadException;
 
 /**

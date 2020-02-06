@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,23 +26,24 @@
 
 package network.minter.core;
 
+import com.edwardstock.bip3x.HDKey;
+import com.edwardstock.bip3x.MnemonicResult;
+import com.edwardstock.bip3x.NativeBip39;
+import com.edwardstock.bip3x.NativeHDKeyEncoder;
+
 import org.junit.Test;
 
-import network.minter.core.bip39.HDKey;
-import network.minter.core.bip39.MnemonicResult;
-import network.minter.core.bip39.NativeBip39;
-import network.minter.core.bip39.NativeHDKeyEncoder;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.PrivateKey;
 import network.minter.core.crypto.PublicKey;
 import network.minter.core.internal.exceptions.NativeLoadException;
 import network.minter.core.internal.helpers.StringHelper;
 
+import static com.edwardstock.bip3x.NativeHDKeyEncoder.MAIN_NET;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static network.minter.core.bip39.NativeHDKeyEncoder.MAIN_NET;
 
 /**
  * MinterWallet. 2018
@@ -150,14 +151,10 @@ public class NativeBip39MnemonicTest {
 
         // bip 32 root key    with derivation path: m/44'/60'/0'/0
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
-        System.out.println("root (master) key -> private key: " + rootKey.getPrivateKey().toHexString());
-        System.out.println("root (master) key -> public  key: " + rootKey.getPublicKey().toHexString());
 
         // bip 39 private key with derivation path: m/44'/60'/0' - dropped external/internal index
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey, MAIN_NET, "m/44'/60'/0'/0");
-        System.out.println("extended (wallet) key -> private key: " + extKey.getPrivateKey().toHexString());
-        System.out.println("extended (wallet) key -> public  key: " + extKey.getPublicKey().toHexString());
-        final PrivateKey privateKey = extKey.getPrivateKey();
+        final PrivateKey privateKey = new PrivateKey(extKey.getPrivateKeyBytes());
         // to get minter address, we should always use uncompressed key
         final PublicKey publicKey = privateKey.getPublicKey(false);
         final MinterAddress outAddress = publicKey.toMinter();
@@ -174,7 +171,7 @@ public class NativeBip39MnemonicTest {
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
         // bip 39 private key with derivation path: m/44'/60'/0' - dropped external/internal index
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey, MAIN_NET, "m/44'/60'/0'/0/0");
-        final PrivateKey privateKey = extKey.getPrivateKey();
+        final PrivateKey privateKey = new PrivateKey(extKey.getPrivateKeyBytes());
         // to get minter address, we should always use uncompressed key
         final PublicKey publicKey = privateKey.getPublicKey(false);
         final MinterAddress outAddress = publicKey.toMinter();
@@ -192,7 +189,7 @@ public class NativeBip39MnemonicTest {
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
         // bip 39 private key with derivation path: m/44'/60'/0'/0/0
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
-        final PrivateKey privateKey = extKey.getPrivateKey();
+        final PrivateKey privateKey = new PrivateKey(extKey.getPrivateKeyBytes());
         // to get minter address, we should always use uncompressed key
         final PublicKey publicKey = privateKey.getPublicKey(false);
         final MinterAddress outAddress = publicKey.toMinter();
@@ -219,7 +216,7 @@ public class NativeBip39MnemonicTest {
         final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed);
         // bip 39 private key with derivation path: m/44'/60'/0' - dropped external/internal index
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
-        final PrivateKey privateKey = extKey.getPrivateKey();
+        final PrivateKey privateKey = new PrivateKey(extKey.getPrivateKeyBytes());
         // to get minter address, we should always use uncompressed key
         final PublicKey publicKey = privateKey.getPublicKey(false);
         final MinterAddress outAddress = publicKey.toMinter();
