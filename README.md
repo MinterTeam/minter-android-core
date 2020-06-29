@@ -26,7 +26,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterSdkVersion = "0.7.0"
+    minterSdkVersion = "0.7.1"
 }
 
 dependencies {

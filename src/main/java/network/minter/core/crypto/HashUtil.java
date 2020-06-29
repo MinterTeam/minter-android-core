@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -25,9 +25,6 @@
  */
 package network.minter.core.crypto;
 
-import org.spongycastle.crypto.Digest;
-import org.spongycastle.crypto.digests.RIPEMD160Digest;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -40,7 +37,6 @@ import network.minter.core.internal.log.Mint;
 import network.minter.core.util.RLPBoxed;
 import network.minter.core.util.SpongyCastleProvider;
 
-import static java.util.Arrays.copyOfRange;
 import static network.minter.core.util.ByteUtil.EMPTY_BYTE_ARRAY;
 
 public class HashUtil {
@@ -158,42 +154,5 @@ public class HashUtil {
             Mint.e(e, "Can't find such algorithm");
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * @param data - message to hash
-     * @return - reipmd160 hash of the message
-     */
-    public static byte[] ripemd160(byte[] data) {
-        Digest digest = new RIPEMD160Digest();
-        if (data != null) {
-            byte[] resBuf = new byte[digest.getDigestSize()];
-            digest.update(data, 0, data.length);
-            digest.doFinal(resBuf, 0);
-            return resBuf;
-        }
-        throw new NullPointerException("Can't hash a NULL value");
-    }
-
-    /**
-     * Calculates RIGTMOST160(SHA3(input)). This is used in address
-     * calculations. *
-     * @param input - data
-     * @return - 20 right bytes of the hash keccak of the data
-     */
-    public static byte[] sha3omit12(byte[] input) {
-        byte[] hash = sha3(input);
-        return copyOfRange(hash, 12, hash.length);
-    }
-
-    /**
-     * Calculates RIGTMOST160(SHA3(input)). This is used in address
-     * calculations. *
-     * @param input - data
-     * @return - 20 right bytes of the hash keccak of the data
-     */
-    public static byte[] sha3omit12(char[] input) {
-        byte[] hash = sha3(input);
-        return copyOfRange(hash, 12, hash.length);
     }
 }

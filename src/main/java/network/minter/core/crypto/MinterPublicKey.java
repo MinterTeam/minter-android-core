@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,6 +26,8 @@
 
 package network.minter.core.crypto;
 
+import org.parceler.Parcel;
+
 import network.minter.core.MinterSDK;
 import network.minter.core.util.RLPBoxed;
 
@@ -36,8 +38,12 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class MinterPublicKey extends PublicKey implements RLPBoxed.FixedByteLength {
     public static final String PUB_KEY_PATTERN = "^(" + MinterSDK.PREFIX_PUBLIC_KEY + "|" + MinterSDK.PREFIX_PUBLIC_KEY.toLowerCase() + ")?([a-fA-F0-9]{64})$";
+
+    MinterPublicKey() {
+    }
 
     public MinterPublicKey(byte[] data) {
         super(data);
@@ -64,7 +70,7 @@ public class MinterPublicKey extends PublicKey implements RLPBoxed.FixedByteLeng
     public String toShortString() {
         final String in = toString();
         String firstPart = in.substring(0, 8);
-        String lastPart = in.substring(in.length() - 6, in.length());
+        String lastPart = in.substring(in.length() - 6);
 
         return firstPart + "..." + lastPart;
     }

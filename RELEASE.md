@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.7.1
+ - Added parcel for MinterPublicKey
+ - Cleanup
+
 ## 0.7.0
  - Refactored chars buffer
  - Removed old deserializers
