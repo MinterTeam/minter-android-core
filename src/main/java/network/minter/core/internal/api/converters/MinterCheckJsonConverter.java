@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -54,12 +54,11 @@ public class MinterCheckJsonConverter implements JsonDeserializer<MinterCheck>, 
 
         String val = json.getAsString();
 
-        if (!val.matches(MinterCheck.PATTERN)) {
+        try {
+            return new MinterCheck(val);
+        } catch (Throwable t) {
             return null;
         }
-
-        return new MinterCheck(val);
-
     }
 
     @Override

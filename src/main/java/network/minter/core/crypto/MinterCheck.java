@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -59,7 +59,7 @@ public class MinterCheck extends PublicKey {
     public MinterCheck(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && hexData.toString().matches(PATTERN),
+                        hexData != null && hexData.toString().toLowerCase().matches(PATTERN),
                         hexData,
                         "Minter check has invalid format and must contains 'Mc' at the beginning"
                 )

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -66,13 +66,13 @@ public class BytesDataJsonConverter implements JsonDeserializer<BytesData>, Json
         }
 
         if (s.length() > 2) {
-            final String pref = s.substring(0, 2);
-            if (pref.equals(PREFIX_ADDRESS) || pref.equals(PREFIX_CHECK) || pref.equals(PREFIX_PUBLIC_KEY) || pref.equals(PREFIX_TX)) {
-                s = s.substring(2);
+            final String pref = s.substring(0, 2).toLowerCase();
+            if (pref.equals(PREFIX_ADDRESS.toLowerCase()) || pref.equals(PREFIX_CHECK.toLowerCase()) || pref.equals(PREFIX_PUBLIC_KEY.toLowerCase()) || pref.equals(PREFIX_TX.toLowerCase())) {
+                s = s.substring(2).toLowerCase();
             }
         }
 
-        if (!s.matches(StringHelper.HEX_NUM_PATTERN)) {
+        if (!s.toLowerCase().matches(StringHelper.HEX_NUM_PATTERN)) {
             return null;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -51,6 +51,8 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  */
 @Parcel
 public class PrivateKey extends BytesData implements java.security.PrivateKey {
+    private final static Object sNativeLock = new Object();
+
     public PrivateKey(BytesData data) {
         super(data);
     }
@@ -79,9 +81,9 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         super(data);
     }
 
-	public PrivateKey(char[] data) {
-		super(data);
-	}
+    public PrivateKey(char[] data) {
+        super(data);
+    }
 
     public PrivateKey(CharSequence hexData) {
         super(hexData);
@@ -92,17 +94,19 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
     }
 
     public static PrivateKey fromMnemonic(@Nonnull final String mnemonic) {
-        checkArgument(mnemonic != null && !mnemonic.isEmpty(), "Mnemonic phrase can't be empty");
-        final MnemonicResult mnemonicResult = new MnemonicResult(mnemonic);
-        final BytesData seed = new BytesData(mnemonicResult.toSeed());
-        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getBytes());
-        final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
-        final PrivateKey privateKey = extKey.getPrivateKey();
+        final PrivateKey privateKey;
+        synchronized (sNativeLock) {
+            checkArgument(mnemonic != null && !mnemonic.isEmpty(), "Mnemonic phrase can't be empty");
+            final MnemonicResult mnemonicResult = new MnemonicResult(mnemonic);
+            final BytesData seed = new BytesData(mnemonicResult.toSeed());
+            final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getBytes());
+            final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
+            privateKey = extKey.getPrivateKey();
 
-        seed.cleanup();
-        rootKey.clear();
-        extKey.clear();
-
+            seed.cleanup();
+            rootKey.clear();
+            extKey.clear();
+        }
         return privateKey;
     }
 
@@ -137,14 +141,16 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
             throw new IllegalStateException("Can't verify, private key already disposed");
         }
 
-        long ctx = NativeSecp256k1.contextCreate();
         boolean res;
-        try {
-            res = NativeSecp256k1.secKeyVerify(ctx, getBytes());
-        } catch (Throwable t) {
-            res = false;
-        } finally {
-            NativeSecp256k1.contextCleanup(ctx);
+        synchronized (sNativeLock) {
+            long ctx = NativeSecp256k1.contextCreate();
+            try {
+                res = NativeSecp256k1.secKeyVerify(ctx, getBytes());
+            } catch (Throwable t) {
+                res = false;
+            } finally {
+                NativeSecp256k1.contextCleanup(ctx);
+            }
         }
         return res;
     }
@@ -162,12 +168,14 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
             throw new IllegalStateException("Can't get public key, private key already disposed");
         }
 
-        long ctx = NativeSecp256k1.contextCreate();
-        PublicKey out;
-        try {
-            out = new PublicKey(NativeSecp256k1.computePubkey(ctx, getBytes(), compressed));
-        } finally {
-            NativeSecp256k1.contextCleanup(ctx);
+        final PublicKey out;
+        synchronized (sNativeLock) {
+            long ctx = NativeSecp256k1.contextCreate();
+            try {
+                out = new PublicKey(NativeSecp256k1.computePubkey(ctx, getBytes(), compressed));
+            } finally {
+                NativeSecp256k1.contextCleanup(ctx);
+            }
         }
 
         return out;

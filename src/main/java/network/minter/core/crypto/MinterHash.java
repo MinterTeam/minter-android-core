@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -48,7 +48,7 @@ public class MinterHash extends PublicKey {
     public MinterHash(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && hexData.toString().matches(TX_HASH_PATTERN),
+                        hexData != null && hexData.toString().toLowerCase().matches(TX_HASH_PATTERN),
                         hexData,
                         "Invalid minter hash hex string"
                 )

@@ -1,5 +1,14 @@
 # Release notes
 
+## 1.0.0
+- First major version
+- Updated retrofit, okhttp and others version to latest
+- Updated android gradle plugin
+- Added `MinterSDK.DEFAULT_COIN_ID`, now coins are represented by theirs ID, not by name
+- Added `synchronized` blocks to methods those uses native secp256k1 context
+- Now fully uppercase data like MinterHash or MinterPublicKey is a valid
+- All data with prefix (Mt, Mx etc) now deserializes case-insensitive
+
 ## 0.7.1
  - Added parcel for MinterPublicKey
  - Cleanup

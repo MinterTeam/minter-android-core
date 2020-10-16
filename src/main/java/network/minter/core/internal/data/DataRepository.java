@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -47,20 +47,7 @@ public abstract class DataRepository<Service> {
     public DataRepository(@Nonnull final ApiService.Builder apiBuilder) {
         mApi = checkNotNull(apiBuilder, "Api client required");
         checkNotNull(getServiceClass(), "Service class is null!");
-        mService = LazyMem.memoize(() -> {
-            mApi.authRequired(isAuthRequired());
-            configureService(mApi);
-            return mApi.build().create(getServiceClass());
-        });
-    }
-
-    /**
-     * @return {@link retrofit2.Retrofit} service
-     * @deprecated Use {@link #getInstantService()} instead
-     */
-    @Deprecated
-    public final Service getService() {
-        return mService.get();
+        mService = LazyMem.memoize(() -> mApi.build().create(getServiceClass()));
     }
 
     /**
@@ -83,50 +70,6 @@ public abstract class DataRepository<Service> {
         }
 
         return b.build().create(getServiceClass());
-    }
-
-    /**
-     * @return
-     * @deprecated Use {@link #getInstantService(Configurator)} instead, set auth required with {@link Configurator#configure(ApiService.Builder)}
-     */
-    @Deprecated
-    protected boolean isAuthRequired() {
-        return false;
-    }
-
-    /**
-     * @param apiBuilder
-     * @see ApiService.Builder
-     * @deprecated Use {@link Configurator} instead. Example:
-     * <pre>
-     *     {@code
-     *     class MyApiRepo extends DataRepository implements Configurator {
-     *         public Call<MyResult<MyObject>> getSomeApiMethod() {
-     *              return getInstantService(this).getSomeApiMethod();
-     *         }
-     *
-     *         \@Override
-     *         public ApiService.Builder configure(ApiService.Builder api) {
-     *             api.authRequired();
-     *             return api;
-     *         }
-     *     }
-     *     }
-     * </pre>
-     *
-     * or just callback for single usage:
-     * <pre>
-     *     {@code
-     *     public Call<MyResult<MyObject>> getSomeApiMethod() {
-     *          return getInstantService(api->{
-     *              return api.authRequired(false);
-     *          }).getSomeApiMethod();
-     *     }
-     *     }
-     * </pre>
-     */
-    @Deprecated
-    protected void configureService(ApiService.Builder apiBuilder) {
     }
 
     @Nonnull

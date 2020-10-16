@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -30,6 +30,7 @@ import com.edwardstock.secp256k1.NativeSecp256k1;
 
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import java.math.BigInteger;
 import java.security.Security;
 
 import network.minter.core.bip39.NativeBip39;
@@ -42,6 +43,8 @@ import network.minter.core.internal.exceptions.NativeLoadException;
 public class MinterSDK {
     @SuppressWarnings("unused")
     public final static String DEFAULT_COIN = BuildConfig.DEFAULT_COIN_NAME;
+    @SuppressWarnings("unused")
+    public final static BigInteger DEFAULT_COIN_ID = BigInteger.ZERO;
     public final static String PREFIX_ADDRESS = "Mx";
     public final static String PREFIX_TX = "Mt";
     public final static String PREFIX_CHECK = "Mc";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -30,6 +30,7 @@ import org.spongycastle.util.BigIntegers;
 
 import java.math.BigInteger;
 
+import network.minter.core.crypto.BytesData;
 import network.minter.core.util.DecodeResult;
 
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
@@ -148,25 +149,51 @@ public class BytesHelper {
 			return new byte[0];
 		}
 
-		byte[] biArr;
-		if (num.equals(new BigInteger("128"))) {
-			biArr = new byte[]{(byte) 0x80};
-		} else {
-			biArr = BigIntegers.asUnsignedByteArray(num);
-		}
+        byte[] biArr;
+        if (num.equals(new BigInteger("128"))) {
+            biArr = new byte[]{(byte) 0x80};
+        } else {
+            biArr = BigIntegers.asUnsignedByteArray(num);
+        }
 
-		return biArr;
-	}
+        return biArr;
+    }
 
-	public static char[] dropLeadingZeroes(char[] input) {
-		if (input == null || input.length == 0) {
-			return input;
-		}
+    public static char[] addLeadingZeroes(char[] input, int mandatoryLen) {
+        if (input.length == mandatoryLen) {
+            return input;
+        }
+        BytesData out = new BytesData(mandatoryLen);
+        int i = 0;
+        for (; i < (mandatoryLen - input.length); i++) {
+            out.write(i, (byte) 0x00);
+        }
+        out.write(i, input);
+        return out.getData();
+    }
 
-		int targetLen = input.length;
-		int i = 0;
+    public static byte[] addLeadingZeroes(byte[] input, int mandatoryLen) {
+        if (input.length == mandatoryLen) {
+            return input;
+        }
+        BytesData out = new BytesData(mandatoryLen);
+        int i = 0;
+        for (; i < (mandatoryLen - input.length); i++) {
+            out.write(i, (byte) 0x00);
+        }
+        out.write(i, input);
+        return out.getBytes();
+    }
+
+    public static char[] dropLeadingZeroes(char[] input) {
+        if (input == null || input.length == 0) {
+            return input;
+        }
+
+        int targetLen = input.length;
+        int i = 0;
         while (i < input.length && input[i] == 0x00) {
-			i++;
+            i++;
 			targetLen--;
 		}
 

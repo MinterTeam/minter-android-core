@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -53,12 +53,11 @@ public class MinterHashJsonConverter implements JsonDeserializer<MinterHash>, Js
 
         String val = json.getAsString();
 
-        if (!val.matches(MinterHash.TX_HASH_PATTERN)) {
+        try {
+            return new MinterHash(val);
+        } catch (Throwable e) {
             return null;
         }
-
-        return new MinterHash(val);
-
     }
 
     @Override

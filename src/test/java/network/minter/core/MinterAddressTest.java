@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -39,6 +39,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * minter-android-core. 2018
@@ -60,6 +61,25 @@ public class MinterAddressTest {
         }
         assertNull(t0);
         assertNotNull(address);
+    }
+
+    @Test
+    public void testMinterAddressEncodeRLPWithLeadingNullz() {
+        MinterAddress address = new MinterAddress("Mx00105df705144b7095e9d680fc0780b78f87b3ae");
+
+        BytesData result1 = new BytesData(
+                RLPBoxed.encode(new Object[]{
+                        address
+                })
+        );
+
+        BytesData result2 = new BytesData(
+                RLPBoxed.encode(new Object[]{
+                        address.getData()
+                })
+        );
+
+        assertNotEquals(result1, result2);
     }
 
     @Test

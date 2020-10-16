@@ -51,7 +51,7 @@ public class MinterPublicKey extends PublicKey implements RLPBoxed.FixedByteLeng
 
     public MinterPublicKey(CharSequence hexData) {
         super(checkArgument(
-                hexData != null && hexData.toString().matches(PUB_KEY_PATTERN),
+                hexData != null && hexData.toString().toLowerCase().matches(PUB_KEY_PATTERN),
                 hexData,
                 "Invalid public key format"));
     }

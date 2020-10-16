@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -54,11 +54,11 @@ public class MinterPublicKeyJsonConverter implements JsonDeserializer<MinterPubl
 
         String val = json.getAsString();
 
-        if (!val.matches(MinterPublicKey.PUB_KEY_PATTERN)) {
+        try {
+            return new MinterPublicKey(val);
+        } catch (Throwable t) {
             return null;
         }
-
-        return new MinterPublicKey(val);
 
     }
 

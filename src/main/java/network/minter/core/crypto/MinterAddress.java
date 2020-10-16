@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -62,7 +62,7 @@ public class MinterAddress extends PublicKey implements RLPBoxed.FixedByteLength
     public MinterAddress(CharSequence hexData) {
         super(
                 checkArgument(
-                        hexData != null && hexData.toString().matches(ADDRESS_PATTERN),
+                        hexData != null && hexData.toString().toLowerCase().matches(ADDRESS_PATTERN),
                         hexData,
                         "Minter public key in hex format must contains 40 or 42 characters, where first 2 chars is a prefix: Mx"
                 )
@@ -90,6 +90,11 @@ public class MinterAddress extends PublicKey implements RLPBoxed.FixedByteLength
     MinterAddress() {
     }
 
+    /**
+     * Test string that is it a valid address
+     * @param input
+     * @return
+     */
     public static boolean testString(CharSequence input) {
         if (input == null || input.length() == 0) {
             return false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -24,16 +24,28 @@
  * THE SOFTWARE.
  */
 
-package network.minter.core.internal.common;
+package network.minter.core;
+
+import org.junit.Test;
+
+import network.minter.core.crypto.MinterHash;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Provides instances of {@code T}
- * minter-android-core. 2018
- *
+ * minter-android-core. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
- * @deprecated Use {@link Lazy<T>}
  */
-@Deprecated
-public interface CallbackProvider<T> {
-    T get();
+public class MinterHashTest {
+
+    @Test
+    public void testUppercaseMinterHash() {
+        String hash = "MT23990E490762593E5ABD87CB43B10ACDD47215A5B35E2800FF3B1BDBC8D943E9";
+        MinterHash res = new MinterHash(hash);
+
+        assertEquals(32, res.size());
+        assertEquals((char) 0x23, res.getData()[0]);
+        assertEquals((char) 0xe9, res.getData()[31]);
+        assertEquals("Mt23990e490762593e5abd87cb43b10acdd47215a5b35e2800ff3b1bdbc8d943e9", res.toString());
+    }
 }
