@@ -32,7 +32,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.TypeAdapterFactory;
 
 import java.lang.reflect.Type;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import network.minter.core.internal.common.Acceptor;
 import network.minter.core.internal.common.Lazy;
@@ -72,26 +78,26 @@ public final class ApiService {
 		void onError(int httpCode, Response response);
 	}
 
-	public static class Builder implements Cloneable {
-		private String mBaseUrl;
-		private String mDateFormat = "yyyy-MM-dd";
-		private boolean mDateAsLong = true;
-		private boolean mAuthRequired = false;
-		private boolean mDebug = false;
-		private int mConnectTimeout = 30;
-		private int mReadTimeout = 30;
-		private String mAuthHeaderName = "Authorization";
-		private GsonBuilder mGsonBuilder;
-		private Cache mHttpCache = null;
-		private OnErrorListener mErrorListener;
-		private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
-		private Lazy<String> mTokenProvider;
-		private Acceptor<OkHttpClient.Builder> mHttpClientConfig;
-		private Acceptor<Retrofit.Builder> mRetrofitClientConfig;
-		private EmptyAuthHeaderTokenListener mEmptyAuthHeaderTokenListener;
-		private ArrayList<ServiceTypeAdapter> mCustomAdapters;
-		private ArrayList<TypeAdapterFactory> mFactories;
-		private List<Pair<String, String>> mHeaders;
+    public static class Builder implements Cloneable {
+        private final String mBaseUrl;
+        private String mDateFormat = "yyyy-MM-dd";
+        private boolean mDateAsLong = true;
+        private boolean mAuthRequired = false;
+        private boolean mDebug = false;
+        private int mConnectTimeout = 30;
+        private int mReadTimeout = 30;
+        private String mAuthHeaderName = "Authorization";
+        private final GsonBuilder mGsonBuilder;
+        private Cache mHttpCache = null;
+        private OnErrorListener mErrorListener;
+        private HttpLoggingInterceptor.Level mDebugLevel = HttpLoggingInterceptor.Level.BODY;
+        private Lazy<String> mTokenProvider;
+        private Acceptor<OkHttpClient.Builder> mHttpClientConfig;
+        private Acceptor<Retrofit.Builder> mRetrofitClientConfig;
+        private EmptyAuthHeaderTokenListener mEmptyAuthHeaderTokenListener;
+        private ArrayList<ServiceTypeAdapter> mCustomAdapters;
+        private ArrayList<TypeAdapterFactory> mFactories;
+        private List<Pair<String, String>> mHeaders;
 		private List<Interceptor> mInterceptors;
 
 		public Builder(String baseUrl, GsonBuilder gsonBuilder) {
@@ -388,9 +394,20 @@ public final class ApiService {
 
                 if (android.os.Build.VERSION.SDK_INT >= 18 && android.os.Build.VERSION.SDK_INT < 22) {
                     try {
+                        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                                TrustManagerFactory.getDefaultAlgorithm());
+                        trustManagerFactory.init((KeyStore) null);
+                        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+                        if (trustManagers.length != 1 ||
+                                !(trustManagers[0] instanceof X509TrustManager)) {
+                            throw new IllegalStateException("Unexpected default trust managers:"
+                                    + Arrays.toString(trustManagers));
+                        }
+                        X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+
                         SSLContext sc = SSLContext.getInstance("TLSv1.2");
-                        sc.init(null, null, null);
-                        client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+                        sc.init(null, new TrustManager[]{trustManager}, new SecureRandom());
+                        client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager);
 
                         ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                                 .tlsVersions(TlsVersion.TLS_1_2)

@@ -1,5 +1,8 @@
 # Release notes
 
+## 1.0.1
+- Fixed OkHttp TLS v1.2 for api < 22
+
 ## 1.0.0
 - First major version
 - Updated retrofit, okhttp and others version to latest
