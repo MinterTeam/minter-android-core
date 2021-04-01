@@ -26,8 +26,6 @@
 
 package network.minter.core.crypto;
 
-import org.parceler.Parcel;
-
 import network.minter.core.MinterSDK;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
@@ -37,7 +35,6 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Parcel
 public class MinterHash extends PublicKey {
     public static final String TX_HASH_PATTERN = "^(" + MinterSDK.PREFIX_TX + "|" + MinterSDK.PREFIX_TX.toLowerCase() + ")?([a-fA-F0-9]+)$";
 

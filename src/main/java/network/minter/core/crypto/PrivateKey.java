@@ -28,8 +28,6 @@ package network.minter.core.crypto;
 
 import com.edwardstock.secp256k1.NativeSecp256k1;
 
-import org.parceler.Parcel;
-
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +47,6 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  * minter-android-core. 2018
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Parcel
 public class PrivateKey extends BytesData implements java.security.PrivateKey {
     private final static Object sNativeLock = new Object();
 
@@ -89,9 +86,7 @@ public class PrivateKey extends BytesData implements java.security.PrivateKey {
         super(hexData);
     }
 
-    //parcel - be carefully
-    PrivateKey() {
-    }
+    PrivateKey() {}
 
     public static PrivateKey fromMnemonic(@Nonnull final String mnemonic) {
         final PrivateKey privateKey;

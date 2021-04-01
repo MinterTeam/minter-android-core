@@ -26,14 +26,11 @@
 
 package network.minter.core.crypto;
 
-import org.parceler.Parcel;
-
 /**
  * minter-android-core. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Parcel
 public class PublicKey extends BytesData implements java.security.PublicKey {
 
     public PublicKey(Byte[] data) {

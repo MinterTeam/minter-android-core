@@ -29,6 +29,8 @@ package network.minter.core;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.util.DecodeResult;
@@ -43,11 +45,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 public class RLPBigIntegerTest {
 	private final static BigInteger VALUE_MUL = new BigInteger("1000000000000000000", 10);
 
@@ -255,6 +252,36 @@ public class RLPBigIntegerTest {
 
         BigInteger res = fixBigintSignedByte(dec[0]);
         assertEquals(nonce, res);
+    }
+
+    @Test
+    public void testEncodeDecodeBigIntList() {
+        BigInteger one, ten, zero;
+        one = BigInteger.ONE;
+        ten = BigInteger.TEN;
+        zero = BigInteger.ZERO;
+
+        ArrayList<BigInteger> data = new ArrayList<BigInteger>() {{
+            add(one);
+            add(ten);
+            add(zero);
+        }};
+
+        char[] encoded = RLPBoxed.encode(new Object[]{
+                data.toArray()
+        });
+
+        Object[] res = (Object[]) RLPBoxed.decode(encoded, 0).getDecoded();
+        Object[] values = (Object[]) res[0];
+        List<BigInteger> decodedData = new ArrayList<>(values.length);
+        for (int i = 0; i < values.length; i++) {
+            decodedData.add(
+                    fixBigintSignedByte(values[i])
+            );
+        }
+        assertEquals(one, decodedData.get(0));
+        assertEquals(ten, decodedData.get(1));
+        assertEquals(zero, decodedData.get(2));
     }
 
 }

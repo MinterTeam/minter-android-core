@@ -26,8 +26,6 @@
 
 package network.minter.core.crypto;
 
-import org.parceler.Parcel;
-
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -53,7 +51,6 @@ import static network.minter.core.internal.helpers.StringHelper.charsToString;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Parcel
 public class BytesData implements Comparable<BytesData>, Serializable, Cloneable {
     protected char[] mData;
     boolean mValid = true;

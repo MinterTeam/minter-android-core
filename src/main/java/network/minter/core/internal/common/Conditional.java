@@ -28,12 +28,13 @@ package network.minter.core.internal.common;
 
 /**
  * minter-android-core. 2018
+ *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class Conditional<T> {
 
-    private Condition mCond;
-    private Value<T> mValue;
+    private final Condition mCond;
+    private final Value<T> mValue;
 
     /**
      * Пример: {@code
@@ -41,6 +42,7 @@ public class Conditional<T> {
      * ()-> App.getValueBigInteger()); <p> someCond.call(appVal -> appVal.doSomeAction())
      * }
      * Кастомный коллбэк с кастомным значением
+     *
      * @param condition
      * @param value
      */
@@ -57,6 +59,7 @@ public class Conditional<T> {
      * <p>
      * someCond.call(appVal -> appVal.doSomeAction()) выполнится если App.getValueBigInteger() != null
      * }
+     *
      * @param value
      */
     public Conditional(Value<T> value) {

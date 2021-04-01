@@ -26,8 +26,6 @@
 
 package network.minter.core.crypto;
 
-import org.parceler.Parcel;
-
 import network.minter.core.MinterSDK;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
@@ -36,7 +34,6 @@ import static network.minter.core.internal.common.Preconditions.checkArgument;
  * minter-android-core. 2018
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-@Parcel
 public class MinterCheck extends PublicKey {
     public static final String PATTERN = "^(" + MinterSDK.PREFIX_CHECK + "|" + MinterSDK.PREFIX_CHECK.toLowerCase() + ")?([a-fA-F0-9]+)$";
 

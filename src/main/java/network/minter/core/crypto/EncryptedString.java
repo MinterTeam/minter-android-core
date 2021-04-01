@@ -26,8 +26,6 @@
 
 package network.minter.core.crypto;
 
-import org.parceler.Parcel;
-
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -50,8 +48,6 @@ import static network.minter.core.internal.common.Preconditions.checkNotNull;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-@Parcel
-@SuppressWarnings("ConstantConditions")
 public class EncryptedString implements Serializable {
     private final static String IV = "Minter seed";
     String mEncrypted;
@@ -89,10 +85,6 @@ public class EncryptedString implements Serializable {
 
     public EncryptedString(@Nonnull final String encryptedString) {
         mEncrypted = checkNotNull(encryptedString, "Encrypted data can't be null. It may lead decryption errors");
-    }
-
-    //parcel
-    EncryptedString() {
     }
 
     /**

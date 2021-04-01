@@ -1,5 +1,8 @@
 # Release notes
 
+## 1.1.0
+- Fully removed android's Parcel implementations for better compatibility with pure java/kotlin implementation
+
 ## 1.0.1
 - Fixed OkHttp TLS v1.2 for api < 22
 
