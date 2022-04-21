@@ -42,8 +42,7 @@ import javax.annotation.Nullable;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-
+import static network.minter.core.internal.common.Preconditions.firstNonNull;
 
 /**
  * minter-android-core. 2018
@@ -238,9 +237,6 @@ public class NetworkException extends RuntimeException {
         return mUserMessage;
     }
 
-    //	public String getTrace() {
-//		return ExceptionHelper.extractStackTrace(firstNonNull(another, this));
-//	}
     public String getExceptionMessage() {
         return mExceptionMessage;
     }

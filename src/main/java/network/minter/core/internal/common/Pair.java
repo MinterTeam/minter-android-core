@@ -26,8 +26,7 @@
 
 package network.minter.core.internal.common;
 
-
-import com.google.common.base.Objects;
+import static network.minter.core.internal.common.Preconditions.objectsEquals;
 
 /**
  * Support pair
@@ -74,7 +73,7 @@ public class Pair<F, S> {
             return false;
         }
         Pair<?, ?> p = (Pair<?, ?>) o;
-        return Objects.equal(p.first, first) && Objects.equal(p.second, second);
+        return objectsEquals(p.first, first) && objectsEquals(p.second, second);
     }
 
     /**

@@ -31,7 +31,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
+import static network.minter.core.internal.common.Preconditions.firstNonNull;
 import static network.minter.core.internal.log.Mint.ASSERT;
 import static network.minter.core.internal.log.Mint.DEBUG;
 import static network.minter.core.internal.log.Mint.ERROR;

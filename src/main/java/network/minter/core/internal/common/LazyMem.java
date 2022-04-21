@@ -26,8 +26,6 @@
 
 package network.minter.core.internal.common;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
@@ -178,7 +176,6 @@ public class LazyMem {
         }
     }
 
-    @VisibleForTesting
     static class MemoizingSupplier<T> implements Lazy<T>, Serializable {
         private static final long serialVersionUID = 0;
         final Lazy<T> delegate;
@@ -213,7 +210,6 @@ public class LazyMem {
         }
     }
 
-    @VisibleForTesting
     static class ExpiringMemoizingSupplier<T> implements Lazy<T>, Serializable {
         private static final long serialVersionUID = 0;
         final Lazy<T> delegate;

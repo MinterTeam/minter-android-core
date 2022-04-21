@@ -27,6 +27,8 @@
 package network.minter.core.internal.common;
 
 
+
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -40,6 +42,16 @@ import static java.lang.String.format;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class Preconditions {
+
+    public static int objectsHashCode(Object... objects) {
+        return Arrays.hashCode(objects);
+    }
+
+    @SuppressWarnings("EqualsReplaceableByObjectsCall")
+    public static boolean objectsEquals(@Nullable Object a, @Nullable Object b) {
+        return a == b || (a != null && a.equals(b));
+    }
+
     /**
      * Ensures that an object reference passed as a parameter to the calling
      * method is not null.

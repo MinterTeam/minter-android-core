@@ -1,4 +1,10 @@
 # Release notes
+## 1.2.0
+ - Removed guava and replaced common helpers to local ones
+ - Updated gradle to 7.2 and agp to 7.1.2
+ - Added gradle wrapper to git
+ - Updated dependencies to match the new version
+
 
 ## 1.1.0
 - Fully removed android's Parcel implementations for better compatibility with pure java/kotlin implementation
